@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl"]
+  previewFeatures = ["driverAdapters"]
+
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+  relationMode = "prisma"
+
+}
+
+// Enum for user roles
+enum Role {
+  ADMIN
+  USER
+}
+
+// User model with updated bmcResult array
+model User {
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
+  email     String       @unique
+  password  String?
+  name      String?
+  role      Role         @default(USER)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model Bmcquestion {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  questionText  String
+  category      String
+  description   String?
+  suggestionList Json?
+  type          String?
+  optionsList   String[]
+  required      Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+}
+
+model Bmcresult {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String    
+  projectName String 
+  itSaved     Boolean      
+  data        Json
+  createdAt DateTime  @default(now())
+}
+
+model Bmcfields {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  category   String
+  description String?
+  createdAt DateTime  @default(now())
+}
