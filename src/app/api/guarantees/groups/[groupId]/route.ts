@@ -1,6 +1,11 @@
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/lib/authOptions";
 import prisma from "@/lib/db";
+
+type RouteContext = {
+  params: Promise<{ groupId: string }>;
+};
 
 async function ensureAdmin() {
   const session = await getServerSession(authOptions);
@@ -10,34 +15,35 @@ async function ensureAdmin() {
   return session;
 }
 
-export async function PATCH(req: Request, { params }: { params: { groupId: string } }) {
+export async function PATCH(req: NextRequest, context: RouteContext) {
+  const { groupId } = await context.params;
   const session = await ensureAdmin();
   if (!session) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
     const { key, title, description, inputType, mandatory } = await req.json();
 
     if (!title || !key) {
-      return Response.json({ error: "Titre et clé requis" }, { status: 400 });
+      return NextResponse.json({ error: "Titre et clé requis" }, { status: 400 });
     }
 
     const validInputTypes = ["CHECKBOX", "SELECTGROUP"];
     if (inputType && !validInputTypes.includes(inputType.toUpperCase())) {
-      return Response.json({ error: "Type invalide" }, { status: 400 });
+      return NextResponse.json({ error: "Type invalide" }, { status: 400 });
     }
 
     const group = await prisma.guaranteeGroup.findUnique({
-      where: { id: params.groupId },
+      where: { id: groupId },
     });
 
     if (!group) {
-      return Response.json({ error: "Groupe non trouvé" }, { status: 404 });
+      return NextResponse.json({ error: "Groupe non trouvé" }, { status: 404 });
     }
 
     const updatedGroup = await prisma.guaranteeGroup.update({
-      where: { id: params.groupId },
+      where: { id: groupId },
       data: {
         key,
         title,
@@ -47,7 +53,7 @@ export async function PATCH(req: Request, { params }: { params: { groupId: strin
       },
     });
 
-    return Response.json({
+    return NextResponse.json({
       id: updatedGroup.id,
       key: updatedGroup.key,
       title: updatedGroup.title,
@@ -57,38 +63,39 @@ export async function PATCH(req: Request, { params }: { params: { groupId: strin
     });
   } catch (error) {
     console.error("Error updating group:", error);
-    return Response.json({ error: "Failed to update group" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to update group" }, { status: 500 });
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { groupId: string } }) {
+export async function DELETE(_req: NextRequest, context: RouteContext) {
+  const { groupId } = await context.params;
   const session = await ensureAdmin();
   if (!session) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
     const group = await prisma.guaranteeGroup.findUnique({
-      where: { id: params.groupId },
+      where: { id: groupId },
       include: { options: true },
     });
 
     if (!group) {
-      return Response.json({ error: "Groupe non trouvé" }, { status: 404 });
+      return NextResponse.json({ error: "Groupe non trouvé" }, { status: 404 });
     }
 
     // Delete the group and its options
     await prisma.guaranteeOption.deleteMany({
-      where: { groupId: params.groupId },
+      where: { groupId: groupId },
     });
 
     await prisma.guaranteeGroup.delete({
-      where: { id: params.groupId },
+      where: { id: groupId },
     });
 
-    return Response.json({ message: "Groupe supprimé avec succès" });
+    return NextResponse.json({ message: "Groupe supprimé avec succès" });
   } catch (error) {
     console.error("Error deleting group:", error);
-    return Response.json({ error: "Failed to delete group" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to delete group" }, { status: 500 });
   }
 }

@@ -63,14 +63,14 @@ export default function UpdateModal({ id, full_name, email, phone_number }: Upda
             </Modal.Header>
             <form onSubmit={handleUpdate}>
               <Modal.Body>
-                <Input size='sm' name='userId' type="text" label="Id"
+                <Input name='userId' type="text" placeholder="Id"
                   className="max-w-xs"
                   value={id}
                   disabled
                 />
-                <Input size='sm' name='userName' type="text" label="User Name" className="max-w-xs" value={nameVal} onChange={(e) => setNameVal(e.target.value)} />
-                <Input size='sm' name='email' type="email" label="Email" className="max-w-xs" value={emailVal} onChange={(e) => setEmailVal(e.target.value)} />
-                <Input size='sm' name='phoneNumber' type="tel" label="Phone Number" className="max-w-xs" value={phoneVal} onChange={(e) => setPhoneVal(e.target.value)} />
+                <Input name='userName' type="text" placeholder="User Name" className="max-w-xs" value={nameVal} onChange={(e) => setNameVal(e.target.value)} />
+                <Input name='email' type="email" placeholder="Email" className="max-w-xs" value={emailVal} onChange={(e) => setEmailVal(e.target.value)} />
+                <Input name='phoneNumber' type="tel" placeholder="Phone Number" className="max-w-xs" value={phoneVal} onChange={(e) => setPhoneVal(e.target.value)} />
               </Modal.Body>
               <Modal.Footer>
                 <Button variant="outline" onPress={() => setIsOpen(false)}>
