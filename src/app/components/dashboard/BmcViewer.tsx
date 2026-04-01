@@ -72,7 +72,7 @@ export default function BMCViewer({ data ,projectName}: BMCViewerProps) {
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-2xl border border-white/10 bg-white/5 px-5 py-4">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-600/20 to-cyan-500/20 border border-white/10 flex items-center justify-center">
+          <div className="w-11 h-11 rounded-2xl bg-linear-to-br from-blue-600/20 to-cyan-500/20 border border-white/10 flex items-center justify-center">
             <FaFileLines className="text-cyan-300" />
           </div>
           <div>
@@ -84,7 +84,7 @@ export default function BMCViewer({ data ,projectName}: BMCViewerProps) {
         <button
           onClick={downloadPDF}
           disabled={isSaving}
-          className={`inline-flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-gray-500 rounded-xl font-semibold shadow-lg shadow-blue-600/20 transition-all duration-200 ${
+          className={`inline-flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-blue-600 to-cyan-500 text-gray-500 rounded-xl font-semibold shadow-lg shadow-blue-600/20 transition-all duration-200 ${
             isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] hover:shadow-blue-600/35'
           }`}
         >

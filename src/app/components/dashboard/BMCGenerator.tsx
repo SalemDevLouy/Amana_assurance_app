@@ -409,7 +409,7 @@ const handleResponseChange = (questionId: string, value: string | string[]) => {
             <SparklesIcon className="w-4 h-4" />
             Assistant BMC
           </div>
-          <h1 className="text-4xl font-bold text-gray-500 mb-3 bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold text-gray-500 mb-3 bg-linear-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
             Créateur de BMC
           </h1>
           <p className="text-gray-500/45 max-w-2xl mx-auto text-sm sm:text-base">
@@ -422,7 +422,7 @@ const handleResponseChange = (questionId: string, value: string | string[]) => {
         <div className="mb-8">
           <div className="bg-white/10 rounded-full h-3 shadow-inner overflow-hidden border border-white/10">
             <div 
-              className={`bg-gradient-to-r ${activeSection === 'questions' ? currentFieldColors.gradient : 'from-indigo-500 to-purple-500'} h-3 rounded-full transition-all duration-500 ease-out`}
+              className={`bg-linear-to-r ${activeSection === 'questions' ? currentFieldColors.gradient : 'from-indigo-500 to-purple-500'} h-3 rounded-full transition-all duration-500 ease-out`}
               style={{ width: `${getProgress()}%` }}
             />
           </div>
@@ -445,7 +445,7 @@ const handleResponseChange = (questionId: string, value: string | string[]) => {
                 onClick={() => setActiveSection(section as ActiveSection)}
                 className={`group relative flex items-center gap-3 px-6 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 min-w-[200px] ${
                   activeSection === section
-                    ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-gray-500 shadow-lg shadow-blue-600/20 border border-white/10'
+                    ? 'bg-linear-to-r from-blue-600 to-cyan-500 text-gray-500 shadow-lg shadow-blue-600/20 border border-white/10'
                     : 'bg-white/5 text-gray-500/70 border border-white/10 hover:bg-white/10 hover:border-white/20'
                 }`}
               >
@@ -457,7 +457,7 @@ const handleResponseChange = (questionId: string, value: string | string[]) => {
                   </div>
                 </div>
                 {activeSection === section && (
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-400 opacity-15 animate-pulse" />
+                  <div className="absolute inset-0 rounded-2xl bg-linear-to-r from-blue-500 to-cyan-400 opacity-15 animate-pulse" />
                 )}
               </button>
             ))}
@@ -542,7 +542,7 @@ const handleResponseChange = (questionId: string, value: string | string[]) => {
                 <button
                   type="button"
                   onClick={handleSaveProject}
-                  className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-gray-500 px-8 py-4 rounded-xl font-semibold transition-all duration-200 hover:shadow-lg hover:shadow-blue-600/25 transform hover:scale-[1.02] flex items-center justify-center gap-2"
+                  className="w-full bg-linear-to-r from-blue-600 to-cyan-500 text-gray-500 px-8 py-4 rounded-xl font-semibold transition-all duration-200 hover:shadow-lg hover:shadow-blue-600/25 transform hover:scale-[1.02] flex items-center justify-center gap-2"
                 >
                   <PlayIcon className="w-5 h-5" />
                   Commencer le questionnaire
@@ -558,7 +558,7 @@ const handleResponseChange = (questionId: string, value: string | string[]) => {
               <div className="p-6 border-b border-white/10 bg-white/5">
                 <div className="mb-4">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className={`w-4 h-4 rounded-full bg-gradient-to-r ${currentFieldColors.gradient} shadow-lg ${currentFieldColors.shadow}`}></div>
+                    <div className={`w-4 h-4 rounded-full bg-linear-to-r ${currentFieldColors.gradient} shadow-lg ${currentFieldColors.shadow}`}></div>
                     <h2 className="text-xl font-bold text-gray-500">
                       {bmcFields[currentFieldIndex]?.name}
                     </h2>
@@ -584,7 +584,7 @@ const handleResponseChange = (questionId: string, value: string | string[]) => {
                             onClick={() => handleFieldChange(index)}
                           >
                             <div 
-                              className={`h-full bg-gradient-to-r ${field.colors.gradient} transition-all duration-300`}
+                              className={`h-full bg-linear-to-r ${field.colors.gradient} transition-all duration-300`}
                               style={{ width: `${progressInField}%` }}
                             />
                           </div>
@@ -605,7 +605,7 @@ const handleResponseChange = (questionId: string, value: string | string[]) => {
                       onClick={() => handleFieldChange(index)}
                       className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                         currentFieldIndex === index
-                          ? `bg-gradient-to-r ${field.colors.gradient} text-gray-500 shadow-lg ${field.colors.shadow}`
+                          ? `bg-linear-to-r ${field.colors.gradient} text-gray-500 shadow-lg ${field.colors.shadow}`
                           : 'text-gray-500/55 hover:text-gray-500 bg-white/5 hover:bg-white/10 border border-white/10'
                       }`}
                     >
@@ -688,7 +688,7 @@ const handleResponseChange = (questionId: string, value: string | string[]) => {
                   <button
                     type="button"
                     onClick={handleNextQuestion}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold bg-gradient-to-r ${currentFieldColors.gradient} text-gray-500 transition-all duration-200 transform hover:scale-105 shadow-lg ${currentFieldColors.shadow}`}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold bg-linear-to-r ${currentFieldColors.gradient} text-gray-500 transition-all duration-200 transform hover:scale-105 shadow-lg ${currentFieldColors.shadow}`}
                   >
                     {isLastQuestionInField && isLastField ? 'Générer le BMC' : 'Suivante'}
                     {isLastQuestionInField && isLastField ? (
@@ -719,7 +719,7 @@ const handleResponseChange = (questionId: string, value: string | string[]) => {
                   className={`w-full flex items-center justify-center gap-3 py-4 px-8 rounded-xl font-semibold transition-all duration-200 transform hover:scale-[1.02] ${
                     isAIGenerating || Object.keys(responses).length === 0
                       ? 'opacity-50 cursor-not-allowed bg-white/5 text-gray-500/30 border border-white/10'
-                      : 'bg-gradient-to-r from-emerald-500 to-teal-500 text-gray-500 shadow-lg hover:shadow-emerald-500/25'
+                      : 'bg-linear-to-r from-emerald-500 to-teal-500 text-gray-500 shadow-lg hover:shadow-emerald-500/25'
                   }`}
                 >
                   {isAIGenerating ? (

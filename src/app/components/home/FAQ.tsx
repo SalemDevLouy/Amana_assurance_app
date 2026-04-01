@@ -39,7 +39,7 @@ export default function FAQ() {
           data-aos-delay="50"
         >
           Questions{' '}
-          <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
             fréquentes
           </span>
         </h2>

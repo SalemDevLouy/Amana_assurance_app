@@ -1,86 +1,89 @@
-// import React,{useState,FormEvent} from "react";
-// import {
-//   Modal, ModalContent, ModalHeader,Input,
-//   ModalBody, ModalFooter, Button, useDisclosure
-// } from '@heroui/react'
-// import { FaEdit } from "react-icons/fa";
-// interface updateProp{
-//   id:string,
-//   full_name:string,
-//   email: string,
-//   phone_number: string,
-// }
-// export default function UpdateModal({question}:updateProp) {
-//   const {isOpen, onOpen, onOpenChange} = useDisclosure();
-//   const [nameVal, setNameVal] = useState(user.full_name);
-//   const [emailVal, setEmailVal] = useState(user.email);
-//   const [phoneVal, setPhoneVal] = useState(user.phone_number);
+import React, { useState, FormEvent } from "react";
+import {
+  Modal, Input, Button
+} from '@heroui/react'
+import { FaEdit } from "react-icons/fa";
 
-// // handle Update User 
-//   const handleUpdate = async (event: FormEvent<HTMLFormElement>) => {
-//     event.preventDefault() // Prevent default form submission
+interface UpdateModalProps {
+  id: string,
+  full_name: string,
+  email: string,
+  phone_number: string,
+}
 
-//     try {
-//       const response = await fetch(`../api/bmc`,
-//         {
-//         method: 'PUT',
-//         headers: {
-//           'Content-Type': 'application/json'
-//           },
-//           body: JSON.stringify({
-//           id: question.id,
-//           full_name: nameVal,
-//           email: emailVal,
-//           phone_number: phoneVal
-//         })
-//       })
+export default function UpdateModal({ id, full_name, email, phone_number }: UpdateModalProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [nameVal, setNameVal] = useState(full_name);
+  const [emailVal, setEmailVal] = useState(email);
+  const [phoneVal, setPhoneVal] = useState(phone_number);
 
-//       if (response.ok) {
-//         // Handle successful response and delete from ui table
-//         console.log("Successfully deleted");
-        
-//       } else {
-//         // Handle error response
-//         console.error('Failed to delete user:', response.statusText)
-//       }
-//     } catch (error) {
-//       console.error('Error deleting user:', error)
-//     }
-//   }
+  // handle Update User 
+  const handleUpdate = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault() // Prevent default form submission
 
-//   return (
-//     <>
-//       <Button onPress={onOpen} className='bg-green-500 text-gray-200 block h-[35px] min-w-[35px] p-0'><FaEdit/></Button>
-//       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-//         <ModalContent>
-//           {(onClose) => (
-//             <>
-//               <ModalHeader className=" gap-1">Update
-//                 <span className=" inline text-blue-400 capitalize" >{user.full_name}</span>
-//                 Information</ModalHeader>
-//               <form onSubmit={handleUpdate}>
-//               <ModalBody>
-//                 <Input size='sm' name='userId' type="text" label="Id" 
-//                 className="max-w-xs" 
-//                 value={user.id} 
-//                 />
-//                 <Input size='sm' name='userName' type="text" label="User Name" className="max-w-xs" value={nameVal} onChange={(e) => setNameVal(e.target.value)}/>
-//                   <Input size='sm' name='email' type="email" label="Email" className="max-w-xs" value={emailVal} onChange={(e) => setEmailVal(e.target.value)}/>
-//                   <Input size='sm' name='phoneNumber' type="tel" label="Phone Number" className="max-w-xs" value={phoneVal} onChange={(e) => setPhoneVal(e.target.value)}/>
-//               </ModalBody>
-//               <ModalFooter>
-//                 <Button color="danger" variant="light" onPress={onClose}>
-//                   Cancel
-//                 </Button>
-//                 <Button color="primary" type='submit' onPress={onClose}>
-//                   Update
-//                 </Button>
-//                 </ModalFooter>
-//               </form>
-//             </>
-//           )}
-//         </ModalContent>
-//       </Modal>
-//     </>
-//   );
-// }
+    try {
+      const response = await fetch(`../api/bmc`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            id: id,
+            full_name: nameVal,
+            email: emailVal,
+            phone_number: phoneVal
+          })
+        })
+
+      if (response.ok) {
+        // Handle successful response and update from ui table
+        console.log("Successfully updated");
+        setIsOpen(false);
+      } else {
+        // Handle error response
+        console.error('Failed to update user:', response.statusText)
+      }
+    } catch (error) {
+      console.error('Error updating user:', error)
+    }
+  }
+
+  return (
+    <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
+      <Button onPress={() => setIsOpen(true)} className='bg-green-500 text-gray-200 block h-[35px] min-w-[35px] p-0'><FaEdit /></Button>
+      <Modal.Backdrop>
+        <Modal.Container>
+          <Modal.Dialog className="sm:max-w-[450px]">
+            <Modal.CloseTrigger />
+            <Modal.Header>
+              <Modal.Heading>
+                Update <span className="text-blue-400 capitalize">{full_name}</span> Information
+              </Modal.Heading>
+            </Modal.Header>
+            <form onSubmit={handleUpdate}>
+              <Modal.Body>
+                <Input size='sm' name='userId' type="text" label="Id"
+                  className="max-w-xs"
+                  value={id}
+                  disabled
+                />
+                <Input size='sm' name='userName' type="text" label="User Name" className="max-w-xs" value={nameVal} onChange={(e) => setNameVal(e.target.value)} />
+                <Input size='sm' name='email' type="email" label="Email" className="max-w-xs" value={emailVal} onChange={(e) => setEmailVal(e.target.value)} />
+                <Input size='sm' name='phoneNumber' type="tel" label="Phone Number" className="max-w-xs" value={phoneVal} onChange={(e) => setPhoneVal(e.target.value)} />
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="outline" onPress={() => setIsOpen(false)}>
+                  Cancel
+                </Button>
+                <Button variant="primary" type='submit'>
+                  Update
+                </Button>
+              </Modal.Footer>
+            </form>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
+  );
+}

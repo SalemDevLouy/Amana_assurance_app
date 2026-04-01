@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import React from 'react'
 import { FaArrowRight, FaRocket } from 'react-icons/fa';
 
 export default function FinalCTA() {
@@ -22,7 +21,7 @@ export default function FinalCTA() {
           data-aos="fade-up"
         >
           Lancez votre assurance{' '}
-          <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
             dès aujourd&apos;hui
           </span>
         </h2>
@@ -43,7 +42,7 @@ export default function FinalCTA() {
         >
           <Link
             href="/signup"
-            className="group inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-gray-500 px-8 py-3.5 rounded-full text-base font-semibold shadow-xl shadow-blue-600/25 hover:shadow-blue-600/50 hover:scale-105 transition-all duration-300"
+            className="group inline-flex items-center gap-2 bg-linear-to-r from-blue-600 to-cyan-500 text-gray-500 px-8 py-3.5 rounded-full text-base font-semibold shadow-xl shadow-blue-600/25 hover:shadow-blue-600/50 hover:scale-105 transition-all duration-300"
           >
             Créer mon compte
             <FaArrowRight className="text-sm group-hover:translate-x-1 transition-transform duration-300" />

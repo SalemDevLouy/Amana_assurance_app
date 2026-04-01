@@ -1,15 +1,12 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl"]
-  previewFeatures = ["driverAdapters"]
-
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+  provider     = "mongodb"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
-
 }
 
 // Enum for user roles
@@ -18,41 +15,64 @@ enum Role {
   USER
 }
 
+enum AssuranceCatalogType {
+  CAR
+  FARMER
+}
+
+enum GuaranteeInputType {
+  CHECKBOX
+  SELECTGROUP
+}
+
 // User model with updated bmcResult array
 model User {
-  id        String       @id @default(auto()) @map("_id") @db.ObjectId
-  email     String       @unique
-  password  String?
-  name      String?
-  role      Role         @default(USER)
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  email            String    @unique
+  password         String?
+  name             String?
+  dateOfBirth      DateTime?
+  gender           String?
+  phone            String?
+  profession       String?
+  wilaya           String?
+  region           String?
+  address          String?
+  licenseNumber    String?
+  licenseType      String?
+  licenseIssueDate DateTime?
+  secondaryDrivers String[]  @default([])
+  role             Role      @default(USER)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 }
 
-model Bmcquestion {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  questionText  String
-  category      String
+model GuaranteeGroup {
+  id            String               @id @default(auto()) @map("_id") @db.ObjectId
+  assuranceType AssuranceCatalogType
+  key           String
+  title         String
   description   String?
-  suggestionList Json?
-  type          String?
-  optionsList   String[]
-  required      Boolean        @default(false)
-  createdAt     DateTime       @default(now())
+  inputType     GuaranteeInputType
+  mandatory     Boolean              @default(false)
+  sortOrder     Int                  @default(0)
+  options       GuaranteeOption[]
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  @@unique([assuranceType, key])
+  @@index([assuranceType, sortOrder])
 }
 
-model Bmcresult {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String    
-  projectName String 
-  itSaved     Boolean      
-  data        Json
-  createdAt DateTime  @default(now())
-}
+model GuaranteeOption {
+  id        String         @id @default(auto()) @map("_id") @db.ObjectId
+  groupId   String         @db.ObjectId
+  key       String
+  label     String
+  price     Int            @default(0)
+  sortOrder Int            @default(0)
+  group     GuaranteeGroup @relation(fields: [groupId], references: [id])
 
-model Bmcfields {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
-  category   String
-  description String?
-  createdAt DateTime  @default(now())
+  @@unique([groupId, key])
+  @@index([groupId, sortOrder])
 }

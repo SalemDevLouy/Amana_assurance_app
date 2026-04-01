@@ -36,7 +36,7 @@ export default function Hero() {
           data-aos="fade-up"
         >
           Protégez{' '}
-          <span className="bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent">
             l&apos;essentiel.
           </span>{' '}
           Simplement.
@@ -61,7 +61,7 @@ export default function Hero() {
         >
           <Link
             href="/signup"
-            className="group inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-gray-100 px-8 py-3.5 rounded-full text-base font-semibold shadow-xl shadow-blue-500/25 hover:shadow-blue-600/50 hover:scale-105 transition-all duration-300"
+            className="group inline-flex items-center gap-2 bg-linear-to-r from-blue-500 to-cyan-500 text-gray-100 px-8 py-3.5 rounded-full text-base font-semibold shadow-xl shadow-blue-500/25 hover:shadow-blue-600/50 hover:scale-105 transition-all duration-300"
           >
             Créer mon dossier
             <FaArrowRight className="text-sm group-hover:translate-x-1 transition-transform duration-300" />
@@ -86,7 +86,7 @@ export default function Hero() {
             { value: '100%', label: 'Parcours digital' }
           ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <p className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
+              <p className="text-3xl font-bold bg-linear-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
                 {stat.value}
               </p>
               <p className="text-xs text-gray-500/85 mt-1 uppercase tracking-widest">

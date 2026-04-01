@@ -1,4 +1,3 @@
-import React from 'react'
 import { FaStar } from 'react-icons/fa';
 
 export default function Testimonials() {
@@ -44,7 +43,7 @@ export default function Testimonials() {
           data-aos-delay="50"
         >
           Ce que disent{' '}
-          <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
             nos utilisateurs
           </span>
         </h2>
@@ -72,7 +71,7 @@ export default function Testimonials() {
               </div>
               <p className="text-gray-500/65 leading-relaxed text-sm mb-6">&ldquo;{t.text}&rdquo;</p>
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-gray-100 text-xs font-bold">
+                <div className="w-9 h-9 rounded-full bg-linear-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-gray-100 text-xs font-bold">
                   {t.initials}
                 </div>
                 <div>

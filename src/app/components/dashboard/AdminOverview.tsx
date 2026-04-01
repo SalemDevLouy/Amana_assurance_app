@@ -1,6 +1,5 @@
 "use client";
 
-import React from 'react';
 import ChartPlaceholder from './ChartPlaceholder';
 
 export default function AdminOverview() {

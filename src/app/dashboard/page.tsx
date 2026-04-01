@@ -1,5 +1,4 @@
 "use client";
-import React from 'react';
 import AdminOverview from '../components/dashboard/AdminOverview';
 import Statistics from '../components/dashboard/Statistics';
 
@@ -12,7 +11,7 @@ return (
         </div>
         <h1 className="text-2xl font-extrabold text-gray-500">
           Tableau de{' '}
-          <span className="text-transparent bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text">bord</span>
+          <span className="text-transparent bg-linear-to-r from-blue-500 to-cyan-400 bg-clip-text">bord</span>
         </h1>
       </div>
       <Statistics/>

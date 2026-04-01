@@ -1,6 +1,6 @@
 "use client";
 import React, { FormEvent, useState } from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Input, Select, SelectItem, Checkbox } from "@heroui/react";
+import { Modal, Button, Input, Select, Checkbox, Label, ListBox } from "@heroui/react";
 import { FaPlus } from "react-icons/fa";
 
 interface FormData {
@@ -12,7 +12,7 @@ interface FormData {
 }
 
 export default function AddQuestionModal() {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     questionText: "",
     category: "Segments Clients",
@@ -110,7 +110,7 @@ export default function AddQuestionModal() {
           required: false,
         });
         setErrors({});
-        onOpenChange(); // Close the modal
+        setIsOpen(false); // Close the modal
       } else {
         const data = await response.json();
         setErrors({ general: data.message || "Failed to add question" });
@@ -122,132 +122,151 @@ export default function AddQuestionModal() {
   };
 
   return (
-    <>
+    <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
       <Button
-        onPress={onOpen}
+        onPress={() => setIsOpen(true)}
         className="bg-blue-600 text-gray-200 h-[35px] min-w-[35px] p-2 flex justify-center items-center"
       >
         <p>Add New Question</p>
         <FaPlus />
       </Button>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">Add New Question</ModalHeader>
-              <form onSubmit={handleAddQuestion}>
-                <ModalBody>
-                  {/* Question Text */}
-                  <Input
-                    size="sm"
-                    name="questionText"
-                    type="text"
-                    label="Question Text"
-                    value={formData.questionText}
-                    onChange={(e) => handleChange("questionText", e.target.value)}
-                    className="max-w-xs"
-                    isInvalid={!!errors.questionText}
-                    errorMessage={errors.questionText}
-                  />
+      <Modal.Backdrop>
+        <Modal.Container>
+          <Modal.Dialog className="sm:max-w-[500px]">
+            <Modal.CloseTrigger />
+            <Modal.Header>
+              <Modal.Heading>Add New Question</Modal.Heading>
+            </Modal.Header>
+            <form onSubmit={handleAddQuestion}>
+              <Modal.Body>
+                {/* Question Text */}
+                <Input
+                  name="questionText"
+                  type="text"
+                  value={formData.questionText}
+                  onChange={(e) => handleChange("questionText", e.target.value)}
+                  className="max-w-xs"
+                />
 
-                  {/* Category */}
-                  <Select
-                    size="sm"
-                    label="Category"
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="max-w-xs"
-                  >
-                    {categories.map((cat) => (
-                      <SelectItem key={cat} data-value={cat}>
-                        {cat}
-                      </SelectItem>
-                    ))}
-                  </Select>
-
-                  {/* Question Type */}
-                  <Select
-                    size="sm"
-                    label="Question Type"
-                    value={formData.type}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        type: e.target.value as "text" | "checkbox",
-                        optionsList: e.target.value === "text" ? [] : formData.optionsList,
-                      })
-                    }
-                    className="max-w-xs"
-                  >
-                    {questionTypes.map((type) => (
-                      <SelectItem key={type} data-value={type}>
-                        {type.charAt(0).toUpperCase() + type.slice(1)}
-                      </SelectItem>
-                    ))}
-                  </Select>
-
-                  {/* Options List (Conditional) */}
-                  {formData.type === "checkbox" && (
-                    <div className="flex flex-col gap-2">
-                      <label className="text-gray-700 font-semibold">Options</label>
-                      {formData.optionsList.map((option, index) => (
-                        <div key={index} className="flex gap-2">
-                          <Input
-                            size="sm"
-                            type="text"
-                            value={option}
-                            onChange={(e) => updateOption(index, e.target.value)}
-                            placeholder={`Option ${index + 1}`}
-                            className="flex-1"
-                          />
-                          <Button
-                            type="button"
-                            color="danger"
-                            variant="light"
-                            onPress={() => removeOption(index)}
-                          >
-                            Remove
-                          </Button>
-                        </div>
+                {/* Category */}
+                <Select
+                  className="w-full"
+                  placeholder="Select Category"
+                  value={formData.category}
+                  onChange={(key: any) => setFormData({ ...formData, category: key })}
+                >
+                  <Label>Category</Label>
+                  <Select.Trigger>
+                    <Select.Value />
+                    <Select.Indicator />
+                  </Select.Trigger>
+                  <Select.Popover>
+                    <ListBox>
+                      {categories.map((cat) => (
+                        <ListBox.Item key={cat} id={cat} textValue={cat}>
+                          {cat}
+                          <ListBox.ItemIndicator />
+                        </ListBox.Item>
                       ))}
-                      <Button
-                        type="button"
-                        color="primary"
-                        variant="light"
-                        onPress={addOption}
-                        className="mt-2"
-                      >
-                        Add Option
-                      </Button>
-                    </div>
-                  )}
+                    </ListBox>
+                  </Select.Popover>
+                </Select>
 
-                  {/* Required */}
-                  <div className="flex items-center">
-                    <Checkbox
-                      isSelected={formData.required}
-                      onChange={(e) => setFormData({ ...formData, required: e.target.checked })}
+                {/* Question Type */}
+                <Select
+                  className="w-full"
+                  placeholder="Select Type"
+                  value={formData.type}
+                  onChange={(key: any) =>
+                    setFormData({
+                      ...formData,
+                      type: key as "text" | "checkbox",
+                      optionsList: key === "text" ? [] : formData.optionsList,
+                    })
+                  }
+                >
+                  <Label>Question Type</Label>
+                  <Select.Trigger>
+                    <Select.Value />
+                    <Select.Indicator />
+                  </Select.Trigger>
+                  <Select.Popover>
+                    <ListBox>
+                      {questionTypes.map((type) => (
+                        <ListBox.Item key={type} id={type} textValue={type}>
+                          {type.charAt(0).toUpperCase() + type.slice(1)}
+                          <ListBox.ItemIndicator />
+                        </ListBox.Item>
+                      ))}
+                    </ListBox>
+                  </Select.Popover>
+                </Select>
+
+                {/* Options List (Conditional) */}
+                {formData.type === "checkbox" && (
+                  <div className="flex flex-col gap-2">
+                    <label className="text-gray-700 font-semibold">Options</label>
+                    {formData.optionsList.map((option, index) => (
+                      <div key={index} className="flex gap-2">
+                        <Input
+                          type="text"
+                          value={option}
+                          onChange={(e) => updateOption(index, e.target.value)}
+                          placeholder={`Option ${index + 1}`}
+                          className="flex-1 text-sm"
+                        />
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          onPress={() => removeOption(index)}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onPress={addOption}
+                      className="mt-2"
                     >
-                      Required
-                    </Checkbox>
+                      Add Option
+                    </Button>
                   </div>
+                )}
 
-                  {/* General Error */}
-                  {errors.general && <p className="text-red-400 text-sm">{errors.general}</p>}
-                </ModalBody>
-                <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
-                    Cancel
-                  </Button>
-                  <Button color="primary" type="submit">
-                    Add Question
-                  </Button>
-                </ModalFooter>
-              </form>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-    </>
+                {/* Required */}
+                <Checkbox 
+                  id="required-terms"
+                  isSelected={formData.required}
+                  onChange={(isSelected) => setFormData({ ...formData, required: isSelected })}
+                >
+                  <Checkbox.Control>
+                    <Checkbox.Indicator />
+                  </Checkbox.Control>
+                  <Checkbox.Content>
+                    <Label htmlFor="required-terms">Required</Label>
+                  </Checkbox.Content>
+                </Checkbox>
+
+                {/* General Error */}
+                {errors.general && <p className="text-red-400 text-sm">{errors.general}</p>}
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="outline"
+                  onPress={() => setIsOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button variant="primary" type="submit">
+                  Add Question
+                </Button>
+              </Modal.Footer>
+            </form>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 }

@@ -101,7 +101,7 @@ export default function BMCPdfViewer({ data, userId }: BMCViewerProps) {
 
     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
     pdf.save(`${data?.projectName || 'bmc'}_BMC.pdf`);
-    router.push('/workspace'); // Redirect to workspace after download
+    router.push('/main'); // Redirect to workspace after download
 
   };
 
@@ -161,7 +161,7 @@ export default function BMCPdfViewer({ data, userId }: BMCViewerProps) {
       <button
         onClick={downloadPDF}
         disabled={isSaving}
-        className={`px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-gray-500 rounded-lg shadow-md hover:from-indigo-600 hover:to-purple-600 transition-all duration-200 mb-4 ${
+        className={`px-4 py-2 bg-linear-to-r from-indigo-500 to-purple-500 text-gray-500 rounded-lg shadow-md hover:from-indigo-600 hover:to-purple-600 transition-all duration-200 mb-4 ${
           isSaving ? 'opacity-50 cursor-not-allowed' : ''
         }`}
       >

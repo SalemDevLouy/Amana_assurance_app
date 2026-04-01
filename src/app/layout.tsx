@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { HeroUIProvider } from "@heroui/react";
 import Provider from "./providers/SessionProvider";
 import Navbar from "./components/UI/Navbar";
 import BackgroundEffect from "./components/UI/Backgroundeffect";
@@ -28,21 +27,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    
       <html lang="en" className="bg-background text-foreground">
-        <Provider>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased z-10 `}
         >
-          <BackgroundEffect/>
-          <HeroUIProvider>
-            <Navbar />
-            <main>
-          {children}
-            </main>
-           </HeroUIProvider>
+          <Provider>
+              <BackgroundEffect />
+              <Navbar />
+              <main>{children}</main>
+          </Provider>
         </body>
-        </Provider>
       </html>
   );
 }

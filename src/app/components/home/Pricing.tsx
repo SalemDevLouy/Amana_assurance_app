@@ -1,4 +1,3 @@
-import React from 'react'
 import { FaCheckCircle, FaStar } from 'react-icons/fa';
 
 const plans = [
@@ -53,7 +52,7 @@ export default function Pricing() {
           data-aos-delay="50"
         >
           Des offres pour{' '}
-          <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
             chaque étape
           </span>
         </h2>
@@ -71,7 +70,7 @@ export default function Pricing() {
               key={index}
               className={`relative flex flex-col p-8 rounded-2xl border transition-all duration-300 ${
                 plan.highlighted
-                  ? 'border-blue-600/50 bg-gradient-to-b from-blue-600/10 to-transparent shadow-xl shadow-blue-600/10'
+                  ? 'border-blue-600/50 bg-linear-to-b from-blue-600/10 to-transparent shadow-xl shadow-blue-600/10'
                   : 'border-white/10 bg-white/5 hover:border-white/20'
               }`}
               data-aos="fade-up"
@@ -79,7 +78,7 @@ export default function Pricing() {
             >
               {plan.highlighted && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-gray-500 text-xs font-semibold px-4 py-1 rounded-full shadow-lg">
+                  <span className="inline-flex items-center gap-1.5 bg-linear-to-r from-blue-600 to-cyan-500 text-gray-500 text-xs font-semibold px-4 py-1 rounded-full shadow-lg">
                     <FaStar className="text-[10px]" /> Populaire
                   </span>
                 </div>
@@ -107,7 +106,7 @@ export default function Pricing() {
                 href={plan.href}
                 className={`block w-full text-center py-3.5 rounded-full font-semibold text-sm transition-all duration-300 ${
                   plan.highlighted
-                    ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-gray-500 shadow-lg shadow-blue-600/25 hover:shadow-blue-600/50 hover:scale-105'
+                    ? 'bg-linear-to-r from-blue-600 to-cyan-500 text-gray-500 shadow-lg shadow-blue-600/25 hover:shadow-blue-600/50 hover:scale-105'
                     : 'border border-white/20 text-gray-500 hover:bg-white/5'
                 }`}
               >

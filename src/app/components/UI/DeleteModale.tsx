@@ -1,7 +1,7 @@
 "use client";
-import React, { FormEvent } from "react";
+import React, { FormEvent, useState } from "react";
 import { toast } from "sonner";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from "@heroui/react"
+import { Modal, Button } from "@heroui/react"
 import { FaCheck } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
@@ -13,7 +13,7 @@ interface DeleteQuestionModalProps {
 }
 
 const DeleteQuestionModal: React.FC<DeleteQuestionModalProps> = ({ questionId,questionTxt, deleteQuestion }) => {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleDeleteQuestion = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Prevent default form submission
@@ -57,39 +57,39 @@ const DeleteQuestionModal: React.FC<DeleteQuestionModalProps> = ({ questionId,qu
   };
 
   return (
-    <>
+    <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
       <Button
-        onPress={onOpen}
+        onPress={() => setIsOpen(true)}
         className="bg-red-500 text-gray-200 flex justify-center items-center h-[35px] min-w-[35px] p-0 "
       >
         <MdDelete />
-
       </Button>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-        <ModalContent>
-          {(onClose: () => void) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">Delete Question</ModalHeader>
-              <form onSubmit={handleDeleteQuestion}>
-                <input type="hidden" name="questionId" value={questionId} />
-                <ModalBody>
-                  <p>Are you sure you want to delete this question ?</p>
-                  <p>{questionTxt}</p>
-                </ModalBody>
-                <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
-                    Cancel
-                  </Button>
-                  <Button color="primary" type="submit" onPress={onClose}>
-                    Delete
-                  </Button>
-                </ModalFooter>
-              </form>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-    </>
+      <Modal.Backdrop>
+        <Modal.Container>
+          <Modal.Dialog className="sm:max-w-[400px]">
+            <Modal.CloseTrigger />
+            <Modal.Header>
+              <Modal.Heading>Delete Question</Modal.Heading>
+            </Modal.Header>
+            <form onSubmit={handleDeleteQuestion}>
+              <input type="hidden" name="questionId" value={questionId} />
+              <Modal.Body>
+                <p>Are you sure you want to delete this question ?</p>
+                <p>{questionTxt}</p>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="outline" onPress={() => setIsOpen(false)}>
+                  Cancel
+                </Button>
+                <Button variant="secondary" type="submit" onPress={() => setIsOpen(false)}>
+                  Delete
+                </Button>
+              </Modal.Footer>
+            </form>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 };
 

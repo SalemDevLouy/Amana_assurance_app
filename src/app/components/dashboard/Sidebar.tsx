@@ -15,6 +15,7 @@ export default function DashboardSidebar() {
     { href: '/dashboard', label: 'Dashboard', icon: <FaTachometerAlt /> },
     { href: '/dashboard/users', label: 'Utilisateurs', icon: <FaUsers /> },
     { href: '/dashboard/bmc', label: 'Projets BMC', icon: <FaCog /> },
+    { href: '/dashboard/garanties', label: 'Gestion des garanties', icon: <FaCog /> },
   ];
 
   if (status !== "authenticated" || session?.user?.role !== "ADMIN") return null;
@@ -30,11 +31,11 @@ export default function DashboardSidebar() {
               onClick={() => setMobileOpen(false)}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 ${
                 isActive
-                  ? 'bg-gradient-to-r from-blue-600/20 to-cyan-500/20 border border-blue-600/30 text-gray-500'
+                  ? 'bg-linear-to-r from-blue-600/20 to-cyan-500/20 border border-blue-600/30 text-gray-500'
                   : 'text-gray-500/50 hover:text-gray-500 hover:bg-white/10'
               }`}
             >
-              <span className={`text-base ${isActive ? 'text-blue-500' : 'text-gray-500/40'}`}>
+              <span className={`text-base ${isActive ? 'text-blue-500' : 'text-gray-500'}`}>
                 {item.icon}
               </span>
               <span>{item.label}</span>
@@ -78,19 +79,19 @@ export default function DashboardSidebar() {
       </div>
 
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex flex-col w-64 shrink-0 min-h-screen bg-[#0d0d18] border-r border-white/10 p-4">
+      <aside className="hidden md:flex flex-col w-64 shrink-0 min-h-screen bg-gray-100/20 backdrop-blur-xl border-r border-white/10 p-4">
         <div className="mb-8 px-1">
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center">
-              <FaTachometerAlt className="text-gray-500 text-xs" />
+            <div className="w-7 h-7 rounded-lg bg-linear-to-br from-blue-600 to-cyan-500 flex items-center justify-center">
+              <FaTachometerAlt className="text-gray-700 text-xs" />
             </div>
-            <span className="text-gray-500 font-bold text-sm tracking-wide">Admin Panel</span>
+            <span className="text-gray-700 font-bold text-sm tracking-wide">Admin Panel</span>
           </div>
           <p className="text-gray-500/40 text-xs mt-2 px-0.5 truncate">{session.user?.email}</p>
         </div>
 
         <div className="mb-2 px-1">
-          <span className="text-xs font-semibold uppercase tracking-widest text-gray-500/30">Navigation</span>
+          <span className="text-xs font-semibold uppercase tracking-widest text-gray-700">Navigation</span>
         </div>
         <NavLinks />
 

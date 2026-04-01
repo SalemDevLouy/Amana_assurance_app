@@ -76,8 +76,8 @@ export const Question: React.FC<QuestionProps> = ({
             className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300
             ${
               hasContent
-                ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-gray-500'
-                : 'bg-gradient-to-br from-blue-600 to-cyan-500 text-gray-500'
+                ? 'bg-linear-to-br from-emerald-500 to-teal-500 text-gray-500'
+                : 'bg-linear-to-br from-blue-600 to-cyan-500 text-gray-500'
             }`}
           >
             {hasContent ? (
@@ -170,7 +170,7 @@ export const Question: React.FC<QuestionProps> = ({
                         transition-all duration-200 hover:scale-[1.02]
                         ${
                           isSelected
-                            ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-gray-500 border-blue-500 shadow-lg shadow-blue-600/20'
+                            ? 'bg-linear-to-r from-blue-600 to-cyan-500 text-gray-500 border-blue-500 shadow-lg shadow-blue-600/20'
                             : 'bg-white/5 border-white/10 text-gray-500/70 hover:border-white/20 hover:bg-white/10'
                         }`}
                     >
@@ -211,8 +211,8 @@ export const Question: React.FC<QuestionProps> = ({
             className={`h-full transition-all duration-500 ease-out
             ${
               hasContent
-                ? 'w-full bg-gradient-to-r from-emerald-500 to-teal-500'
-                : 'w-0 bg-gradient-to-r from-blue-600 to-cyan-500'
+                ? 'w-full bg-linear-to-r from-emerald-500 to-teal-500'
+                : 'w-0 bg-linear-to-r from-blue-600 to-cyan-500'
             }`}
           />
         </div>

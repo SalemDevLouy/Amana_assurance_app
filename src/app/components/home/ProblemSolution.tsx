@@ -1,4 +1,3 @@
-import React from 'react'
 import { FaExclamationTriangle, FaLightbulb } from 'react-icons/fa';
 
 export default function ProblemSolution() {
@@ -19,7 +18,7 @@ export default function ProblemSolution() {
             data-aos-delay="50"
           >
             Le Défi &amp;{' '}
-            <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
               Notre Solution
             </span>
           </h2>

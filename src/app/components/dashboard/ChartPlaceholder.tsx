@@ -1,6 +1,5 @@
 "use client"; // Added for client-side rendering if interactivity is needed
 
-import React from 'react';
 
 export default function ChartPlaceholder() {
   return (
@@ -9,7 +8,7 @@ export default function ChartPlaceholder() {
         {[40, 65, 50, 80, 55, 90, 70].map((h, i) => (
           <div
             key={i}
-            className="w-5 rounded-t-sm bg-gradient-to-t from-blue-600/60 to-cyan-500/60"
+            className="w-5 rounded-t-sm bg-linear-to-t from-blue-600/60 to-cyan-500/60"
             style={{ height: `${h}%` }}
           />
         ))}

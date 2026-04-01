@@ -7,19 +7,19 @@ const ACCENT_COLORS = ['#e879f9', '#22d3ee', '#a78bfa'];
 export default function Statistics() {
   const [stats, setStats] = useState<Stat[]>([]);
 
-  useEffect(() => {
-    const fetchStatistics = async () => {
-      try {
-        const response = await fetch('/api/statistics', { method: 'GET', headers: { 'Content-Type': 'application/json' } });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
-        setStats(data);
-      } catch (error: unknown) {
-        if (error instanceof Error) console.error('Error fetching statistics:', error.message);
-      }
-    };
-    fetchStatistics();
-  }, []);
+  // useEffect(() => {
+  //   const fetchStatistics = async () => {
+  //     try {
+  //       const response = await fetch('/api/statistics', { method: 'GET', headers: { 'Content-Type': 'application/json' } });
+  //       if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  //       const data = await response.json();
+  //       setStats(data);
+  //     } catch (error: unknown) {
+  //       if (error instanceof Error) console.error('Error fetching statistics:', error.message);
+  //     }
+  //   };
+  //   fetchStatistics();
+  // }, []);
 
   return (
     <div className="mb-6">

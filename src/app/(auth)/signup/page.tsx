@@ -188,7 +188,7 @@ const SignupForm: React.FC = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-gray-500 px-4 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg shadow-blue-600/25 ${
+            className={`w-full inline-flex items-center justify-center gap-2 bg-linear-to-r from-blue-600 to-cyan-500 text-gray-500 px-4 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg shadow-blue-600/25 ${
               isSubmitting ? 'opacity-60 cursor-not-allowed' : 'hover:scale-[1.02] hover:shadow-blue-600/40'
             }`}
           >

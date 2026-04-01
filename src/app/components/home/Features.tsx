@@ -1,4 +1,3 @@
-import React from 'react'
 import { FaGlobeAfrica, FaLightbulb, FaRocket } from 'react-icons/fa';
 
 export default function Features() {
@@ -45,7 +44,7 @@ export default function Features() {
           data-aos-delay="50"
         >
           Pourquoi choisir{' '}
-          <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
             Amana ?
           </span>
         </h2>
@@ -65,7 +64,7 @@ export default function Features() {
               data-aos="fade-up"
               data-aos-delay={index * 100}
             >
-              <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} text-gray-100 text-xl mb-5 shadow-lg`}>
+              <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-linear-to-br ${feature.color} text-gray-100 text-xl mb-5 shadow-lg`}>
                 {feature.icon}
               </div>
               <h3 className="text-lg font-bold text-gray-500 mb-2">{feature.title}</h3>

@@ -1,130 +1,182 @@
-import { NextResponse, NextRequest } from 'next/server';
-import { db } from '@/app/lib/db';
-import { hash } from 'bcrypt';
-import { Role } from '@prisma/client';
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/db";
+import bcrypt from "bcrypt";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/lib/authOptions";
 
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/lib/authOptions';
-import apiValidation from '@/app/utils/apiValidation';
+type ProfileUpdatePayload = {
+  name?: string;
+  dateOfBirth?: string;
+  gender?: string;
+  phone?: string;
+  profession?: string;
+  wilaya?: string;
+  region?: string;
+  address?: string;
+  licenseNumber?: string;
+  licenseType?: string;
+  licenseIssueDate?: string;
+  secondaryDrivers?: string[];
+};
 
-// GET: Fetch all BMC questions or filter by category
 export async function GET() {
-  apiValidation();
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    return new NextResponse("Unauthorized", { status: 401 });
-  }
   try {
-    const result = await db.user.findMany({
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
       select: {
         id: true,
         email: true,
         name: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
+        dateOfBirth: true,
+        gender: true,
+        phone: true,
+        profession: true,
+        wilaya: true,
+        region: true,
+        address: true,
+        licenseNumber: true,
+        licenseType: true,
+        licenseIssueDate: true,
+        secondaryDrivers: true,
       },
     });
-    return NextResponse.json(result);
-  } catch (error: unknown) {
-    console.error('Prisma Error:', error);
-    if (error instanceof Error) {
-      return NextResponse.json(
-        {
-          message: 'Something went wrong',
-          error: {
-            name: error.name,
-            message: error.message,
-            // details: (error as any).meta || 'No additional details',
-          },
-        },
-        { status: 500 }
-      );
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+
+    return NextResponse.json({ user }, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching profile:", error);
     return NextResponse.json(
-      {
-        message: 'Something went wrong',
-        error: {
-          name: 'UnknownError',
-          message: 'An unknown error occurred',
-          details: 'No additional details',
-        },
-      },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
 }
 
-// Create a new user
 export async function POST(request: NextRequest) {
-  
   try {
-    const { name, email, password }: { name?: string; email: string; password: string } = await request.json();
+    const body = await request.json();
+    const { email, password, name, role } = body;
 
-    // Validate input
+    // Validation
     if (!email || !password) {
       return NextResponse.json(
-        { user: null, message: 'Email and password are required' },
+        { error: "Email and password are required" },
         { status: 400 }
       );
     }
 
-    // Verify email
-    const existingUserByEmail = await db.user.findUnique({
-      where: {
-        email: email,
-      },
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
     });
 
-    if (existingUserByEmail) {
+    if (existingUser) {
       return NextResponse.json(
-        { user: null, message: 'User already exists' },
+        { error: "User already exists" },
         { status: 409 }
       );
     }
 
     // Hash password
-    const hashPassword = await hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user
-    const newUser = await db.user.create({
+    // Create user
+    const user = await prisma.user.create({
       data: {
-        email: email,
-        password: hashPassword,
-        name: name || null, // name is optional
-        role: Role.USER, // Use enum value
+        email,
+        password: hashedPassword,
+        name: name || null,
+        role: role || "USER",
       },
     });
 
-    // Exclude password from response
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _newUserPassword, ...rest } = newUser;
-    return NextResponse.json({ user: rest, message: 'User Added successfully' });
-  } catch (error:unknown) {
-    console.error('Prisma Error:', error);
-    if (error instanceof Error) {
-      return NextResponse.json(
-        {
-          message: 'Something went wrong',
-          error: {
-            name: error.name,
-            message: error.message,
-            // details: (error as any).meta || 'No additional details',
-          },
-        },
-        { status: 500 }
-      );
-    }
     return NextResponse.json(
       {
-        message: 'Something went wrong',
-        error: {
-          name: 'UnknownError',
-          message: 'An unknown error occurred',
-          details: 'No additional details',
+        message: "User created successfully",
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
         },
       },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Error creating user:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = (await request.json()) as ProfileUpdatePayload;
+
+    const updatedUser = await prisma.user.update({
+      where: { email: session.user.email },
+      data: {
+        name: body.name ?? null,
+        dateOfBirth: body.dateOfBirth ? new Date(body.dateOfBirth) : null,
+        gender: body.gender ?? null,
+        phone: body.phone ?? null,
+        profession: body.profession ?? null,
+        wilaya: body.wilaya ?? null,
+        region: body.region ?? null,
+        address: body.address ?? null,
+        licenseNumber: body.licenseNumber ?? null,
+        licenseType: body.licenseType ?? null,
+        licenseIssueDate: body.licenseIssueDate
+          ? new Date(body.licenseIssueDate)
+          : null,
+        secondaryDrivers: body.secondaryDrivers ?? [],
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        dateOfBirth: true,
+        gender: true,
+        phone: true,
+        profession: true,
+        wilaya: true,
+        region: true,
+        address: true,
+        licenseNumber: true,
+        licenseType: true,
+        licenseIssueDate: true,
+        secondaryDrivers: true,
+      },
+    });
+
+    return NextResponse.json(
+      {
+        message: "Profile updated successfully",
+        user: updatedUser,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

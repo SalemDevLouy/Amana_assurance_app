@@ -66,10 +66,27 @@ export const authOptions: AuthOptions = {
           return null;
         }
 
-        const isPasswordCorrect = await compare(
-          credentials.password,
-          existingUser.password
-        );
+        let isPasswordCorrect = false;
+
+        // Backward compatibility for legacy users created with plain-text passwords.
+        if (existingUser.password.startsWith("$2")) {
+          isPasswordCorrect = await compare(
+            credentials.password,
+            existingUser.password
+          );
+        } else {
+          isPasswordCorrect = credentials.password === existingUser.password;
+
+          if (isPasswordCorrect) {
+            const { hash } = await import("bcrypt");
+            const upgradedHash = await hash(credentials.password, 10);
+
+            await db.user.update({
+              where: { id: existingUser.id },
+              data: { password: upgradedHash },
+            });
+          }
+        }
 
         if (!isPasswordCorrect) {
           return null;

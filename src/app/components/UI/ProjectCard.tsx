@@ -1,5 +1,4 @@
 "use client";
-import React from 'react';
 import Link from 'next/link';
 import { FaFileAlt, FaArrowRight } from 'react-icons/fa';
 
@@ -27,7 +26,7 @@ const ProjectCard: React.FC<AddProjectCardProps> = ({
     >
       <Link href={available ? link : '#'} passHref>
         <div className="flex items-start gap-4">
-          <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600/20 to-cyan-500/20 border border-white/10 flex items-center justify-center">
+          <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-linear-to-br from-blue-600/20 to-cyan-500/20 border border-white/10 flex items-center justify-center">
             <FaFileAlt className="text-blue-500 text-sm" />
           </div>
           <div className="flex-grow min-w-0">

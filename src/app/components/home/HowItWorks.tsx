@@ -1,4 +1,3 @@
-import React from 'react'
 
 export default function HowItWorks() {
   const steps = [
@@ -35,7 +34,7 @@ export default function HowItWorks() {
           data-aos-delay="50"
         >
           Comment ça{' '}
-          <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
             marche ?
           </span>
         </h2>
@@ -57,10 +56,10 @@ export default function HowItWorks() {
             >
               {/* Connector line */}
               {index < steps.length - 1 && (
-                <div className="hidden md:block absolute top-6 left-[calc(50%+28px)] w-[calc(100%-56px)] h-px bg-gradient-to-r from-blue-600/40 to-cyan-500/40" />
+                <div className="hidden md:block absolute top-6 left-[calc(50%+28px)] w-[calc(100%-56px)] h-px bg-linear-to-r from-blue-600/40 to-cyan-500/40" />
               )}
               {/* Step number bubble */}
-              <div className="relative z-10 w-12 h-12 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-gray-100 font-bold text-lg shadow-lg shadow-blue-600/25 mb-5">
+              <div className="relative z-10 w-12 h-12 rounded-full bg-linear-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-gray-100 font-bold text-lg shadow-lg shadow-blue-600/25 mb-5">
                 {index + 1}
               </div>
               <h3 className="text-base font-bold text-gray-700 mb-2">{step.title}</h3>

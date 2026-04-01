@@ -14,8 +14,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <main className="max-w-screen flex flex-col min-h-screen max-h-screen bg-[#06060f]">
-          <div className="flex flex-col-reverse md:flex-row h-[100vh] max-w-screen">
+      <main className="max-w-screen flex flex-col min-h-screen max-h-screen bg-transparent">
+          <div className="flex flex-col-reverse md:flex-row h-[100vh] max-w-screen z-20">
              <Sidebar />
              <Wrapper>
               <div className="pt-14 md:pt-0">

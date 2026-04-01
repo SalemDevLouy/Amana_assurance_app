@@ -31,7 +31,7 @@ export default function ConsultingRequests() {
                     setNewRequest('');
                   }
                 }}
-                className="bg-gradient-to-r from-blue-600 to-cyan-500 text-gray-500 px-4 py-2 rounded hover:bg-green-700"
+                className="bg-linear-to-r from-blue-600 to-cyan-500 text-gray-500 px-4 py-2 rounded hover:bg-green-700"
               >
                 Submit Request
               </button>
