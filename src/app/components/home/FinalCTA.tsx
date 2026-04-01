@@ -1,58 +1,64 @@
 import Link from 'next/link';
-import { FaArrowRight, FaRocket } from 'react-icons/fa';
 
 export default function FinalCTA() {
   return (
-    <section className="relative py-32 overflow-hidden text-center border-t border-white/5">
-      {/* Ambient blobs */}
-      {/* <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-blue-700 blur-[140px]" /> */}
+    <section className="py-8 px-4" style={{ background: '#d4d0c8' }}>
+      <div className="max-w-2xl mx-auto">
+        {/* Modal-style dialog */}
+        <div className="win-window">
+          <div className="win-titlebar">
+            <span>🛡️</span>
+            <span>Amana — Démarrer</span>
+            <div className="ml-auto flex items-center gap-1">
+              <button className="win-btn" style={{ padding: '0 6px', minWidth: 18, height: 16, fontSize: 10 }} aria-label="Close">✕</button>
+            </div>
+          </div>
 
-      <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div
-          className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-blue-300 text-sm font-medium px-4 py-1.5 rounded-full mb-8"
-          data-aos="fade-down"
-        >
-          <FaRocket className="text-xs" />
-          Rejoignez des centaines de clients assurés
-        </div>
+          <div className="p-6">
+            {/* Icon + message row — classic Windows dialog layout */}
+            <div className="flex items-start gap-4 mb-6">
+              <span style={{ fontSize: 48 }}>🚀</span>
+              <div>
+                <p className="font-bold mb-2" style={{ fontFamily: 'Tahoma, Arial, sans-serif', fontSize: 13, color: '#000080' }}>
+                  Lancez votre assurance dès aujourd&apos;hui
+                </p>
+                <div className="win-separator" />
+                <p className="text-xs mt-2" style={{ fontFamily: 'Tahoma, Arial, sans-serif', color: '#333', lineHeight: 1.6 }}>
+                  Rejoignez des centaines de clients assurés. Connectez-vous, complétez vos informations, personnalisez votre couverture et gérez tout votre parcours d&apos;assurance en ligne.
+                </p>
+                <p className="text-xs mt-2" style={{ fontFamily: 'Tahoma, Arial, sans-serif', color: '#333' }}>
+                  Voulez-vous créer votre compte ou vous connecter ?
+                </p>
+              </div>
+            </div>
 
-        <h2
-          className="text-4xl sm:text-6xl font-extrabold text-gray-700 leading-tight mb-6"
-          data-aos="fade-up"
-        >
-          Lancez votre assurance{' '}
-          <span className="bg-linear-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
-            dès aujourd&apos;hui
-          </span>
-        </h2>
+            {/* Progress bar decorative */}
+            <div className="win-inset mb-6 h-5 overflow-hidden">
+              <div style={{ height: '100%', width: '72%', background: 'linear-gradient(to right, #000080, #1084d0)', display: 'flex', alignItems: 'center', paddingLeft: 4 }}>
+                <span style={{ color: '#fff', fontSize: 10, fontFamily: 'Tahoma, Arial, sans-serif' }}>72% des utilisateurs recommandent Amana</span>
+              </div>
+            </div>
 
-        <p
-          className="text-lg text-gray-500/50 max-w-xl mx-auto mb-10"
-          data-aos="fade-up"
-          data-aos-delay="100"
-        >
-          Connectez-vous, complétez vos informations, personnalisez votre
-          couverture et gérez tout votre parcours d’assurance en ligne.
-        </p>
+            {/* Dialog buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link href="/signup" className="win-btn win-btn-primary text-xs font-bold" style={{ padding: '8px 24px', fontSize: 12 }}>
+                <span>📁</span> Créer mon compte
+              </Link>
+              <Link href="/login" className="win-btn text-xs" style={{ padding: '8px 24px', fontSize: 12 }}>
+                <span>🔑</span> Se connecter
+              </Link>
+              <button className="win-btn text-xs" style={{ padding: '8px 24px', fontSize: 12 }}>
+                Annuler
+              </button>
+            </div>
+          </div>
 
-        <div
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
-          data-aos="fade-up"
-          data-aos-delay="200"
-        >
-          <Link
-            href="/signup"
-            className="group inline-flex items-center gap-2 bg-linear-to-r from-blue-600 to-cyan-500 text-gray-500 px-8 py-3.5 rounded-full text-base font-semibold shadow-xl shadow-blue-600/25 hover:shadow-blue-600/50 hover:scale-105 transition-all duration-300"
-          >
-            Créer mon compte
-            <FaArrowRight className="text-sm group-hover:translate-x-1 transition-transform duration-300" />
-          </Link>
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-2 text-gray-500/60 hover:text-gray-500 border border-white/15 hover:border-white/30 px-8 py-3.5 rounded-full text-base font-medium transition-all duration-300"
-          >
-            Se connecter
-          </Link>
+          {/* Status bar */}
+          <div className="flex items-center gap-1 px-2 py-1" style={{ borderTop: '1px solid #808080', background: '#d4d0c8' }}>
+            <div className="win-inset flex-1 px-2 py-0.5">
+              <span className="text-xs" style={{ fontFamily: 'Tahoma, Arial, sans-serif' }}>500+ clients assurés • 100% parcours digital</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>

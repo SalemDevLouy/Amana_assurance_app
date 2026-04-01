@@ -2,9 +2,147 @@
 @import "@heroui/styles"; 
 
 * {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer and Edge */
+  scrollbar-width: thin;
+  scrollbar-color: #c0c0c0 #f0f0f0;
 }
-::-webkit-scrollbar {
-  display: none;
+
+:root {
+  /* Windows 2000 color palette */
+  --win-bg: #d4d0c8;
+  --win-dark: #808080;
+  --win-darker: #404040;
+  --win-light: #ffffff;
+  --win-highlight: #0a246a;
+  --win-highlight-text: #ffffff;
+  --win-title-from: #0a246a;
+  --win-title-to: #a6b4c8;
+  --win-border-light: #ffffff;
+  --win-border-dark: #808080;
+  --win-border-darker: #404040;
+  --win-btn-face: #d4d0c8;
+  --win-inset: #bfbfbf;
+  --win-shadow: #404040;
+  --win-text: #000000;
+  --win-disabled: #808080;
+}
+
+body {
+  background-color: var(--win-bg);
+  font-family: "Tahoma", "MS Sans Serif", Arial, sans-serif;
+  font-size: 11px;
+  color: var(--win-text);
+}
+
+/* Classic Win2000 raised button */
+.win-btn {
+  background-color: var(--win-btn-face);
+  border-top: 2px solid var(--win-border-light);
+  border-left: 2px solid var(--win-border-light);
+  border-right: 2px solid var(--win-border-darker);
+  border-bottom: 2px solid var(--win-border-darker);
+  padding: 4px 12px;
+  cursor: pointer;
+  font-family: "Tahoma", Arial, sans-serif;
+  font-size: 11px;
+  color: var(--win-text);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  user-select: none;
+  text-decoration: none;
+}
+.win-btn:active,
+.win-btn-active {
+  border-top: 2px solid var(--win-border-darker);
+  border-left: 2px solid var(--win-border-darker);
+  border-right: 2px solid var(--win-border-light);
+  border-bottom: 2px solid var(--win-border-light);
+}
+.win-btn-primary {
+  background-color: var(--win-btn-face);
+  border-top: 2px solid var(--win-border-light);
+  border-left: 2px solid var(--win-border-light);
+  border-right: 2px solid var(--win-border-darker);
+  border-bottom: 2px solid var(--win-border-darker);
+  outline: 1px solid #000;
+  font-weight: bold;
+}
+
+/* Classic window panel */
+.win-panel {
+  background-color: var(--win-btn-face);
+  border-top: 2px solid var(--win-border-light);
+  border-left: 2px solid var(--win-border-light);
+  border-right: 2px solid var(--win-border-darker);
+  border-bottom: 2px solid var(--win-border-darker);
+}
+
+/* Inset / sunken */
+.win-inset {
+  background-color: var(--win-light);
+  border-top: 2px solid var(--win-border-darker);
+  border-left: 2px solid var(--win-border-darker);
+  border-right: 2px solid var(--win-border-light);
+  border-bottom: 2px solid var(--win-border-light);
+}
+
+/* Title bar */
+.win-titlebar {
+  background: linear-gradient(to right, var(--win-title-from), var(--win-title-to));
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+  font-family: "Tahoma", Arial, sans-serif;
+  padding: 3px 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  user-select: none;
+}
+
+/* Window chrome */
+.win-window {
+  background-color: var(--win-btn-face);
+  border-top: 2px solid var(--win-border-light);
+  border-left: 2px solid var(--win-border-light);
+  border-right: 2px solid var(--win-border-darker);
+  border-bottom: 2px solid var(--win-border-darker);
+  outline: 1px solid var(--win-shadow);
+}
+
+/* Sunken field */
+.win-field {
+  background-color: #fff;
+  border-top: 1px solid var(--win-border-darker);
+  border-left: 1px solid var(--win-border-darker);
+  border-right: 1px solid var(--win-border-light);
+  border-bottom: 1px solid var(--win-border-light);
+  padding: 2px 4px;
+  font-family: "Tahoma", Arial, sans-serif;
+  font-size: 11px;
+}
+
+/* Separator */
+.win-separator {
+  border-top: 1px solid var(--win-border-dark);
+  border-bottom: 1px solid var(--win-border-light);
+  margin: 4px 0;
+}
+
+/* Group box */
+.win-groupbox {
+  border: 1px solid var(--win-border-dark);
+  border-top: 1px solid var(--win-border-darker);
+  padding: 8px;
+  position: relative;
+  margin-top: 8px;
+}
+.win-groupbox-label {
+  position: absolute;
+  top: -8px;
+  left: 8px;
+  background-color: var(--win-btn-face);
+  padding: 0 4px;
+  font-size: 11px;
+  font-family: "Tahoma", Arial, sans-serif;
 }

@@ -1,99 +1,106 @@
 "use client"
-import useAOS from '../../hooks/useAOS';
 import Link from 'next/link';
-import { FaArrowRight, FaRocket } from 'react-icons/fa';
 
 export default function Hero() {
-  useAOS();
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Ambient blobs */}
-      {/* <div className="pointer-events-none absolute -top-48 -left-48 w-[700px] h-[700px] rounded-full bg-blue-700/40 blur-[140px]" />
-      <div className="pointer-events-none absolute -bottom-48 -right-48 w-[700px] h-[700px] rounded-full bg-cyan-600/35 blur-[140px]" /> */}
-      {/* Subtle grid overlay */}
-      {/* <div
-        className="pointer-events-none absolute inset-0 opacity-[0.5]"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(255,255,255,.5) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.5) 1px,transparent 1px)',
-          backgroundSize: '60px 60px',
-        }}
-      /> */}
-
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
-        {/* Badge */}
-        <div
-          className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-gray-600 text-sm font-medium px-4 py-1.5 rounded-full mb-10 backdrop-blur-sm"
-          data-aos="fade-down"
-        >
-          <FaRocket className="text-xs" />
-          Agence d&apos;assurance digitale en Algérie
+    <div className="min-h-screen flex items-center justify-center pt-16 pb-8 px-4" style={{ background: '#008080' }}>
+      {/* Big desktop window */}
+      <div className="win-window w-full max-w-3xl">
+        {/* Title bar */}
+        <div className="win-titlebar">
+          {/* Window icon */}
+          <span style={{ fontSize: 12 }}>🛡️</span>
+          <span>Amana Assurance — Bienvenue</span>
+          <div className="ml-auto flex items-center gap-1">
+            <button className="win-btn" style={{ padding: '0 6px', minWidth: 18, height: 16, fontSize: 10 }} aria-label="Minimize">_</button>
+            <button className="win-btn" style={{ padding: '0 6px', minWidth: 18, height: 16, fontSize: 10 }} aria-label="Maximize">□</button>
+            <button className="win-btn" style={{ padding: '0 6px', minWidth: 18, height: 16, fontSize: 10, fontWeight: 'bold' }} aria-label="Close">✕</button>
+          </div>
         </div>
 
-        {/* Headline */}
-        <h1
-          className="text-5xl sm:text-7xl font-extrabold tracking-tight text-gray-700 leading-[1.1] mb-6"
-          data-aos="fade-up"
-        >
-          Protégez{' '}
-          <span className="bg-linear-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent">
-            l&apos;essentiel.
-          </span>{' '}
-          Simplement.
-        </h1>
-
-        {/* Sub-headline */}
-        <p
-          className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed mb-12"
-          data-aos="fade-up"
-          data-aos-delay="100"
-        >
-          Avec Amana, toute la gestion d&apos;assurance devient digitale :
-          souscription, personnalisation, validation et suivi depuis un seul
-          espace client.
-        </p>
-
-        {/* CTA buttons */}
-        <div
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
-          data-aos="fade-up"
-          data-aos-delay="200"
-        >
-          <Link
-            href="/signup"
-            className="group inline-flex items-center gap-2 bg-linear-to-r from-blue-500 to-cyan-500 text-gray-100 px-8 py-3.5 rounded-full text-base font-semibold shadow-xl shadow-blue-500/25 hover:shadow-blue-600/50 hover:scale-105 transition-all duration-300"
-          >
-            Créer mon dossier
-            <FaArrowRight className="text-sm group-hover:translate-x-1 transition-transform duration-300" />
-          </Link>
-          {/* <Link
-            href="#how-it-works"
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-500 border border-white/15 hover:border-white/30 px-8 py-3.5 rounded-full text-base font-medium transition-all duration-300"
-          >
-            Voir comment ça marche
-          </Link> */}
-        </div>
-
-        {/* Stats strip */}
-        <div
-          className="mt-24 grid grid-cols-3 gap-8 max-w-md mx-auto border-t border-white/10 pt-10"
-          data-aos="fade-up"
-          data-aos-delay="300"
-        >
-          {[
-            { value: '500+', label: 'Clients assurés' },
-            { value: '1K+', label: 'Devis traités' },
-            { value: '100%', label: 'Parcours digital' }
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
-              <p className="text-3xl font-bold bg-linear-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
-                {stat.value}
-              </p>
-              <p className="text-xs text-gray-500/85 mt-1 uppercase tracking-widest">
-                {stat.label}
-              </p>
-            </div>
+        {/* Menu bar */}
+        <div className="flex items-center gap-0 px-1 py-0.5" style={{ background: '#d4d0c8', borderBottom: '1px solid #808080' }}>
+          {['Fichier', 'Édition', 'Affichage', 'Aide'].map((m) => (
+            <button key={m} className="px-3 py-0.5 text-xs hover:bg-[#0a246a] hover:text-white" style={{ fontFamily: 'Tahoma, Arial, sans-serif', background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 11 }}>
+              {m}
+            </button>
           ))}
+        </div>
+
+        {/* Toolbar */}
+        <div className="flex items-center gap-2 px-2 py-1.5 win-panel" style={{ borderTop: 'none', borderLeft: 'none', borderRight: 'none', borderBottom: '2px solid #808080' }}>
+          <button className="win-btn text-xs" aria-label="Back">◄ Précédent</button>
+          <button className="win-btn text-xs" aria-label="Forward">Suivant ►</button>
+          <div className="win-separator" style={{ width: 1, height: 20, margin: '0 4px', borderTop: 'none', borderLeft: '1px solid #808080', borderRight: '1px solid #fff' }} />
+          <div className="win-inset flex-1 flex items-center gap-1 px-2" style={{ height: 22 }}>
+            <span className="text-xs" style={{ color: '#808080' }}>Adresse :</span>
+            <span className="text-xs" style={{ color: '#0000ff', fontFamily: 'Tahoma, Arial, sans-serif' }}>https://amana.dz/</span>
+          </div>
+          <button className="win-btn text-xs" aria-label="Go">OK</button>
+        </div>
+
+        {/* Window body */}
+        <div className="p-6">
+          {/* Hero content inside inset panel */}
+          <div className="win-inset p-6 text-center">
+            {/* Big icon / logo area */}
+            <div className="flex justify-center mb-4">
+              <div className="win-panel p-3" style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                <span style={{ fontSize: 48, lineHeight: 1 }}>🛡️</span>
+                <span className="text-xs font-bold" style={{ fontFamily: 'Tahoma, Arial, sans-serif' }}>Amana v1.0</span>
+              </div>
+            </div>
+
+            {/* Headline */}
+            <h1 className="text-2xl font-bold mb-2" style={{ fontFamily: 'Tahoma, Arial, sans-serif', color: '#000080', letterSpacing: 0 }}>
+              Protégez l&apos;essentiel. Simplement.
+            </h1>
+            <p className="text-xs mb-1" style={{ color: '#444', fontFamily: 'Tahoma, Arial, sans-serif' }}>
+              Agence d&apos;assurance digitale en Algérie
+            </p>
+            <div className="win-separator" style={{ margin: '12px auto', maxWidth: 300 }} />
+
+            {/* Sub text */}
+            <p className="text-xs mb-6 max-w-md mx-auto" style={{ fontFamily: 'Tahoma, Arial, sans-serif', color: '#222', lineHeight: 1.6 }}>
+              Avec Amana, toute la gestion d&apos;assurance devient digitale :
+              souscription, personnalisation, validation et suivi depuis un seul
+              espace client.
+            </p>
+
+            {/* CTA buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
+              <Link href="/signup" className="win-btn win-btn-primary text-xs font-bold" style={{ padding: '6px 20px' }}>
+                <span>📁</span> Créer mon dossier
+              </Link>
+              <Link href="/login" className="win-btn text-xs" style={{ padding: '6px 20px' }}>
+                <span>🔑</span> Se connecter
+              </Link>
+            </div>
+
+            {/* Stats strip — Win2000 status bar style */}
+            <div className="flex justify-center gap-1">
+              {[
+                { value: '500+', label: 'Clients assurés' },
+                { value: '1K+', label: 'Devis traités' },
+                { value: '100%', label: 'Parcours digital' },
+              ].map((stat, i) => (
+                <div key={stat.label} className="win-inset flex flex-col items-center px-6 py-2" style={{ minWidth: 90 }}>
+                  <span className="font-bold text-sm" style={{ color: '#000080', fontFamily: 'Tahoma, Arial, sans-serif' }}>{stat.value}</span>
+                  <span className="text-xs" style={{ color: '#444', fontFamily: 'Tahoma, Arial, sans-serif' }}>{stat.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Status bar */}
+        <div className="flex items-center gap-1 px-2 py-1" style={{ borderTop: '1px solid #808080', background: '#d4d0c8' }}>
+          <div className="win-inset flex-1 px-2 py-0.5">
+            <span className="text-xs" style={{ fontFamily: 'Tahoma, Arial, sans-serif', color: '#000' }}>Prêt</span>
+          </div>
+          <div className="win-inset px-3 py-0.5">
+            <span className="text-xs" style={{ fontFamily: 'Tahoma, Arial, sans-serif' }}>Algérie 🇩🇿</span>
+          </div>
         </div>
       </div>
     </div>

@@ -1,67 +1,74 @@
-import { FaExclamationTriangle, FaLightbulb } from 'react-icons/fa';
-
 export default function ProblemSolution() {
   return (
-    <section className="relative py-28 overflow-hidden border-t border-white/5">
-      
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section label */}
-        <div className="flex justify-center mb-6" data-aos="fade-up">
-          <span className="text-xs font-semibold uppercase tracking-widest text-blue-500 bg-blue-600/10 border border-blue-600/20 px-4 py-1.5 rounded-full">
-            Contexte
-          </span>
-        </div>
-        <div className="text-center mb-16">
-          <h2
-            className="text-4xl sm:text-5xl font-extrabold text-gray-500 leading-tight"
-            data-aos="fade-up"
-            data-aos-delay="50"
-          >
-            Le Défi &amp;{' '}
-            <span className="bg-linear-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
-              Notre Solution
-            </span>
-          </h2>
-          <p
-            className="mt-5 text-base text-gray-500/50 max-w-xl mx-auto"
-            data-aos="fade-up"
-            data-aos-delay="100"
-          >
-            Simplifier l&apos;accès à une assurance claire, personnalisée et rapide pour chaque client.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Problem card */}
-          <div
-            className="relative p-8 rounded-2xl border border-rose-500/20 bg-rose-500/5 hover:border-rose-500/40 transition-all duration-300"
-            data-aos="fade-right"
-          >
-            <div className="inline-flex items-center gap-2 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full mb-5">
-              <FaExclamationTriangle />
-              Le Problème
+    <section className="py-8 px-4" style={{ background: '#d4d0c8' }}>
+      <div className="max-w-4xl mx-auto">
+        {/* Window */}
+        <div className="win-window">
+          <div className="win-titlebar">
+            <span>⚠️</span>
+            <span>Contexte — Le Défi &amp; Notre Solution</span>
+            <div className="ml-auto flex items-center gap-1">
+              <button className="win-btn" style={{ padding: '0 6px', minWidth: 18, height: 16, fontSize: 10 }} aria-label="Minimize">_</button>
+              <button className="win-btn" style={{ padding: '0 6px', minWidth: 18, height: 16, fontSize: 10 }} aria-label="Maximize">□</button>
             </div>
-            <h3 className="text-xl font-bold text-gray-500 mb-3">Parcours assurance complexe</h3>
-            <p className="text-gray-500/55 leading-relaxed text-sm">
-              Beaucoup de clients perdent du temps entre formulaires, offres peu claires et démarches papier pour obtenir une couverture adaptée.
-            </p>
           </div>
 
-          {/* Solution card */}
-          <div
-            className="relative p-8 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 hover:border-cyan-500/40 transition-all duration-300"
-            data-aos="fade-left"
-          >
-            <div className="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full mb-5">
-              <FaLightbulb />
-              Notre Solution
+          <div className="p-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Problem */}
+              <div className="win-window">
+                <div className="win-titlebar" style={{ background: 'linear-gradient(to right, #8b0000, #c08080)' }}>
+                  <span>⚠️</span>
+                  <span>Le Problème</span>
+                </div>
+                <div className="p-4">
+                  <div className="win-inset p-3 mb-3">
+                    <p className="text-xs font-bold mb-2" style={{ fontFamily: 'Tahoma, Arial, sans-serif', color: '#8b0000' }}>
+                      Parcours assurance complexe
+                    </p>
+                    <p className="text-xs" style={{ fontFamily: 'Tahoma, Arial, sans-serif', lineHeight: 1.6 }}>
+                      Beaucoup de clients perdent du temps entre formulaires, offres peu claires et démarches papier pour obtenir une couverture adaptée.
+                    </p>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span style={{ fontSize: 20 }}>📋</span>
+                    <span className="text-xs" style={{ fontFamily: 'Tahoma, Arial, sans-serif', color: '#666' }}>Démarches lentes et manuelles</span>
+                  </div>
+                  <div className="win-separator" />
+                  <div className="flex items-start gap-2 mt-2">
+                    <span style={{ fontSize: 20 }}>❌</span>
+                    <span className="text-xs" style={{ fontFamily: 'Tahoma, Arial, sans-serif', color: '#666' }}>Offres peu lisibles et confuses</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Solution */}
+              <div className="win-window">
+                <div className="win-titlebar" style={{ background: 'linear-gradient(to right, #005000, #50a050)' }}>
+                  <span>💡</span>
+                  <span>Notre Solution</span>
+                </div>
+                <div className="p-4">
+                  <div className="win-inset p-3 mb-3">
+                    <p className="text-xs font-bold mb-2" style={{ fontFamily: 'Tahoma, Arial, sans-serif', color: '#005000' }}>
+                      Guidé, personnalisé, digital
+                    </p>
+                    <p className="text-xs" style={{ fontFamily: 'Tahoma, Arial, sans-serif', lineHeight: 1.6 }}>
+                      Amana centralise tout dans un parcours simple : connexion, informations personnelles, personnalisation de la couverture, validation et suivi digital du dossier.
+                    </p>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span style={{ fontSize: 20 }}>✅</span>
+                    <span className="text-xs" style={{ fontFamily: 'Tahoma, Arial, sans-serif', color: '#666' }}>Tout depuis un seul espace client</span>
+                  </div>
+                  <div className="win-separator" />
+                  <div className="flex items-start gap-2 mt-2">
+                    <span style={{ fontSize: 20 }}>🖥️</span>
+                    <span className="text-xs" style={{ fontFamily: 'Tahoma, Arial, sans-serif', color: '#666' }}>100% numérique, sans papier</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <h3 className="text-xl font-bold text-gray-500 mb-3">Guidé, personnalisé, digital</h3>
-            <p className="text-gray-500/55 leading-relaxed text-sm">
-              Amana centralise tout dans un parcours simple : connexion,
-              informations personnelles, personnalisation de la couverture,
-              validation et suivi digital du dossier.
-            </p>
           </div>
         </div>
       </div>
