@@ -12,7 +12,7 @@ import Footer from './components/UI/Footer';
 // Main Landing Page Component
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#ededed] font-sans overflow-x-hidden">
+    <div className="min-h-screen overflow-x-hidden" style={{ background: '#d4d0c8', fontFamily: 'Tahoma, MS Sans Serif, Arial, sans-serif' }}>
       <Hero />
       <ProblemSolution />
       <Features />

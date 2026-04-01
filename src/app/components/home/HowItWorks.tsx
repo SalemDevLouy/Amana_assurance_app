@@ -1,71 +1,79 @@
+const steps = [
+  {
+    num: 1,
+    title: 'Connexion',
+    description: 'Connectez-vous à votre espace client sécurisé pour démarrer votre demande d\'assurance.',
+    icon: '🔑',
+  },
+  {
+    num: 2,
+    title: 'Informations personnelles',
+    description: 'Renseignez vos informations personnelles pour préparer une offre adaptée à votre profil.',
+    icon: '📝',
+  },
+  {
+    num: 3,
+    title: 'Personnalisez votre assurance',
+    description: 'Choisissez les garanties et options qui correspondent à vos besoins et à votre budget.',
+    icon: '⚙️',
+  },
+  {
+    num: 4,
+    title: 'Validation & suivi digital',
+    description: 'Suivez l\'état de votre dossier et finalisez votre assurance directement depuis votre espace client.',
+    icon: '✅',
+  },
+];
 
 export default function HowItWorks() {
-  const steps = [
-    {
-      title: 'Connexion',
-      description: 'Connectez-vous à votre espace client sécurisé pour démarrer votre demande d’assurance.',
-    },
-    {
-      title: 'Informations personnelles',
-      description: 'Renseignez vos informations personnelles pour préparer une offre adaptée à votre profil.',
-    },
-    {
-      title: 'Personnalisez votre assurance',
-      description: 'Choisissez les garanties et options qui correspondent à vos besoins et à votre budget.',
-    },
-    {
-      title: 'Validation & suivi digital',
-      description: 'Suivez l’état de votre dossier et finalisez votre assurance directement depuis votre espace client.',
-    },
-  ];
-
   return (
-    <section id="how-it-works" className="py-28 overflow-hidden border-t border-white/5">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section label */}
-        <div className="flex justify-center mb-6" data-aos="fade-up">
-          <span className="text-xs font-semibold uppercase tracking-widest text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-4 py-1.5 rounded-full">
-            Processus
-          </span>
-        </div>
-        <h2
-          className="text-4xl sm:text-5xl font-extrabold text-gray-500 text-center leading-tight mb-4"
-          data-aos="fade-up"
-          data-aos-delay="50"
-        >
-          Comment ça{' '}
-          <span className="bg-linear-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
-            marche ?
-          </span>
-        </h2>
-        <p
-          className="text-base text-gray-500/45 text-center max-w-xl mx-auto mb-16"
-          data-aos="fade-up"
-          data-aos-delay="100"
-        >
-          Quatre étapes simples pour obtenir votre assurance en ligne.
-        </p>
-
-        <div className="grid md:grid-cols-4 gap-6">
-          {steps.map((step, index) => (
-            <div
-              key={step.title}
-              className="relative flex flex-col items-center text-center"
-              data-aos="fade-up"
-              data-aos-delay={index * 100}
-            >
-              {/* Connector line */}
-              {index < steps.length - 1 && (
-                <div className="hidden md:block absolute top-6 left-[calc(50%+28px)] w-[calc(100%-56px)] h-px bg-linear-to-r from-blue-600/40 to-cyan-500/40" />
-              )}
-              {/* Step number bubble */}
-              <div className="relative z-10 w-12 h-12 rounded-full bg-linear-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-gray-100 font-bold text-lg shadow-lg shadow-blue-600/25 mb-5">
-                {index + 1}
-              </div>
-              <h3 className="text-base font-bold text-gray-700 mb-2">{step.title}</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">{step.description}</p>
+    <section id="how-it-works" className="py-8 px-4" style={{ background: '#d4d0c8' }}>
+      <div className="max-w-4xl mx-auto">
+        <div className="win-window">
+          <div className="win-titlebar">
+            <span>📋</span>
+            <span>Processus — Comment ça marche ?</span>
+            <div className="ml-auto flex items-center gap-1">
+              <button className="win-btn" style={{ padding: '0 6px', minWidth: 18, height: 16, fontSize: 10 }} aria-label="Minimize">_</button>
+              <button className="win-btn" style={{ padding: '0 6px', minWidth: 18, height: 16, fontSize: 10 }} aria-label="Maximize">□</button>
             </div>
-          ))}
+          </div>
+
+          <div className="p-4">
+            {/* Wizard-style step panels */}
+            <div className="win-inset p-4 mb-4">
+              <p className="text-xs mb-4" style={{ fontFamily: 'Tahoma, Arial, sans-serif', color: '#444' }}>
+                Quatre étapes simples pour obtenir votre assurance en ligne.
+              </p>
+
+              <div className="grid md:grid-cols-2 gap-3">
+                {steps.map((step) => (
+                  <div key={step.num} className="win-panel flex items-start gap-3 p-3">
+                    {/* Step number badge */}
+                    <div className="win-inset flex items-center justify-center flex-shrink-0" style={{ width: 32, height: 32 }}>
+                      <span className="font-bold text-sm" style={{ fontFamily: 'Tahoma, Arial, sans-serif', color: '#000080' }}>{step.num}</span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span style={{ fontSize: 14 }}>{step.icon}</span>
+                        <p className="text-xs font-bold" style={{ fontFamily: 'Tahoma, Arial, sans-serif' }}>{step.title}</p>
+                      </div>
+                      <p className="text-xs" style={{ fontFamily: 'Tahoma, Arial, sans-serif', color: '#555', lineHeight: 1.5 }}>{step.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Wizard navigation buttons */}
+            <div className="flex justify-between items-center pt-2" style={{ borderTop: '1px solid #808080' }}>
+              <button className="win-btn text-xs" style={{ padding: '4px 16px' }}>◄ Précédent</button>
+              <div className="flex gap-2">
+                <button className="win-btn win-btn-primary text-xs" style={{ padding: '4px 20px' }}>Suivant ►</button>
+                <button className="win-btn text-xs" style={{ padding: '4px 20px' }}>Annuler</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

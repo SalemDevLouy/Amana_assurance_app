@@ -1,86 +1,93 @@
-import { FaStar } from 'react-icons/fa';
+const testimonials = [
+  {
+    text: "J'ai finalisé mon assurance en quelques minutes. Le parcours est clair et tout est suivi depuis mon espace client.",
+    author: 'Samia',
+    location: 'Constantine',
+    initials: 'SA',
+  },
+  {
+    text: "Les options de personnalisation sont simples à comprendre. J'ai choisi exactement la couverture dont j'avais besoin.",
+    author: 'Amani',
+    location: 'Batna',
+    initials: 'AM',
+  },
+  {
+    text: "Enfin une solution d'assurance digitale qui évite les démarches compliquées. Tout se fait depuis mon espace client.",
+    author: 'Maisoune',
+    location: 'Tébessa',
+    initials: 'MA',
+  },
+  {
+    text: "Service rapide et professionnel. J'ai pu compléter mes informations, personnaliser mon contrat et finaliser mon dossier entièrement en ligne.",
+    author: 'Sofiane',
+    location: 'Sétif',
+    initials: 'SO',
+  },
+];
 
 export default function Testimonials() {
-  const testimonials = [
-    {
-      text: "J&apos;ai finalisé mon assurance en quelques minutes. Le parcours est clair et tout est suivi depuis mon espace client.",
-      author: 'Samia',
-      location: 'Constantine',
-      initials: 'SA',
-    },
-    {
-      text: "Les options de personnalisation sont simples à comprendre. J&apos;ai choisi exactement la couverture dont j&apos;avais besoin.",
-      author: 'Amani',
-      location: 'Batna',
-      initials: 'AM',
-    },
-    {
-      text: "Enfin une solution d&apos;assurance digitale qui évite les démarches compliquées. Tout se fait depuis mon espace client.",
-      author: 'Maisoune',
-      location: 'Tébessa',
-      initials: 'MA',
-    },
-    {
-      text: "Service rapide et professionnel. J&apos;ai pu compléter mes informations, personnaliser mon contrat et finaliser mon dossier entièrement en ligne.",
-      author: 'Sofiane',
-      location: 'Sétif',
-      initials: 'SO',
-    },
-  ];
-
   return (
-    <section className="py-28 overflow-hidden border-t border-white/5">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section label */}
-        <div className="flex justify-center mb-6" data-aos="fade-up">
-          <span className="text-xs font-semibold uppercase tracking-widest text-blue-500 bg-blue-600/10 border border-blue-600/20 px-4 py-1.5 rounded-full">
-            Témoignages
-          </span>
-        </div>
-        <h2
-          className="text-4xl sm:text-5xl font-extrabold text-gray-500 text-center leading-tight mb-4"
-          data-aos="fade-up"
-          data-aos-delay="50"
-        >
-          Ce que disent{' '}
-          <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-            nos utilisateurs
-          </span>
-        </h2>
-        <p
-          className="text-base text-gray-500/45 text-center max-w-xl mx-auto mb-16"
-          data-aos="fade-up"
-          data-aos-delay="100"
-        >
-          Des clients qui ont souscrit leur assurance avec Amana en toute simplicité.
-        </p>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {testimonials.map((t, index) => (
-            <div
-              key={`${t.author}-${t.location}`}
-              className="p-8 bg-white/5 rounded-2xl border border-white/10 hover:border-blue-600/40 hover:bg-white/10 transition-all duration-300"
-              data-aos="fade-up"
-              data-aos-delay={index * 80}
-            >
-              {/* Stars */}
-              <div className="flex gap-1 mb-4">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <FaStar key={star} className="text-amber-400 text-xs" />
-                ))}
-              </div>
-              <p className="text-gray-500/65 leading-relaxed text-sm mb-6">&ldquo;{t.text}&rdquo;</p>
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-linear-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-gray-100 text-xs font-bold">
-                  {t.initials}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-500">{t.author}</p>
-                  <p className="text-xs text-gray-500/35">{t.location}</p>
-                </div>
-              </div>
+    <section className="py-8 px-4" style={{ background: '#d4d0c8' }}>
+      <div className="max-w-4xl mx-auto">
+        <div className="win-window">
+          <div className="win-titlebar">
+            <span>💬</span>
+            <span>Témoignages — Ce que disent nos utilisateurs</span>
+            <div className="ml-auto flex items-center gap-1">
+              <button className="win-btn" style={{ padding: '0 6px', minWidth: 18, height: 16, fontSize: 10 }} aria-label="Minimize">_</button>
+              <button className="win-btn" style={{ padding: '0 6px', minWidth: 18, height: 16, fontSize: 10 }} aria-label="Maximize">□</button>
             </div>
-          ))}
+          </div>
+
+          <div className="p-4">
+            <p className="text-xs mb-4" style={{ fontFamily: 'Tahoma, Arial, sans-serif', color: '#444' }}>
+              Des clients qui ont souscrit leur assurance avec Amana en toute simplicité.
+            </p>
+
+            {/* List-view style testimonials */}
+            <div className="win-inset">
+              {/* List header */}
+              <div className="flex" style={{ background: '#d4d0c8', borderBottom: '1px solid #808080' }}>
+                <div className="win-panel px-3 py-1 text-xs font-bold flex-1" style={{ fontFamily: 'Tahoma, Arial, sans-serif', borderTop: 'none', borderLeft: 'none' }}>Utilisateur</div>
+                <div className="win-panel px-3 py-1 text-xs font-bold flex-1" style={{ fontFamily: 'Tahoma, Arial, sans-serif', borderTop: 'none', borderLeft: 'none' }}>Ville</div>
+                <div className="win-panel px-3 py-1 text-xs font-bold" style={{ fontFamily: 'Tahoma, Arial, sans-serif', borderTop: 'none', borderLeft: 'none', width: 60 }}>Note</div>
+              </div>
+
+              {testimonials.map((t, index) => (
+                <div key={`${t.author}-${t.location}`}>
+                  {/* Row */}
+                  <div
+                    className="flex items-start gap-2 px-2 py-2"
+                    style={{
+                      background: index % 2 === 0 ? '#ffffff' : '#f0f0f0',
+                      borderBottom: '1px solid #e0e0e0',
+                    }}
+                  >
+                    <div className="flex items-center gap-2 flex-1">
+                      {/* Avatar */}
+                      <div className="win-inset flex items-center justify-center flex-shrink-0" style={{ width: 28, height: 28 }}>
+                        <span className="text-xs font-bold" style={{ color: '#000080', fontFamily: 'Tahoma, Arial, sans-serif' }}>{t.initials}</span>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold" style={{ fontFamily: 'Tahoma, Arial, sans-serif' }}>{t.author}</p>
+                        <p className="text-xs" style={{ fontFamily: 'Tahoma, Arial, sans-serif', color: '#555' }}>&ldquo;{t.text}&rdquo;</p>
+                      </div>
+                    </div>
+                    <div className="flex-1 px-2">
+                      <span className="text-xs" style={{ fontFamily: 'Tahoma, Arial, sans-serif', color: '#444' }}>{t.location}</span>
+                    </div>
+                    <div style={{ width: 60 }}>
+                      <span style={{ color: '#FFB800', fontSize: 11 }}>★★★★★</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-end gap-2 mt-3 pt-2" style={{ borderTop: '1px solid #808080' }}>
+              <button className="win-btn text-xs" style={{ padding: '4px 16px' }}>Fermer</button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
