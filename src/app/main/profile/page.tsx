@@ -3,7 +3,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { setProfileStatusCache } from "@/app/lib/clientCache";
 
 type ProfileForm = {
@@ -85,14 +85,13 @@ const getAssuranceStatusClass = (status: AssuranceItem["status"]) => {
 
 export default function Page() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { data: session, status } = useSession();
   const [form, setForm] = useState<ProfileForm>(initialForm);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const forceCompletion = searchParams.get("complete") === "1";
+  const [forceCompletion, setForceCompletion] = useState(false);
 
   const isAuthenticated = status === "authenticated";
 
@@ -134,6 +133,14 @@ export default function Page() {
     ],
     []
   );
+
+  useEffect(() => {
+    const completionFlag = globalThis.window?.location.search
+      ? new URLSearchParams(globalThis.window.location.search).get("complete") === "1"
+      : false;
+
+    setForceCompletion(completionFlag);
+  }, []);
 
   useEffect(() => {
     if (forceCompletion) {
