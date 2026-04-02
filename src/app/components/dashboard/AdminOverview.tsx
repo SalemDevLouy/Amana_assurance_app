@@ -14,7 +14,7 @@ export default function AdminOverview() {
           <ChartPlaceholder />
         </div>
         <div className="rounded-2xl border border-white/10 bg-white/5 p-5 hover:border-cyan-500/20 hover:bg-white/10 transition-all duration-300">
-          <h3 className="text-sm font-semibold text-gray-500 mb-4">BMC complétés</h3>
+          <h3 className="text-sm font-semibold text-gray-500 mb-4">Dossiers complétés</h3>
           <ChartPlaceholder />
         </div>
       </div>

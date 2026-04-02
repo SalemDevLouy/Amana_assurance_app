@@ -2,7 +2,7 @@ import { FaCheckCircle, FaStar } from 'react-icons/fa';
 
 const plans = [
   {
-    name: 'BMC Simple',
+    name: 'Pack Simple',
     price: '2 000',
     period: 'DA',
     description: 'Pour structurer votre première idée de manière claire et rapide.',
@@ -18,7 +18,7 @@ const plans = [
     highlighted: false,
   },
   {
-    name: 'BMC Avancé',
+    name: 'Pack Avancé',
     price: '5 000',
     period: 'DA',
     description: 'Pour présenter votre projet à des partenaires, incubateurs ou investisseurs.',
@@ -65,16 +65,15 @@ export default function Pricing() {
         </p>
 
         <div className="grid md:grid-cols-2 gap-6 items-start">
-          {plans.map((plan, index) => (
+          {plans.map((plan) => (
             <div
-              key={index}
+              key={plan.name}
               className={`relative flex flex-col p-8 rounded-2xl border transition-all duration-300 ${
                 plan.highlighted
                   ? 'border-blue-600/50 bg-linear-to-b from-blue-600/10 to-transparent shadow-xl shadow-blue-600/10'
                   : 'border-white/10 bg-white/5 hover:border-white/20'
               }`}
               data-aos="fade-up"
-              data-aos-delay={index * 100}
             >
               {plan.highlighted && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
@@ -94,8 +93,8 @@ export default function Pricing() {
               </div>
 
               <ul className="space-y-3 mb-8 flex-1">
-                {plan.features.map((feature, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm text-gray-500/60">
+                {plan.features.map((feature) => (
+                  <li key={`${plan.name}-${feature}`} className="flex items-start gap-3 text-sm text-gray-500/60">
                     <FaCheckCircle className="text-cyan-400 mt-0.5 shrink-0" />
                     {feature}
                   </li>

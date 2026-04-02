@@ -56,31 +56,10 @@ interface User {
     link: string;
     available?:boolean;
   }
-
-  
-  interface BMCViewerProps {
-    data: BMCData | null;
-    userId?:string;
-    projectName?: string;
-  }
   interface ProjectDetails {
     name: string;
     description: string;
     secteur: string;
-  }
-  
-  interface BMCData {
-    CustomerSegments: string[];
-    ValuePropositions: string[];
-    Channels: string[];
-    CustomerRelationships: string[];
-    RevenueStreams: string[];
-    KeyResources: string[];
-    KeyActivities: string[];
-    KeyPartners: string[];
-    CostStructure: string[];
-    userId?: string;
-    projectName?: string;
   }
   
   interface FormErrors {
@@ -106,17 +85,6 @@ interface User {
     id: string;
     content: string;
     cat: string;
-  }
-  
-  interface BmcQuestion {
-    id: string; // MongoDB ObjectId
-    order: number;
-    questionText: string;
-    category: string;
-    description?: string;
-    type?: 'text' | 'checkbox' ;
-    optionsList?: Option[];
-    required: boolean;
   }
   
   interface QuestionProps {
@@ -148,6 +116,6 @@ interface FormErrorsLogin {
 
   
   export type {HeaderProps, User, ConsultingRequest, BusinessPlan,
-     Stat, Profile, SignupFormData, FormErrors, LoginFormData, SidebarProps, AddProjectCardProps ,BMCViewerProps, BMCData,ProjectDetails
+     Stat, Profile, SignupFormData, FormErrors, LoginFormData, SidebarProps, AddProjectCardProps ,ProjectDetails
      , OpenAIResult, AISummary, QuestionProps , FormErrorsLogin , Option,
-      Suggestion, BmcQuestion, Errors};
+      Suggestion, Errors};

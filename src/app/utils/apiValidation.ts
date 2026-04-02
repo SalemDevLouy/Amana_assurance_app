@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/lib/authOptions';
 import { NextResponse } from 'next/server';
-// GET: Fetch all BMC questions or filter by category
+// Validate authenticated API session
 
 async function apiValidation() {
 const session = await getServerSession(authOptions);

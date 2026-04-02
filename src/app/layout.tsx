@@ -18,7 +18,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Amana - Build Your Business in Algeria",
-  description: "Amana est une plateforme numérique intelligente conçue pour aider les jeunes, étudiants, et porteurs d&apos;idées en Algérie à transformer leurs idées en projets concrets et bien structurés.",
+  description: "Amana est une plateforme numérique intelligente de gestion d&apos;assurance conçue pour les agriculteurs et automobilistes en Algérie. Gérez facilement vos garanties d&apos;assurance automobile et agricole avec des solutions adaptées à vos besoins.",
 };
 
 export default function RootLayout({
@@ -32,9 +32,9 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased z-10 `}
         >
           <Provider>
-              <BackgroundEffect />
+              <BackgroundEffect  />
               <Navbar />
-              <main>{children}</main>
+              <main >{children}</main>
           </Provider>
         </body>
       </html>

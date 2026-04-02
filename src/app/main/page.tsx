@@ -15,13 +15,13 @@ interface Project {
 }
 
 export default function Page() {
-  const [bmcResults] = useState<Project[]>([]);
+  const [assuranceResults] = useState<Project[]>([]);
   const router = useRouter();
   const { data: session } = useSession();
 
  
   const handleCardClick = (id: string) => {
-    router.push(`/main/bmc/${id}`);
+    router.push(`/main/newassurance`);
   };
 
   return (
@@ -85,22 +85,22 @@ export default function Page() {
           <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">
             Assurance List
           </h2>
-          {bmcResults.length > 0 && (
+          {assuranceResults.length > 0 && (
             <span className="text-xs text-gray-500/30 bg-white/10 border border-white/10 rounded-full px-2 py-0.5">
-              {bmcResults.length}
+              {assuranceResults.length}
             </span>
           )}
         </div>
 
-        {bmcResults.length > 0 ? (
+        {assuranceResults.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {bmcResults.map((project, index) => (
+            {assuranceResults.map((project, index) => (
               <ProjectCard
                 key={project.id || index}
                 title={project.projectName || 'Projet sans titre'}
                 desc="Continuer"
                 small="le projet"
-                link={`/main/bmc/${project.id}`}
+                link="/main/newassurance"
                 available={true}
                 onClick={() => handleCardClick(project.id)}
               />
@@ -121,22 +121,22 @@ export default function Page() {
           <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">
             Demandes en attente
           </h2>
-          {bmcResults.length > 0 && (
+          {assuranceResults.length > 0 && (
             <span className="text-xs text-gray-500/30 bg-white/10 border border-white/10 rounded-full px-2 py-0.5">
-              {bmcResults.length}
+              {assuranceResults.length}
             </span>
           )}
         </div>
 
-        {bmcResults.length > 0 ? (
+        {assuranceResults.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {bmcResults.map((project, index) => (
+            {assuranceResults.map((project, index) => (
               <ProjectCard
                 key={project.id || index}
                 title={project.projectName || 'Projet sans titre'}
                 desc="Continuer"
                 small="le projet"
-                link={`/main/bmc/${project.id}`}
+                link="/main/newassurance"
                 available={true}
                 onClick={() => handleCardClick(project.id)}
               />

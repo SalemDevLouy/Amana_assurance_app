@@ -25,7 +25,7 @@ enum GuaranteeInputType {
   SELECTGROUP
 }
 
-// User model with updated bmcResult array
+// User model
 model User {
   id               String    @id @default(auto()) @map("_id") @db.ObjectId
   email            String    @unique
