@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { SignupFormData, FormErrors } from '@/app/types/types';
 import Link from 'next/link';
 import { FaArrowRight, FaEnvelope, FaLock, FaUser } from 'react-icons/fa';
+import { signIn } from 'next-auth/react';
 
 const SignupForm: React.FC = () => {
   const router = useRouter();
@@ -73,7 +74,17 @@ const SignupForm: React.FC = () => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || 'Signup failed');
 
-      router.push('/login');
+      const signInResult = await signIn('credentials', {
+        email: formData.email,
+        password: formData.password,
+        redirect: false,
+      });
+
+      if (signInResult?.error) {
+        throw new Error('Compte cree, mais la connexion automatique a echoue. Connectez-vous manuellement.');
+      }
+
+      router.push('/main/profile?complete=1&welcome=1');
     } catch (error: unknown) {
       if (error instanceof Error) {
         setErrors({ general: error.message });

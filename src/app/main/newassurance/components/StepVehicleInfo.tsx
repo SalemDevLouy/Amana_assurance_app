@@ -93,7 +93,7 @@ export default function StepVehicleInfo({
   };
 
   return (
-    <div className="">
+    <div className="space-y-5">
       <h2 className="text-lg font-semibold text-gray-800">
         2. Informations Vehicule (obligatoire)
       </h2>
@@ -101,7 +101,7 @@ export default function StepVehicleInfo({
         Renseignez toutes les donnees obligatoires pour valider le contrat.
       </p>
 
-      <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="mt-5 grid grid-cols-1 gap-4 rounded-2xl border border-gray-200 bg-white p-4 sm:grid-cols-2 sm:p-5">
         <Input
           type="text"
           value={carInfo.brand}
@@ -326,7 +326,7 @@ export default function StepVehicleInfo({
       </div>
 
       {!canGoNext && (
-        <p className="mt-3 text-xs text-amber-600">
+        <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">
           Tous les champs et documents de l&apos;etape 2 sont obligatoires.
         </p>
       )}
@@ -356,7 +356,7 @@ function UploadBlock({
   multiple,
 }: Readonly<UploadBlockProps>) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+    <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
       <div className="mb-3 flex items-center justify-between gap-3">
         <div>
           <h3 className="text-sm font-bold text-gray-800">{title}</h3>
@@ -364,7 +364,7 @@ function UploadBlock({
         </div>
         <label
           htmlFor={id}
-          className="cursor-pointer rounded-lg border border-cyan-400 bg-white px-3 py-2 text-xs font-semibold text-cyan-700 transition hover:bg-cyan-50"
+          className="cursor-pointer rounded-lg border border-cyan-400 bg-cyan-50 px-3 py-2 text-xs font-semibold text-cyan-700 transition hover:bg-cyan-100"
         >
           Ajouter
         </label>
@@ -380,13 +380,15 @@ function UploadBlock({
       />
 
       {files.length === 0 ? (
-        <p className="text-xs text-gray-500">Aucun fichier televerse pour le moment.</p>
+        <p className="rounded-lg border border-dashed border-gray-300 bg-gray-50 px-3 py-4 text-center text-xs text-gray-500">
+          Aucun fichier televerse pour le moment.
+        </p>
       ) : (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {files.map((item, index) => (
             <div
               key={`${item.file.name}-${index}`}
-              className="rounded-xl border border-gray-200 bg-white p-3"
+              className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm"
             >
               <img
                 src={item.preview}

@@ -3,6 +3,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { setProfileStatusCache } from "@/app/lib/clientCache";
 
 type ProfileForm = {
   name: string;
@@ -18,6 +20,22 @@ type ProfileForm = {
   licenseType: string;
   licenseIssueDate: string;
   secondaryDrivers: string;
+};
+
+type ProfileApiUser = {
+  name: string | null;
+  email: string | null;
+  dateOfBirth: string | null;
+  gender: string | null;
+  phone: string | null;
+  profession: string | null;
+  wilaya: string | null;
+  region: string | null;
+  address: string | null;
+  licenseNumber: string | null;
+  licenseType: string | null;
+  licenseIssueDate: string | null;
+  secondaryDrivers: string[];
 };
 
 type AssuranceItem = {
@@ -66,12 +84,15 @@ const getAssuranceStatusClass = (status: AssuranceItem["status"]) => {
 };
 
 export default function Page() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: session, status } = useSession();
   const [form, setForm] = useState<ProfileForm>(initialForm);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const forceCompletion = searchParams.get("complete") === "1";
 
   const isAuthenticated = status === "authenticated";
 
@@ -115,6 +136,13 @@ export default function Page() {
   );
 
   useEffect(() => {
+    if (forceCompletion) {
+      setIsEditing(true);
+      setMessage("Veuillez completer votre profil avant de demander ou creer une assurance.");
+    }
+  }, [forceCompletion]);
+
+  useEffect(() => {
     if (status !== "authenticated") {
       setIsLoading(false);
       return;
@@ -127,8 +155,10 @@ export default function Page() {
           throw new Error("Failed to fetch profile");
         }
 
-        const data = await response.json();
+        const data = (await response.json()) as { user: ProfileApiUser; profileCompleted?: boolean };
         const user = data.user;
+
+        setProfileStatusCache(Boolean(data.profileCompleted));
 
         setForm({
           name: user.name ?? "",
@@ -190,8 +220,16 @@ export default function Page() {
         throw new Error("Failed to save profile");
       }
 
+      const data = (await response.json()) as { profileCompleted?: boolean };
+
+      setProfileStatusCache(Boolean(data.profileCompleted));
+
       setMessage("Profil mis a jour avec succes.");
       setIsEditing(false);
+
+      if (forceCompletion && data.profileCompleted) {
+        router.push("/main");
+      }
     } catch (error) {
       console.error(error);
       setMessage("Erreur lors de la mise a jour du profil.");

@@ -83,7 +83,7 @@ export default function StepGuarantees({
 
   if (assuranceType === "farmer") {
     return (
-      <div>
+      <div className="space-y-4">
         <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
         <p className="mt-1 text-sm text-gray-500">
           La responsabilite civile est obligatoire. Les autres garanties sont facultatives.
@@ -96,10 +96,10 @@ export default function StepGuarantees({
           return (
             <Card
               key={group.id}
-              className={isMandatory ? "mt-5 border border-emerald-200 bg-emerald-50" : "mt-4 border border-gray-200"}
+              className={isMandatory ? "mt-5 rounded-2xl border border-emerald-200 bg-emerald-50" : "mt-4 rounded-2xl border border-gray-200 bg-white"}
             >
               <CardHeader className="pb-1 text-sm font-semibold text-gray-700">{group.title}</CardHeader>
-              <div className="pt-2">
+              <div className="space-y-2 px-4 pb-4 pt-2">
                 <CheckboxGroup
                   name={group.key}
                   value={selectedValues}
@@ -129,7 +129,7 @@ export default function StepGuarantees({
   }
 
   return (
-    <div>
+    <div className="space-y-4">
       <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
       <p className="mt-1 text-sm text-gray-500">
         La responsabilite civile est obligatoire. Les autres garanties sont facultatives.
@@ -144,10 +144,10 @@ export default function StepGuarantees({
           return (
             <Card
               key={group.id}
-              className={isMandatory ? "mt-5 border border-emerald-200 bg-emerald-50" : "mt-4 border border-gray-200"}
+              className={isMandatory ? "mt-5 rounded-2xl border border-emerald-200 bg-emerald-50" : "mt-4 rounded-2xl border border-gray-200 bg-white"}
             >
               <CardHeader className="pb-1 text-sm font-semibold text-gray-700">{group.title}</CardHeader>
-              <div className="pt-2">
+              <div className="space-y-2 px-4 pb-4 pt-2">
                 <CheckboxGroup
                   name={group.key}
                   value={selectedValues}
@@ -174,9 +174,9 @@ export default function StepGuarantees({
         }
 
         return (
-          <Card key={group.id} className="mt-4 border border-gray-200">
+          <Card key={group.id} className="mt-4 rounded-2xl border border-gray-200 bg-white">
             <CardHeader className="pb-1 text-sm font-semibold text-gray-700">{group.title}</CardHeader>
-            <div className="pt-2">
+            <div className="space-y-2 px-4 pb-4 pt-2">
               <RadioGroup
                 name={group.key}
                 value={selectedValue}

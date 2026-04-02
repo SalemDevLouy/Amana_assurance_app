@@ -3,6 +3,7 @@ import prisma from "@/lib/db";
 import bcrypt from "bcrypt";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/authOptions";
+import { calculateProfileCompletion, isProfileComplete } from "@/app/lib/profileCompletion";
 
 type ProfileUpdatePayload = {
   name?: string;
@@ -51,7 +52,10 @@ export async function GET() {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ user }, { status: 200 });
+    const profileCompletion = calculateProfileCompletion(user);
+    const profileCompleted = isProfileComplete(user);
+
+    return NextResponse.json({ user, profileCompletion, profileCompleted }, { status: 200 });
   } catch (error) {
     console.error("Error fetching profile:", error);
     return NextResponse.json(
@@ -166,10 +170,15 @@ export async function PATCH(request: NextRequest) {
       },
     });
 
+    const profileCompletion = calculateProfileCompletion(updatedUser);
+    const profileCompleted = isProfileComplete(updatedUser);
+
     return NextResponse.json(
       {
         message: "Profile updated successfully",
         user: updatedUser,
+        profileCompletion,
+        profileCompleted,
       },
       { status: 200 }
     );

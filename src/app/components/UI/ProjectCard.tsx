@@ -20,25 +20,30 @@ const ProjectCard: React.FC<AddProjectCardProps> = ({
   onClick,
 }) => {
   return (
-    <div
-      className={`group relative rounded-2xl border border-white/10 bg-white/5 p-5 hover:border-blue-600/30 hover:bg-white/10 transition-all duration-300 cursor-pointer ${!available ? 'opacity-40 pointer-events-none' : ''}`}
+    <Link
+      href={available ? link : "#"}
+      passHref
       onClick={available ? onClick : undefined}
+      className={`group relative block overflow-hidden rounded-2xl border border-gray-200 bg-white p-5 transition-all duration-300 ${
+        available
+          ? "cursor-pointer hover:-translate-y-0.5 hover:border-cyan-300 hover:shadow-md hover:shadow-cyan-100"
+          : "pointer-events-none opacity-40"
+      }`}
     >
-      <Link href={available ? link : '#'} passHref>
-        <div className="flex items-start gap-4">
-          <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-linear-to-br from-blue-600/20 to-cyan-500/20 border border-white/10 flex items-center justify-center">
-            <FaFileAlt className="text-blue-500 text-sm" />
-          </div>
-          <div className="flex-grow min-w-0">
-            <h4 className="text-sm font-semibold text-gray-500 truncate">{title}</h4>
-            <p className="text-xs text-gray-500/40 mt-0.5">
-              {desc} <span className="text-gray-500/55">{small}</span>
-            </p>
-          </div>
-          <FaArrowRight className="flex-shrink-0 text-gray-500/20 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all text-xs mt-0.5" />
+      <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-cyan-50/70 via-transparent to-blue-50/70 opacity-80" />
+      <div className="relative flex items-start gap-4">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-cyan-200 bg-cyan-50">
+          <FaFileAlt className="text-sm text-cyan-700" />
         </div>
-      </Link>
-    </div>
+        <div className="grow min-w-0">
+          <h4 className="truncate text-sm font-semibold text-gray-800">{title}</h4>
+          <p className="mt-0.5 text-xs text-gray-500">
+            {desc} <span className="text-gray-600">{small}</span>
+          </p>
+        </div>
+        <FaArrowRight className="mt-0.5 shrink-0 text-xs text-gray-300 transition-all group-hover:translate-x-0.5 group-hover:text-cyan-600" />
+      </div>
+    </Link>
   );
 };
 

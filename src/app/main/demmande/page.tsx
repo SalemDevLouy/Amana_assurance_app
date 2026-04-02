@@ -1,7 +1,10 @@
 
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { getProfileStatusCached } from "@/app/lib/clientCache";
 
 type UploadedFile = {
   file: File;
@@ -9,6 +12,9 @@ type UploadedFile = {
 };
 
 export default function Page() {
+  const router = useRouter();
+  const { status } = useSession();
+  const [isCheckingAccess, setIsCheckingAccess] = useState(true);
   const [accidentDateTime, setAccidentDateTime] = useState("");
   const [currentDateTime] = useState(() => new Date().toISOString().slice(0, 16));
   const [locationText, setLocationText] = useState("");
@@ -24,6 +30,43 @@ export default function Page() {
   const [documents, setDocuments] = useState<UploadedFile[]>([]);
 
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (status === "loading") {
+      return;
+    }
+
+    if (status === "unauthenticated") {
+      router.replace("/login");
+      return;
+    }
+
+    let isCancelled = false;
+
+    const validateProfileCompletion = async () => {
+      try {
+        const profileCompleted = await getProfileStatusCached();
+
+        if (!profileCompleted) {
+          router.replace("/main/profile?complete=1");
+          return;
+        }
+      } catch {
+        router.replace("/main/profile?complete=1");
+        return;
+      } finally {
+        if (!isCancelled) {
+          setIsCheckingAccess(false);
+        }
+      }
+    };
+
+    void validateProfileCompletion();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [router, status]);
 
   const suggestedUploads = useMemo(
     () => [
@@ -74,25 +117,38 @@ export default function Page() {
     setSuccessMessage("Les informations de l'accident ont ete enregistrees avec succes.");
   };
 
+  if (isCheckingAccess) {
+    return (
+      <section className="relative z-10 mx-auto my-24 max-w-5xl rounded-3xl border border-cyan-200 bg-white/90 p-6 text-sm font-semibold text-gray-700 shadow-xl md:p-10">
+        Verification de votre profil en cours...
+      </section>
+    );
+  }
+
   return (
-    <section className="relative z-10 mx-auto my-24 max-w-5xl rounded-3xl border border-cyan-500/50 bg-white/90 p-6 shadow-xl md:p-10">
+    <section className="relative z-10 mx-auto my-20 max-w-5xl overflow-hidden rounded-3xl border border-cyan-300/50 bg-white/90 p-6 shadow-2xl shadow-cyan-100 md:p-10">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.14),transparent_45%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.12),transparent_45%)]" />
+
       <header className="mb-8">
-        <h1 className="text-2xl font-extrabold text-gray-800 md:text-3xl">
+        <p className="relative text-xs uppercase tracking-[0.22em] text-cyan-700">Declaration sinistre</p>
+        <h1 className="relative mt-2 text-2xl font-extrabold text-gray-800 md:text-3xl">
           Demande de declaration d'accident
         </h1>
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="relative mt-2 max-w-3xl text-sm text-gray-600">
           En cas d'accident, veuillez remplir toutes les informations avec precision pour accelerer le traitement de votre dossier.
         </p>
       </header>
 
       {successMessage ? (
-        <p className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+        <p className="relative mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
           {successMessage}
         </p>
       ) : null}
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <form onSubmit={handleSubmit} className="relative space-y-8">
+        <div className="rounded-2xl border border-gray-200 bg-white/80 p-5 md:p-6">
+          <h2 className="mb-4 text-sm font-bold uppercase tracking-[0.18em] text-gray-600">Informations principales</h2>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <Field
             id="current-time"
             label="Heure actuelle (automatique)"
@@ -138,9 +194,10 @@ export default function Page() {
             value={policeReportNumber}
             onChange={setPoliceReportNumber}
           />
+          </div>
         </div>
 
-        <div>
+        <div className="rounded-2xl border border-gray-200 bg-white/80 p-5 md:p-6">
           <label
             htmlFor="accident-description"
             className="mb-2 block text-sm font-semibold text-gray-700"
@@ -154,11 +211,13 @@ export default function Page() {
             required
             rows={5}
             placeholder="Decrivez les circonstances, la direction du vehicule, les degats visibles..."
-            className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
+            className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="rounded-2xl border border-gray-200 bg-white/80 p-5 md:p-6">
+          <h2 className="mb-4 text-sm font-bold uppercase tracking-[0.18em] text-gray-600">Contexte humain</h2>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <Field
             id="injuries"
             label="Blessures corporelles"
@@ -173,6 +232,7 @@ export default function Page() {
             onChange={setWitnesses}
             placeholder="Ex: Ahmed 0550xxxxxx"
           />
+          </div>
         </div>
 
         <UploadBlock
@@ -205,18 +265,18 @@ export default function Page() {
           hint="Proces-verbal, carte d'assurance, permis de conduire, carte grise..."
         />
 
-        <div className="rounded-2xl border border-blue-200 bg-blue-50 p-4">
+        <div className="rounded-2xl border border-blue-200 bg-blue-50 p-4 md:p-5">
           <h2 className="mb-2 text-sm font-bold text-blue-800">Pieces recommandees</h2>
           <ul className="space-y-1 text-sm text-blue-700">
             {suggestedUploads.map((item) => (
-              <li key={item}>- {item}</li>
+              <li key={item}>• {item}</li>
             ))}
           </ul>
         </div>
 
         <button
           type="submit"
-          className="w-full rounded-xl bg-linear-to-r from-blue-600 to-cyan-500 px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+          className="w-full rounded-xl bg-linear-to-r from-blue-600 to-cyan-500 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:shadow-lg hover:shadow-cyan-200"
         >
           Enregistrer la declaration d'accident
         </button>
@@ -259,7 +319,7 @@ function Field({
         placeholder={placeholder}
         required={required}
         disabled={disabled}
-        className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-cyan-500 disabled:cursor-not-allowed disabled:bg-gray-100"
+        className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 disabled:cursor-not-allowed disabled:bg-gray-100"
       />
     </div>
   );
@@ -285,7 +345,7 @@ function UploadBlock({
   hint,
 }: Readonly<UploadBlockProps>) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+    <div className="rounded-2xl border border-gray-200 bg-white/80 p-4 md:p-5">
       <div className="mb-3 flex items-center justify-between gap-3">
         <div>
           <h3 className="text-sm font-bold text-gray-800">{title}</h3>
@@ -293,7 +353,7 @@ function UploadBlock({
         </div>
         <label
           htmlFor={id}
-          className="cursor-pointer rounded-lg border border-cyan-400 bg-white px-3 py-2 text-xs font-semibold text-cyan-700 transition hover:bg-cyan-50"
+          className="cursor-pointer rounded-lg border border-cyan-400 bg-cyan-50 px-3 py-2 text-xs font-semibold text-cyan-700 transition hover:bg-cyan-100"
         >
           Ajouter des fichiers
         </label>
@@ -309,13 +369,15 @@ function UploadBlock({
       />
 
       {files.length === 0 ? (
-        <p className="text-xs text-gray-500">Aucun fichier televerse pour le moment.</p>
+        <p className="rounded-lg border border-dashed border-gray-300 bg-gray-50 px-3 py-4 text-center text-xs text-gray-500">
+          Aucun fichier televerse pour le moment.
+        </p>
       ) : (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {files.map((item, index) => (
             <div
               key={`${item.file.name}-${index}`}
-              className="rounded-xl border border-gray-200 bg-white p-3"
+              className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm"
             >
               {item.preview ? (
                 <img

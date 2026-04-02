@@ -2,16 +2,27 @@ import { AddProjectCardProps } from "@/app/types/types";
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 
-export default function AddProjectCard({ title, desc, small, link, available }: AddProjectCardProps) {
+export default function AddProjectCard({ title, desc, small, link, available }: Readonly<AddProjectCardProps>) {
   return (
-    <Link href={available ? link : ''} className={!available ? 'pointer-events-none' : ''}>
-      <div className={`group relative rounded-2xl border-2 border-dashed border-blue-600/30 bg-white/5 hover:border-blue-600/60 hover:bg-white/6 transition-all duration-300 p-6 flex items-center gap-5 ${!available ? 'opacity-40' : ''}`}>
-        <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-linear-to-br from-blue-600/15 to-cyan-500/15 border border-white/10 group-hover:border-blue-600/25 flex items-center justify-center transition-all">
-          <FaPlus className="text-blue-500/70 group-hover:text-blue-500 text-lg transition-colors" />
-        </div>
-        <div>
-          <p className="text-xs uppercase font-semibold tracking-wide text-gray-500/35 group-hover:text-gray-500/50 transition-colors">{desc} {small}</p>
-          <h4 className="text-base font-bold text-gray-500/70 group-hover:text-gray-500 transition-colors mt-0.5">{title}</h4>
+    <Link href={available ? link : "#"} className={available ? "" : "pointer-events-none"}>
+      <div
+        className={`group relative overflow-hidden rounded-2xl border border-cyan-300/40 bg-white/70 p-6 transition-all duration-300 ${
+          available
+            ? "hover:-translate-y-0.5 hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-200/60"
+            : "opacity-50"
+        }`}
+      >
+        <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-cyan-100/40 via-transparent to-blue-100/40 opacity-80" />
+        <div className="relative flex items-center gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-cyan-300/40 bg-white text-cyan-700 transition-colors group-hover:text-cyan-800">
+            <FaPlus className="text-sm" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-gray-500">
+              {desc} {small}
+            </p>
+            <h4 className="mt-1 text-base font-bold text-gray-800">{title}</h4>
+          </div>
         </div>
       </div>
     </Link>

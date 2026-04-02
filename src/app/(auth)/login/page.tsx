@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { FaEnvelope, FaLock, FaArrowRight } from 'react-icons/fa';
 import { signIn, useSession } from "next-auth/react";
 import { FormErrorsLogin, LoginFormData } from '@/app/types/types';
+import { getProfileStatusCached } from '@/app/lib/clientCache';
 
 const LoginForm: React.FC = () => {
   const router = useRouter();
@@ -14,13 +15,41 @@ const LoginForm: React.FC = () => {
   const { data: session, status } = useSession();
 
   useEffect(() => {
-    if (status === 'authenticated' && session?.user?.role) {
-      if (session.user.role === 'USER') {
-        router.push('/main');
-      } else {
-        router.push('/dashboard');
-      }
+    if (status !== 'authenticated' || !session?.user?.role) {
+      return;
     }
+
+    if (session.user.role === 'ADMIN') {
+      router.push('/dashboard');
+      return;
+    }
+
+    let isCancelled = false;
+
+    const resolveUserDestination = async () => {
+      try {
+        const profileCompleted = await getProfileStatusCached();
+
+        if (!profileCompleted) {
+          router.push('/main/profile?complete=1');
+          return;
+        }
+
+        if (!isCancelled) {
+          router.push('/main');
+        }
+      } catch {
+        if (!isCancelled) {
+          router.push('/main/profile?complete=1');
+        }
+      }
+    };
+
+    void resolveUserDestination();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [status, session, router]);
 
   const validateForm = (): FormErrorsLogin => {

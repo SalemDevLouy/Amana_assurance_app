@@ -25,11 +25,11 @@ export default function StepPayment({
   totalCost,
 }: StepPaymentProps) {
   return (
-    <div>
+    <div className="space-y-5">
       <h2 className="text-lg font-semibold text-gray-800">4. Payment</h2>
       <p className="mt-1 text-sm text-gray-500">Finalisez votre demande et confirmez le paiement.</p>
 
-      <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="mt-5 grid grid-cols-1 gap-4 rounded-2xl border border-gray-200 bg-white p-4 sm:grid-cols-2 sm:p-5">
         <Label className="sr-only">Nom complet</Label>
         <Input type="text" value={payment.fullName} placeholder="Nom complet" />
         <Label className="sr-only">Email</Label>
@@ -38,9 +38,9 @@ export default function StepPayment({
         <Input type="tel" value={payment.phone} className="sm:col-span-2" placeholder="Telephone" />
       </div>
 
-      <Card className="mt-5 border border-gray-200 bg-gray-50">
-        <CardHeader className="pb-0 text-sm font-semibold text-gray-700">Resume du contrat</CardHeader>
-        <div className="pt-2">
+      <Card className="mt-5 rounded-2xl border border-cyan-200 bg-cyan-50/60">
+        <CardHeader className="pb-0 text-sm font-semibold text-cyan-900">Resume du contrat</CardHeader>
+        <div className="space-y-2 px-4 pb-4 pt-2">
           <p className="text-sm text-gray-600">Type assurance: {assuranceType || "-"}</p>
           <p className="mt-1 text-sm text-gray-600">
             Vehicule: {carBrand || "-"} {carModel || "-"} ({registration || "-"})
@@ -48,7 +48,9 @@ export default function StepPayment({
 
           <div className="mt-3 space-y-1">
             <p className="text-sm font-semibold text-gray-700">Garanties selectionnees (Etape 3)</p>
-            {selectedGuaranteesSummary.map((guarantee) => (
+            {selectedGuaranteesSummary.length === 0 ? (
+              <p className="text-sm text-gray-500">Aucune option additionnelle.</p>
+            ) : selectedGuaranteesSummary.map((guarantee) => (
               <div key={guarantee.id} className="flex items-center justify-between text-sm text-gray-600">
                 <span>{guarantee.label}</span>
                 <span>{guarantee.price > 0 ? `${guarantee.price} DA` : "Inclus"}</span>
@@ -62,7 +64,7 @@ export default function StepPayment({
         </div>
       </Card>
 
-      <div className="mt-5 space-y-3">
+      <div className="mt-5 space-y-3 rounded-2xl border border-gray-200 bg-white p-4 sm:p-5">
         <RadioGroup name="payment-method" orientation="horizontal">
           <Label>Methode de paiement</Label>
           <Description>Choisissez le mode de paiement que vous preferez.</Description>

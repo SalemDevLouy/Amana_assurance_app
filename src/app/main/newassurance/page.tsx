@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Button, Card } from "@heroui/react";
 import { BASE_PRICE } from "./constants";
 import StepAssuranceType from "./components/StepAssuranceType";
@@ -19,6 +21,12 @@ import {
   GuaranteeSelections,
   PaymentInfo,
 } from "./types";
+import {
+  getProfileStatusCached,
+  makeGuaranteesCacheKey,
+  readGuaranteesCache,
+  writeGuaranteesCache,
+} from "@/app/lib/clientCache";
 
 function getInitialSelections(groups: GuaranteeGroup[]): GuaranteeSelections {
   const selections: GuaranteeSelections = {};
@@ -76,6 +84,9 @@ function buildSelectedGuaranteesSummary(
 }
 
 export default function Page() {
+  const router = useRouter();
+  const { status } = useSession();
+  const [isCheckingAccess, setIsCheckingAccess] = useState(true);
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
 
@@ -130,6 +141,43 @@ export default function Page() {
   });
 
   useEffect(() => {
+    if (status === "loading") {
+      return;
+    }
+
+    if (status === "unauthenticated") {
+      router.replace("/login");
+      return;
+    }
+
+    let isCancelled = false;
+
+    const validateProfileCompletion = async () => {
+      try {
+        const profileCompleted = await getProfileStatusCached();
+
+        if (!profileCompleted) {
+          router.replace("/main/profile?complete=1");
+          return;
+        }
+      } catch {
+        router.replace("/main/profile?complete=1");
+        return;
+      } finally {
+        if (!isCancelled) {
+          setIsCheckingAccess(false);
+        }
+      }
+    };
+
+    void validateProfileCompletion();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [router, status]);
+
+  useEffect(() => {
     if (assuranceType === "") {
       setGuaranteeGroups([]);
       setGuaranteeSelections({});
@@ -145,7 +193,19 @@ export default function Page() {
       setGuaranteesError(null);
 
       try {
-        const response = await fetch(`/api/guarantees?assuranceType=${assuranceType}`);
+        const cacheKey = makeGuaranteesCacheKey(assuranceType);
+        const cachedGroups = readGuaranteesCache<GuaranteeGroup[]>(cacheKey);
+
+        if (cachedGroups && cachedGroups.length > 0) {
+          setGuaranteeGroups(cachedGroups);
+          setGuaranteeSelections(getInitialSelections(cachedGroups));
+          setGuaranteesLoading(false);
+          return;
+        }
+
+        const response = await fetch(`/api/guarantees?assuranceType=${assuranceType}`, {
+          cache: "force-cache",
+        });
 
         if (!response.ok) {
           throw new Error("Impossible de charger les garanties.");
@@ -158,6 +218,7 @@ export default function Page() {
         }
 
         setGuaranteeGroups(data.groups);
+        writeGuaranteesCache(cacheKey, data.groups);
 
         setGuaranteeSelections(getInitialSelections(data.groups));
       } catch {
@@ -296,13 +357,26 @@ export default function Page() {
     setSubmitted(true);
   };
 
+  if (isCheckingAccess) {
+    return (
+      <section className="relative z-10 mx-auto min-h-screen max-w-5xl px-4 py-10 pt-24 sm:px-6">
+        <div className="rounded-2xl border border-cyan-300/60 bg-white/80 p-6 text-sm font-semibold text-gray-700 shadow-sm">
+          Verification de votre profil en cours...
+        </div>
+      </section>
+    );
+  }
+
   if (submitted) {
     return <SubmissionSuccess totalCost={totalCost} />;
   }
 
   return (
-    <section className="relative z-10 mx-auto min-h-screen max-w-5xl px-4 py-10 pt-24 sm:px-6">
-      <div className="mb-8">
+    <section className="relative z-10 mx-auto min-h-screen max-w-6xl px-4 py-10 pt-24 sm:px-6">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.12),transparent_45%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.12),transparent_45%)]" />
+
+      <div className="relative mb-8 overflow-hidden rounded-3xl border border-cyan-300/40 bg-white/70 p-6 shadow-xl shadow-cyan-100 md:p-8">
+        <p className="text-xs uppercase tracking-[0.22em] text-cyan-700">Parcours de souscription</p>
         <h1 className="text-2xl font-extrabold text-gray-800 sm:text-3xl">
           Nouveau contrat d&apos;assurance
         </h1>
@@ -311,10 +385,12 @@ export default function Page() {
         </p>
       </div>
 
-      <StepIndicator step={step} />
+      <div className="relative">
+        <StepIndicator step={step} />
+      </div>
 
-      <Card className="rounded-2xl border-2 border-gray-300 bg-linear-to-r from-cyan-300/20 to-blue-400/60">
-        <div className="p-5 sm:p-8">
+      <Card className="relative rounded-3xl border border-cyan-200 bg-white/85 shadow-2xl shadow-blue-100">
+        <div className="p-5 sm:p-8 md:p-10">
           <form onSubmit={handleSubmit}>
             {step === 1 && <StepAssuranceType assuranceType={assuranceType} basePrice={BASE_PRICE} setAssuranceType={setAssuranceType} setStep={setStep} />}
 
@@ -364,11 +440,12 @@ export default function Page() {
               />
             )}
 
-            <div className="mt-8 flex items-center justify-between border-t border-gray-200 pt-5">
+            <div className="mt-8 flex items-center justify-between border-t border-gray-200 pt-6">
               <Button
                 type="button"
                 variant="outline"
                 onPress={() => setStep((prev) => Math.max(1, prev - 1))}
+                className="rounded-xl border border-gray-300 bg-white px-5 py-2 text-sm font-semibold text-gray-700"
               >
                 Retour
               </Button>
@@ -378,11 +455,12 @@ export default function Page() {
                   type="button"
                   variant="primary"
                   onPress={() => setStep((prev) => Math.min(4, prev + 1))}
+                  className="rounded-xl bg-linear-to-r from-blue-600 to-cyan-500 px-5 py-2 text-sm font-semibold text-white"
                 >
                   Continuer
                 </Button>
               ) : (
-                <Button type="submit" variant="secondary">
+                <Button type="submit" variant="secondary" className="rounded-xl bg-emerald-600 px-5 py-2 text-sm font-semibold text-white">
                   Confirmer et payer
                 </Button>
               )}

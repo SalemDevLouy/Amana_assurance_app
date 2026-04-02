@@ -26,14 +26,16 @@ export default function StepFarmerInfo({
       <h2 className="text-lg font-semibold text-gray-800">
         2. Informations agricoles
       </h2>
+      <p className="text-sm text-gray-500">
+        Renseignez votre activite, votre materiel et vos donnees de production.
+      </p>
 
-      {/* Equipment Information Section */}
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
+      <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
         <h3 className="mb-4 text-base font-semibold text-gray-700">
           1 - Les informations de matériels
         </h3>
-        <div className="space-y-4">
-          <div className=" flex flex-col">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="flex flex-col">
             <Label className="text-gray-500 text-xs">Type de matériel</Label>
           <Input
             placeholder="Ex: Tracteur, Moissonneuse..."
@@ -94,12 +96,11 @@ export default function StepFarmerInfo({
         </div>
       </div>
 
-      {/* Agricultural Information Section */}
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-5">
+      <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
         <h3 className="mb-4 text-base font-semibold text-gray-700">
           2 - Les informations concernant l&apos;agriculteure, les cultures agri et les animaux
         </h3>
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <Label className="text-gray-500 text-xs">Superficie agricole (hectares)</Label>
           <Input
@@ -149,7 +150,7 @@ export default function StepFarmerInfo({
             
           />
           </div>
-          <div>
+          <div className="sm:col-span-2">
             <Label className="text-gray-500 text-xs">Années d&apos;expérience agricole</Label>
           <Input
             type="number"
