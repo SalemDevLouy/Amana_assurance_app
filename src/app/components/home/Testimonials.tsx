@@ -1,87 +1,87 @@
-import { FaStar } from 'react-icons/fa';
+"use client"
+import useAOS from '../../hooks/useAOS';
+import { FaStar, FaQuoteLeft } from 'react-icons/fa';
+
+const testimonials = [
+  {
+    name: 'Karim Benali',
+    role: 'Private Driver · Algiers',
+    avatar: 'KB',
+    color: 'from-blue-500 to-cyan-500',
+    rating: 5,
+    quote:
+      'I subscribed to full coverage in 8 minutes from my phone. The AI gave me a better price than what I had at the agency. The contract arrived as a PDF instantly.',
+  },
+  {
+    name: 'Samira Hadj',
+    role: 'Business Owner · Oran',
+    avatar: 'SH',
+    color: 'from-emerald-500 to-teal-500',
+    rating: 5,
+    quote:
+      'After my accident, I just opened the app, took photos, and the expert was assigned within the hour. The garage tracking was incredibly reassuring.',
+  },
+  {
+    name: 'Mohamed Chérif',
+    role: 'Taxi Driver · Constantine',
+    avatar: 'MC',
+    color: 'from-indigo-500 to-purple-500',
+    rating: 5,
+    quote:
+      'As a professional driver, I need reliable insurance. Amaneka covers my commercial vehicle and the claim process is 10x faster than before. No more waiting.',
+  },
+];
 
 export default function Testimonials() {
-  const testimonials = [
-    {
-      text: "J&apos;ai finalisé mon assurance en quelques minutes. Le parcours est clair et tout est suivi depuis mon espace client.",
-      author: 'Samia',
-      location: 'Constantine',
-      initials: 'SA',
-    },
-    {
-      text: "Les options de personnalisation sont simples à comprendre. J&apos;ai choisi exactement la couverture dont j&apos;avais besoin.",
-      author: 'Amani',
-      location: 'Batna',
-      initials: 'AM',
-    },
-    {
-      text: "Enfin une solution d&apos;assurance digitale qui évite les démarches compliquées. Tout se fait depuis mon espace client.",
-      author: 'Maisoune',
-      location: 'Tébessa',
-      initials: 'MA',
-    },
-    {
-      text: "Service rapide et professionnel. J&apos;ai pu compléter mes informations, personnaliser mon contrat et finaliser mon dossier entièrement en ligne.",
-      author: 'Sofiane',
-      location: 'Sétif',
-      initials: 'SO',
-    },
-  ];
-
+  useAOS();
   return (
-    <section className="py-28 overflow-hidden border-t border-white/5">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section label */}
-        <div className="flex justify-center mb-6" data-aos="fade-up">
-          <span className="text-xs font-semibold uppercase tracking-widest text-blue-500 bg-blue-600/10 border border-blue-600/20 px-4 py-1.5 rounded-full">
-            Témoignages
-          </span>
-        </div>
-        <h2
-          className="text-4xl sm:text-5xl font-extrabold text-gray-500 text-center leading-tight mb-4"
-          data-aos="fade-up"
-          data-aos-delay="50"
-        >
-          Ce que disent{' '}
-          <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-            nos utilisateurs
-          </span>
-        </h2>
-        <p
-          className="text-base text-gray-500/45 text-center max-w-xl mx-auto mb-16"
-          data-aos="fade-up"
-          data-aos-delay="100"
-        >
-          Des clients qui ont souscrit leur assurance avec Amana en toute simplicité.
-        </p>
+    <section className="py-28 px-4">
+      <div className="max-w-6xl mx-auto">
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {testimonials.map((t, index) => (
+        <div className="text-center max-w-2xl mx-auto mb-16" data-aos="fade-up">
+          <span className="inline-block text-xs font-semibold uppercase tracking-widest text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full mb-4">
+            Customer Stories
+          </span>
+          <h2 className="text-4xl sm:text-5xl font-extrabold text-gray-800 leading-tight mb-4">
+            Trusted by drivers
+            <span className="bg-gradient-to-r from-indigo-500 to-blue-500 bg-clip-text text-transparent"> across Algeria.</span>
+          </h2>
+          <p className="text-gray-500 text-lg">Real people, real claims, real results.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {testimonials.map((t, i) => (
             <div
-              key={`${t.author}-${t.location}`}
-              className="p-8 bg-white/5 rounded-2xl border border-white/10 hover:border-blue-600/40 hover:bg-white/10 transition-all duration-300"
+              key={t.name}
+              className="bg-white/80 backdrop-blur-sm border border-gray-100 rounded-3xl p-7 hover:shadow-xl hover:shadow-blue-900/8 hover:-translate-y-1 transition-all duration-300"
               data-aos="fade-up"
-              data-aos-delay={index * 80}
+              data-aos-delay={i * 100}
             >
+              <FaQuoteLeft className="text-blue-100 text-3xl mb-4" />
+
               {/* Stars */}
-              <div className="flex gap-1 mb-4">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <FaStar key={star} className="text-amber-400 text-xs" />
+              <div className="flex gap-0.5 mb-4">
+                {Array.from({ length: t.rating }).map((_, j) => (
+                  <FaStar key={j} className="text-amber-400 text-xs" />
                 ))}
               </div>
-              <p className="text-gray-500/65 leading-relaxed text-sm mb-6">&ldquo;{t.text}&rdquo;</p>
+
+              <p className="text-sm text-gray-600 leading-relaxed mb-6">&ldquo;{t.quote}&rdquo;</p>
+
+              {/* Author */}
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-linear-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-gray-100 text-xs font-bold">
-                  {t.initials}
+                <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${t.color} flex items-center justify-center text-white text-xs font-bold shrink-0`}>
+                  {t.avatar}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-500">{t.author}</p>
-                  <p className="text-xs text-gray-500/35">{t.location}</p>
+                  <p className="text-sm font-bold text-gray-800">{t.name}</p>
+                  <p className="text-xs text-gray-400">{t.role}</p>
                 </div>
               </div>
             </div>
           ))}
         </div>
+
       </div>
     </section>
   );

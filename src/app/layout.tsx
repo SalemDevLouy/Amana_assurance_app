@@ -17,8 +17,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Amana - Build Your Business in Algeria",
-  description: "Amana est une plateforme numérique intelligente de gestion d&apos;assurance conçue pour les agriculteurs et automobilistes en Algérie. Gérez facilement vos garanties d&apos;assurance automobile et agricole avec des solutions adaptées à vos besoins.",
+  title: "Amaneka – AI-Powered Auto Insurance Platform",
+  description: "Amaneka is a next-generation digital insurance platform for automobile coverage and accident claim management in Algeria. Subscribe, declare accidents, and track repairs — all from one place.",
 };
 
 export default function RootLayout({
@@ -27,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <html lang="en" className="bg-background text-foreground">
+      <html lang="en" className="bg-[#eef2ff] text-foreground">
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased z-10 `}
         >

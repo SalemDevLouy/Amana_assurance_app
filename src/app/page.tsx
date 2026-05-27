@@ -7,12 +7,9 @@ import Faq from './components/home/FAQ';
 import FinalCTA from './components/home/FinalCTA';
 import Footer from './components/UI/Footer';
 
-
-
-// Main Landing Page Component
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#ededed] font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-transparent font-sans overflow-x-hidden">
       <Hero />
       <ProblemSolution />
       <Features />

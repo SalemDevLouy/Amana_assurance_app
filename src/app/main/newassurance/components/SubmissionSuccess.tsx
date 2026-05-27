@@ -9,14 +9,15 @@ export default function SubmissionSuccess({ totalCost }: SubmissionSuccessProps)
     <section className="relative z-10 mx-auto max-w-4xl px-4 py-16">
       <Card className="overflow-hidden border border-emerald-300 bg-white shadow-2xl shadow-emerald-100">
         <div className="h-2 bg-linear-to-r from-emerald-500 via-cyan-400 to-blue-500" />
-        <div className="p-8 text-center">
-          <p className="text-xs uppercase tracking-[0.22em] text-emerald-700">Confirmation</p>
-          <h1 className="mt-2 text-2xl font-bold text-emerald-700">Demande envoyee</h1>
-          <p className="mt-3 text-sm text-emerald-800">
-            Votre demande d&apos;assurance a ete enregistree avec succes.
+        <div className="p-10 text-center">
+          <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-5 text-3xl">✓</div>
+          <p className="text-xs font-semibold uppercase tracking-widest text-emerald-600 mb-2">Submitted Successfully</p>
+          <h1 className="text-2xl font-extrabold text-gray-800 mb-3">Your Insurance Request is In!</h1>
+          <p className="text-sm text-gray-500 max-w-md mx-auto mb-4">
+            Your auto insurance application has been received. Our team will review your documents and contact you shortly to finalize your contract.
           </p>
-          <p className="mt-2 text-sm font-medium text-emerald-900">
-            Cout total: <span className="font-semibold">{totalCost} DZD</span>
+          <p className="text-base font-bold text-emerald-700">
+            Total Premium: <span className="text-emerald-800">{totalCost.toLocaleString()} DA/yr</span>
           </p>
         </div>
       </Card>

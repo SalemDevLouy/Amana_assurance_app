@@ -2,297 +2,181 @@
 
 import { useMemo } from "react";
 import { useSession } from "next-auth/react";
-import {
-  FaArrowTrendUp,
-  FaChartLine,
-  FaChartPie,
-  FaClipboardCheck,
-  FaClock,
-  FaUserCheck,
-  FaUsers,
-} from "react-icons/fa6";
-import { FaExclamationTriangle, FaShieldAlt } from "react-icons/fa";
+import { FaUsers, FaClipboardList, FaCheckCircle, FaShieldAlt, FaExclamationTriangle, FaClock, FaUserCheck, FaChartLine } from "react-icons/fa";
 
-type TrendPoint = {
-  label: string;
-  users: number;
-  demandes: number;
-};
-
-type StatusSlice = {
-  label: string;
-  value: number;
-  color: string;
-};
+type TrendPoint = { label: string; users: number; claims: number };
+type StatusSlice = { label: string; value: number; color: string };
 
 const monthlyTrend: TrendPoint[] = [
-  { label: "Jan", users: 36, demandes: 18 },
-  { label: "Fév", users: 42, demandes: 22 },
-  { label: "Mar", users: 48, demandes: 27 },
-  { label: "Avr", users: 55, demandes: 31 },
-  { label: "Mai", users: 63, demandes: 34 },
-  { label: "Juin", users: 71, demandes: 39 },
-  { label: "Juil", users: 79, demandes: 45 },
-  { label: "Août", users: 84, demandes: 48 },
-  { label: "Sep", users: 92, demandes: 54 },
-  { label: "Oct", users: 101, demandes: 57 },
-  { label: "Nov", users: 112, demandes: 61 },
-  { label: "Déc", users: 124, demandes: 67 },
+  { label: "Jan", users: 36, claims: 18 }, { label: "Feb", users: 42, claims: 22 },
+  { label: "Mar", users: 48, claims: 27 }, { label: "Apr", users: 55, claims: 31 },
+  { label: "May", users: 63, claims: 34 }, { label: "Jun", users: 71, claims: 39 },
+  { label: "Jul", users: 79, claims: 45 }, { label: "Aug", users: 84, claims: 48 },
+  { label: "Sep", users: 92, claims: 54 }, { label: "Oct", users: 101, claims: 57 },
+  { label: "Nov", users: 112, claims: 61 }, { label: "Dec", users: 124, claims: 67 },
 ];
 
-const demandStatusSlices: StatusSlice[] = [
-  { label: "En attente", value: 16, color: "#f59e0b" },
-  { label: "En revue", value: 9, color: "#0ea5e9" },
-  { label: "Acceptées", value: 22, color: "#10b981" },
-  { label: "Refusées", value: 5, color: "#ef4444" },
+const claimStatusSlices: StatusSlice[] = [
+  { label: "Pending", value: 16, color: "#f59e0b" },
+  { label: "Under Review", value: 9, color: "#0ea5e9" },
+  { label: "Approved", value: 22, color: "#10b981" },
+  { label: "Rejected", value: 5, color: "#ef4444" },
 ];
 
-const alertItems = [
-  {
-    title: "7 dossiers prioritaires",
-    text: "Des demandes accident nécessitent une réponse aujourd'hui.",
-    tone: "amber",
-  },
-  {
-    title: "3 pièces manquantes",
-    text: "Certains dossiers attendent encore un PV ou une photo lisible.",
-    tone: "blue",
-  },
-  {
-    title: "2 comptes incomplets",
-    text: "Les profils clients doivent être complétés avant validation.",
-    tone: "slate",
-  },
+const alerts = [
+  { title: "7 priority claims", text: "Accident declarations require attention today.", tone: "amber" },
+  { title: "3 documents missing", text: "Some files are awaiting a police report or photo.", tone: "blue" },
+  { title: "2 incomplete profiles", text: "Customer profiles must be completed before validation.", tone: "slate" },
 ];
 
 const recentActivity = [
-  {
-    title: "Dossier ACC-2026-0142",
-    meta: "Accepté par l'équipe sinistres",
-    time: "Il y a 12 min",
-  },
-  {
-    title: "Dossier ACC-2026-0133",
-    meta: "Passé en revue pour contrôle complémentaire",
-    time: "Il y a 34 min",
-  },
-  {
-    title: "Nouveau compte client",
-    meta: "Profil utilisateur créé avec 84 % de complétion",
-    time: "Il y a 1 h",
-  },
-  {
-    title: "Dossier finalisé",
-    meta: "Un nouveau dossier a été validé",
-    time: "Il y a 2 h",
-  },
+  { title: "Claim CLM-2026-0142", meta: "Approved by the claims team", time: "12 min ago" },
+  { title: "Claim CLM-2026-0133", meta: "Passed to review for additional checks", time: "34 min ago" },
+  { title: "New customer account", meta: "Profile created with 84% completion", time: "1 hr ago" },
+  { title: "Contract finalized", meta: "New policy AMT-2026-091 issued", time: "2 hr ago" },
 ];
 
 const opsQueue = [
-  {
-    label: "Demandes en attente",
-    value: 16,
-    helper: "À traiter en priorité",
-    icon: <FaClock />,
-  },
-  {
-    label: "Demandes acceptées",
-    value: 22,
-    helper: "Prêtes pour indemnisation",
-    icon: <FaClipboardCheck />,
-  },
-  {
-    label: "Utilisateurs actifs",
-    value: 124,
-    helper: "Connectés sur les 30 derniers jours",
-    icon: <FaUsers />,
-  },
-  {
-    label: "Complétion moyenne",
-    value: 87,
-    helper: "Dossiers presque complets",
-    icon: <FaUserCheck />,
-  },
+  { label: "Pending Claims", value: 16, helper: "Requires immediate attention", icon: FaClock },
+  { label: "Approved Claims", value: 22, helper: "Ready for compensation", icon: FaCheckCircle },
+  { label: "Active Customers", value: 124, helper: "Logged in last 30 days", icon: FaUsers },
+  { label: "Profile Completion", value: "87%", helper: "Average across all accounts", icon: FaUserCheck },
 ];
 
-export default function Dashboard() {
+export default function AdminDashboard() {
   const { data: session, status } = useSession();
-
   const isAdmin = status === "authenticated" && session?.user?.role === "ADMIN";
 
-  const kpis = useMemo(
-    () => [
-      {
-        label: "Utilisateurs",
-        value: "124",
-        delta: "+18 %",
-        note: "Par rapport au mois précédent",
-        icon: <FaUsers />,
-      },
-      {
-        label: "Demandes",
-        value: "67",
-        delta: "+11 %",
-        note: "Nouvelles déclarations accident",
-        icon: <FaShieldAlt />,
-      },
-      {
-        label: "Dossiers finalisés",
-        value: "64",
-        delta: "+24 %",
-        note: "Dossiers validés et clôturés",
-        icon: <FaChartLine />,
-      },
-      {
-        label: "Taux d’acceptation",
-        value: "81 %",
-        delta: "+4 pts",
-        note: "Dossiers validés au premier passage",
-        icon: <FaArrowTrendUp />,
-      },
-    ],
-    []
-  );
+  const kpis = useMemo(() => [
+    { label: "Total Customers", value: "124", delta: "+18%", note: "vs last month", icon: FaUsers, color: "bg-blue-50 text-blue-600" },
+    { label: "Total Claims", value: "67", delta: "+11%", note: "New accident declarations", icon: FaClipboardList, color: "bg-amber-50 text-amber-600" },
+    { label: "Resolved Claims", value: "64", delta: "+24%", note: "Validated and closed", icon: FaCheckCircle, color: "bg-emerald-50 text-emerald-600" },
+    { label: "Approval Rate", value: "81%", delta: "+4pts", note: "First-pass validation rate", icon: FaShieldAlt, color: "bg-indigo-50 text-indigo-600" },
+  ], []);
 
   if (status === "loading") {
     return (
-      <div className="relative z-10 mx-auto my-24 max-w-7xl rounded-3xl border border-cyan-400/30 bg-white/80 p-8 shadow-xl">
-        Chargement du tableau de bord...
+      <div className="flex items-center justify-center min-h-screen bg-[#f4f6fb]">
+        <div className="bg-white border border-gray-100 rounded-3xl p-8 text-sm text-gray-500 shadow-sm">Loading dashboard...</div>
       </div>
     );
   }
 
   if (!isAdmin) {
     return (
-      <div className="relative z-10 mx-auto my-24 max-w-4xl rounded-3xl border border-red-200 bg-white/90 p-8 text-red-700 shadow-xl">
-        Acces refuse. Le tableau de bord est reserve aux administrateurs.
+      <div className="flex items-center justify-center min-h-screen bg-[#f4f6fb]">
+        <div className="bg-white border border-red-100 rounded-3xl p-8 text-sm text-red-600 shadow-sm max-w-sm text-center">
+          Access denied. This dashboard is restricted to administrators.
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="relative z-10 mx-auto my-10 flex max-w-7xl flex-col gap-6 px-4 py-4 md:my-16 md:px-6">
-      <section
-        className="rounded-3xl border border-cyan-500/30 p-6 text-white shadow-2xl md:p-8"
-        style={{
-          backgroundImage: "linear-gradient(135deg, #020617 0%, #0f172a 52%, #1e293b 100%)",
-        }}
-      >
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-3xl">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-cyan-200">
-              <FaChartPie /> Tableau de bord
-            </div>
-            <h1 className="text-3xl font-black tracking-tight text-white md:text-5xl">
-              Pilotage temps réel de la plateforme Amana.
+    <div className="bg-[#f4f6fb] min-h-screen p-4 sm:p-6 lg:p-8 space-y-6">
+
+      {/* Hero banner */}
+      <div className="rounded-3xl bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 p-7 sm:p-10 text-white shadow-2xl">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-cyan-400 mb-3">Admin Dashboard</p>
+            <h1 className="text-3xl sm:text-4xl font-black text-white leading-tight">
+              Amaneka Platform Overview
             </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300 md:text-base">
-              Suivez l&apos;activité des utilisateurs, le volume de demandes accident, les dossiers
-              et le niveau de traitement opérationnel depuis une vue unifiée.
+            <p className="mt-2 text-sm text-slate-400 max-w-xl">
+              Monitor customer accounts, insurance contracts, claims pipeline, and platform performance in real-time.
+            </p>
+            <p className="mt-3 text-xs text-slate-500">
+              Signed in as <span className="text-cyan-400 font-semibold">{session?.user?.name ?? session?.user?.email}</span>
             </p>
           </div>
-
-          <div className="grid grid-cols-2 gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur md:grid-cols-4">
-            <MiniStat label="Comptes" value="124" helper="Utilisateurs actifs" />
-            <MiniStat label="Demandes" value="67" helper="Sinistres / déclarations" />
-            <MiniStat label="Validés" value="64" helper="Dossiers finalisés" />
-            <MiniStat label="Taux" value="81 %" helper="Acceptation moyenne" />
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4 gap-3">
+            {[
+              { label: "Customers", value: "124" }, { label: "Claims", value: "67" },
+              { label: "Resolved", value: "64" }, { label: "Rate", value: "81%" },
+            ].map((s) => (
+              <div key={s.label} className="rounded-2xl bg-white/8 border border-white/10 p-3 text-center">
+                <p className="text-xl font-black text-white">{s.value}</p>
+                <p className="text-xs text-slate-400 mt-0.5 uppercase tracking-wide">{s.label}</p>
+              </div>
+            ))}
           </div>
         </div>
-      </section>
+      </div>
 
-      <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {kpis.map((item) => (
-          <article
-            key={item.label}
-            className="rounded-3xl border border-slate-200 bg-white/90 p-5 shadow-xl transition hover:-translate-y-0.5 hover:border-cyan-200"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                  {item.label}
-                </p>
-                <p className="mt-3 text-3xl font-black text-slate-900">{item.value}</p>
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        {kpis.map((kpi) => (
+          <div key={kpi.label} className="bg-white/80 border border-gray-100 rounded-3xl p-5 shadow-sm hover:-translate-y-0.5 transition-transform">
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${kpi.color}`}>
+                <kpi.icon className="text-sm" />
               </div>
-              <div className="rounded-2xl bg-cyan-50 p-3 text-cyan-700">{item.icon}</div>
+              <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">{kpi.delta}</span>
             </div>
-            <div className="mt-4 flex items-center justify-between gap-3">
-              <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
-                {item.delta}
-              </span>
-            </div>
-            <p className="mt-3 text-sm text-slate-500">{item.note}</p>
-          </article>
+            <p className="text-3xl font-extrabold text-slate-900">{kpi.value}</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mt-1">{kpi.label}</p>
+            <p className="text-xs text-slate-400 mt-1">{kpi.note}</p>
+          </div>
         ))}
-      </section>
+      </div>
 
-      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1.4fr_0.9fr]">
-        <div className="rounded-3xl border border-slate-200 bg-white/90 p-5 shadow-xl md:p-6">
-          <div className="mb-6 flex items-start justify-between gap-4">
+      {/* Charts row */}
+      <div className="grid grid-cols-1 xl:grid-cols-[1.4fr_0.9fr] gap-6">
+        <div className="bg-white/80 border border-gray-100 rounded-3xl p-6 shadow-sm">
+          <div className="flex items-start justify-between mb-6">
             <div>
-              <h2 className="text-xl font-bold text-slate-900 md:text-2xl">Tendances mensuelles</h2>
-              <p className="mt-1 text-sm text-slate-500">
-                Croissance des utilisateurs et demandes sur les 12 derniers mois.
-              </p>
+              <h2 className="text-lg font-bold text-slate-900">Monthly Trends</h2>
+              <p className="text-xs text-slate-500 mt-1">Customer growth and claims volume over the last 12 months.</p>
             </div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600">
-              <FaChartLine /> Vue globale
+            <div className="flex items-center gap-1.5 text-xs text-slate-500 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-full">
+              <FaChartLine className="text-xs" /> 12 months
             </div>
           </div>
           <TrendChart points={monthlyTrend} />
         </div>
 
-        <div className="rounded-3xl border border-slate-200 bg-white/90 p-5 shadow-xl md:p-6">
-          <div className="mb-6 flex items-start justify-between gap-4">
-            <div>
-              <h2 className="text-xl font-bold text-slate-900 md:text-2xl">Statut des demandes</h2>
-              <p className="mt-1 text-sm text-slate-500">
-                Répartition des déclarations accident à traiter.
-              </p>
-            </div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600">
-              <FaClock /> Pipeline
-            </div>
+        <div className="bg-white/80 border border-gray-100 rounded-3xl p-6 shadow-sm">
+          <div className="mb-6">
+            <h2 className="text-lg font-bold text-slate-900">Claim Status</h2>
+            <p className="text-xs text-slate-500 mt-1">Distribution of accident declarations by processing state.</p>
           </div>
-          <StatusDonut slices={demandStatusSlices} />
+          <StatusDonut slices={claimStatusSlices} />
         </div>
-      </section>
+      </div>
 
-      <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-        <div className="rounded-3xl border border-slate-200 bg-white/90 p-5 shadow-xl md:p-6">
-          <div className="mb-5 flex items-center justify-between gap-3">
-            <div>
-              <h2 className="text-xl font-bold text-slate-900 md:text-2xl">Pipeline opérationnel</h2>
-              <p className="mt-1 text-sm text-slate-500">
-                État du traitement des demandes et de la base client.
-              </p>
-            </div>
+      {/* Ops + Activity */}
+      <div className="grid grid-cols-1 xl:grid-cols-[1.05fr_0.95fr] gap-6">
+        <div className="bg-white/80 border border-gray-100 rounded-3xl p-6 shadow-sm space-y-4">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">Operational Pipeline</h2>
+            <p className="text-xs text-slate-500 mt-1">Real-time processing status across claims and customers.</p>
           </div>
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {opsQueue.map((item) => (
-              <article key={item.label} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <div className="flex items-start justify-between gap-3">
+              <div key={item.label} className="rounded-2xl bg-slate-50 border border-slate-200 p-4">
+                <div className="flex items-start justify-between gap-3 mb-3">
                   <div>
-                    <p className="text-sm font-semibold text-slate-900">{item.label}</p>
-                    <p className="mt-1 text-xs text-slate-500">{item.helper}</p>
+                    <p className="text-sm font-bold text-slate-800">{item.label}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{item.helper}</p>
                   </div>
-                  <div className="rounded-2xl bg-white p-3 text-cyan-700 shadow-sm">{item.icon}</div>
+                  <div className="w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
+                    <item.icon className="text-blue-500 text-xs" />
+                  </div>
                 </div>
-                <p className="mt-4 text-3xl font-black text-slate-900">{item.value}</p>
-              </article>
+                <p className="text-2xl font-extrabold text-slate-900">{item.value}</p>
+              </div>
             ))}
           </div>
-
-          <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
             <div className="flex items-start gap-3">
-              <FaExclamationTriangle className="mt-0.5 text-amber-600" />
+              <FaExclamationTriangle className="text-amber-500 mt-0.5 shrink-0" />
               <div>
-                <p className="text-sm font-bold text-amber-800">Alertes à surveiller</p>
-                <ul className="mt-3 space-y-2 text-sm text-amber-700">
-                  {alertItems.map((item) => (
-                    <li key={item.title} className="rounded-xl bg-white/70 px-3 py-2">
-                      <span className="font-semibold">{item.title}</span> - {item.text}
+                <p className="text-sm font-bold text-amber-800 mb-2">Active Alerts</p>
+                <ul className="space-y-2">
+                  {alerts.map((a) => (
+                    <li key={a.title} className="rounded-xl bg-white/70 px-3 py-2 text-xs text-amber-700">
+                      <span className="font-semibold">{a.title}</span> — {a.text}
                     </li>
                   ))}
                 </ul>
@@ -301,165 +185,84 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-slate-200 bg-white/90 p-5 shadow-xl md:p-6">
-          <div className="mb-5 flex items-center justify-between gap-3">
-            <div>
-              <h2 className="text-xl font-bold text-slate-900 md:text-2xl">Activité récente</h2>
-              <p className="mt-1 text-sm text-slate-500">Dernières actions enregistrées dans la plateforme.</p>
-            </div>
+        <div className="bg-white/80 border border-gray-100 rounded-3xl p-6 shadow-sm">
+          <div className="mb-5">
+            <h2 className="text-lg font-bold text-slate-900">Recent Activity</h2>
+            <p className="text-xs text-slate-500 mt-1">Latest actions recorded on the platform.</p>
           </div>
-
-          <div className="space-y-4">
+          <div className="space-y-3">
             {recentActivity.map((item) => (
-              <article key={item.title} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div key={item.title} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="font-semibold text-slate-900">{item.title}</p>
-                    <p className="mt-1 text-sm text-slate-600">{item.meta}</p>
+                    <p className="text-sm font-bold text-slate-800">{item.title}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{item.meta}</p>
                   </div>
-                  <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-500">
-                    {item.time}
-                  </span>
+                  <span className="text-xs text-slate-400 shrink-0 bg-white border border-slate-200 px-2 py-1 rounded-full">{item.time}</span>
                 </div>
-              </article>
+              </div>
             ))}
           </div>
-
-          <div className="mt-6 rounded-2xl border border-cyan-200 bg-cyan-50 p-4">
-            <p className="text-sm font-bold text-cyan-800">Session connectée</p>
-            <p className="mt-2 text-sm text-cyan-700">
-              {session?.user?.name ?? session?.user?.email ?? "Administrateur"} - accès complet aux modules de gestion.
-            </p>
-          </div>
         </div>
-      </section>
-    </div>
-  );
-}
+      </div>
 
-function MiniStat({
-  label,
-  value,
-  helper,
-}: Readonly<{
-  label: string;
-  value: string;
-  helper: string;
-}>) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
-      <p className="text-[11px] uppercase tracking-[0.2em] text-slate-300">{label}</p>
-      <p className="mt-2 text-xl font-black text-white">{value}</p>
-      <p className="mt-1 text-xs text-slate-400">{helper}</p>
     </div>
   );
 }
 
 function TrendChart({ points }: Readonly<{ points: TrendPoint[] }>) {
-  const maxValue = Math.max(...points.map((point) => Math.max(point.users, point.demandes)));
-
+  const maxVal = Math.max(...points.flatMap((p) => [p.users, p.claims]));
   return (
-    <div className="space-y-5">
-      <div className="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50 p-4">
-        <div className="flex items-end gap-2">
-          {points.map((point) => (
-            <div key={point.label} className="flex flex-1 flex-col items-center gap-2">
-              <div className="flex h-56 w-full items-end gap-1.5 rounded-2xl bg-white/60 p-2">
-                <Bar value={point.users} max={maxValue} color="#06b6d4" />
-                <Bar value={point.demandes} max={maxValue} color="#3b82f6" />
+    <div className="space-y-4">
+      <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+        <div className="flex items-end gap-1.5 h-48">
+          {points.map((pt) => (
+            <div key={pt.label} className="flex flex-1 flex-col items-center gap-1">
+              <div className="flex h-40 w-full items-end gap-0.5 rounded-xl bg-white/60 p-1.5">
+                <div className="flex-1 rounded-t-full" style={{ height: `${Math.max((pt.users / maxVal) * 100, 6)}%`, background: "linear-gradient(to top, #3b82f6, #93c5fd)" }} />
+                <div className="flex-1 rounded-t-full" style={{ height: `${Math.max((pt.claims / maxVal) * 100, 6)}%`, background: "linear-gradient(to top, #06b6d4, #a5f3fc)" }} />
               </div>
-              <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
-                {point.label}
-              </span>
+              <span className="text-[10px] font-medium text-slate-400">{pt.label}</span>
             </div>
           ))}
         </div>
       </div>
-
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-        <LegendSwatch color="#06b6d4" label="Utilisateurs" />
-        <LegendSwatch color="#3b82f6" label="Demandes" />
+      <div className="flex gap-4">
+        {[{ color: "#3b82f6", label: "Customers" }, { color: "#06b6d4", label: "Claims" }].map((l) => (
+          <div key={l.label} className="flex items-center gap-2 text-xs text-slate-600 bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl">
+            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: l.color }} />
+            {l.label}
+          </div>
+        ))}
       </div>
-    </div>
-  );
-}
-
-function Bar({
-  value,
-  max,
-  color,
-}: Readonly<{
-  value: number;
-  max: number;
-  color: string;
-}>) {
-  const height = `${Math.max((value / max) * 100, 8)}%`;
-
-  return (
-    <div className="flex w-full justify-center">
-      <div
-        className="w-3 rounded-t-full shadow-sm"
-        style={{
-          height,
-          background: `linear-gradient(to top, ${color}, rgba(255,255,255,0.2))`,
-        }}
-      />
-    </div>
-  );
-}
-
-function LegendSwatch({
-  color,
-  label,
-}: Readonly<{
-  color: string;
-  label: string;
-}>) {
-  return (
-    <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-      <span className="h-3 w-3 rounded-full" style={{ backgroundColor: color }} />
-      <span className="text-sm font-semibold text-slate-700">{label}</span>
     </div>
   );
 }
 
 function StatusDonut({ slices }: Readonly<{ slices: StatusSlice[] }>) {
-  const total = slices.reduce((sum, slice) => sum + slice.value, 0);
-  let cumulative = 0;
-
-  const segments = slices
-    .map((slice) => {
-      const start = (cumulative / total) * 100;
-      cumulative += slice.value;
-      const end = (cumulative / total) * 100;
-      return `${slice.color} ${start}% ${end}%`;
-    })
-    .join(", ");
-
+  const total = slices.reduce((s, sl) => s + sl.value, 0);
+  let cum = 0;
+  const segments = slices.map((sl) => {
+    const start = (cum / total) * 100;
+    cum += sl.value;
+    return `${sl.color} ${start}% ${(cum / total) * 100}%`;
+  }).join(", ");
   return (
-    <div className="flex flex-col items-center gap-6">
-      <div
-        className="relative flex h-64 w-64 items-center justify-center rounded-full"
-        style={{
-          background: `conic-gradient(${segments})`,
-        }}
-      >
-        <div className="flex h-40 w-40 flex-col items-center justify-center rounded-full bg-white text-center shadow-xl">
-          <p className="text-3xl font-black text-slate-900">{total}</p>
-          <p className="mt-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-            Dossiers
-          </p>
+    <div className="flex flex-col items-center gap-5">
+      <div className="relative w-48 h-48 rounded-full flex items-center justify-center" style={{ background: `conic-gradient(${segments})` }}>
+        <div className="w-28 h-28 rounded-full bg-white flex flex-col items-center justify-center shadow-lg">
+          <p className="text-3xl font-extrabold text-slate-900">{total}</p>
+          <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">Claims</p>
         </div>
       </div>
-
-      <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
-        {slices.map((slice) => (
-          <div key={slice.label} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-            <div className="flex items-center gap-3">
-              <span className="h-3 w-3 rounded-full" style={{ backgroundColor: slice.color }} />
-              <span className="text-sm font-semibold text-slate-700">{slice.label}</span>
+      <div className="grid grid-cols-2 gap-2 w-full">
+        {slices.map((sl) => (
+          <div key={sl.label} className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-3 py-2">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: sl.color }} />
+              <span className="text-xs font-medium text-slate-700">{sl.label}</span>
             </div>
-            <span className="text-sm font-bold text-slate-900">{slice.value}</span>
+            <span className="text-xs font-bold text-slate-900">{sl.value}</span>
           </div>
         ))}
       </div>

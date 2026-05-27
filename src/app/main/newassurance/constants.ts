@@ -1,5 +1,8 @@
 import { AssuranceType, GuaranteeInputType } from "./types";
 
+// Internal API catalog type (maps to DB AssuranceCatalogType enum)
+export type ApiCatalogType = "car" | "farmer";
+
 type GuaranteeSeedOption = {
   key: string;
   label: string;
@@ -15,7 +18,7 @@ type GuaranteeSeedGroup = {
   options: GuaranteeSeedOption[];
 };
 
-export const DEFAULT_GUARANTEE_CATALOG: Record<Exclude<AssuranceType, "">, GuaranteeSeedGroup[]> = {
+export const DEFAULT_GUARANTEE_CATALOG: Record<ApiCatalogType, GuaranteeSeedGroup[]> = {
   car: [
     {
       key: "civil-liability",
@@ -132,6 +135,14 @@ export const DEFAULT_GUARANTEE_CATALOG: Record<Exclude<AssuranceType, "">, Guara
 };
 
 export const BASE_PRICE: Record<Exclude<AssuranceType, "">, number> = {
-  car: 500,
-  farmer: 650,
+  third_party: 9200,
+  full_coverage: 18500,
+  commercial: 24000,
+};
+
+// Maps UI coverage types to the API catalog type
+export const COVERAGE_TO_API_TYPE: Record<Exclude<AssuranceType, "">, "car"> = {
+  third_party: "car",
+  full_coverage: "car",
+  commercial: "car",
 };

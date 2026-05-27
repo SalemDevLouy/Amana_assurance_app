@@ -4,18 +4,16 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Button, Card } from "@heroui/react";
-import { BASE_PRICE } from "./constants";
+import { BASE_PRICE, COVERAGE_TO_API_TYPE } from "./constants";
 import StepAssuranceType from "./components/StepAssuranceType";
 import StepGuarantees from "./components/StepGuarantees";
 import StepIndicator from "./components/StepIndicator";
 import StepPayment from "./components/StepPayment";
 import StepVehicleInfo from "./components/StepVehicleInfo";
-import StepFarmerInfo from "./components/StepFarmerInfo";
 import SubmissionSuccess from "./components/SubmissionSuccess";
 import {
   AssuranceType,
   CarInfo,
-  FarmerInfo,
   GuaranteeGroup,
   GuaranteeOption,
   GuaranteeSelections,
@@ -110,20 +108,6 @@ export default function Page() {
     horsepower: "",
     technicalCertificate: "",
   });
-  const [farmerInfo, setFarmerInfo] = useState<FarmerInfo>({
-    equipmentType: "",
-    equipmentBrand: "",
-    equipmentModel: "",
-    equipmentYear: "",
-    equipmentValue: "",
-    equipmentQuantity: "",
-    farmArea: "",
-    cropTypes: "",
-    cropProduction: "",
-    livestockTypes: "",
-    livestockQuantity: "",
-    farmingExperience: "",
-  });
   const [vehiclePhotos, setVehiclePhotos] = useState<File[]>([]);
   const [chassisPhoto, setChassisPhoto] = useState<File | null>(null);
   const [platePhoto, setPlatePhoto] = useState<File | null>(null);
@@ -203,7 +187,8 @@ export default function Page() {
           return;
         }
 
-        const response = await fetch(`/api/guarantees?assuranceType=${assuranceType}`, {
+        const apiType = assuranceType ? COVERAGE_TO_API_TYPE[assuranceType] : "car";
+        const response = await fetch(`/api/guarantees?assuranceType=${apiType}`, {
           cache: "force-cache",
         });
 
@@ -223,7 +208,7 @@ export default function Page() {
         setGuaranteeSelections(getInitialSelections(data.groups));
       } catch {
         if (!isCancelled) {
-          setGuaranteesError("Erreur lors du chargement des garanties depuis la base de donnees.");
+          setGuaranteesError("Failed to load coverage options. Please try again.");
           setGuaranteeGroups([]);
           setGuaranteeSelections({});
         }
@@ -281,21 +266,6 @@ export default function Page() {
     }
 
     if (step === 2) {
-      if (assuranceType === "farmer") {
-        return (
-          farmerInfo.equipmentType.trim() !== "" &&
-          farmerInfo.equipmentBrand.trim() !== "" &&
-          farmerInfo.equipmentModel.trim() !== "" &&
-          farmerInfo.equipmentYear.trim() !== "" &&
-          farmerInfo.equipmentValue.trim() !== "" &&
-          farmerInfo.equipmentQuantity.trim() !== "" &&
-          farmerInfo.farmArea.trim() !== "" &&
-          farmerInfo.cropTypes.trim() !== "" &&
-          farmerInfo.cropProduction.trim() !== "" &&
-          farmerInfo.farmingExperience.trim() !== ""
-        );
-      }
-      // Car insurance validation
       return (
         carInfo.brand.trim() !== "" &&
         carInfo.model.trim() !== "" &&
@@ -338,7 +308,6 @@ export default function Page() {
   }, [
     assuranceType,
     carInfo,
-    farmerInfo,
     chassisPhoto,
     odometerPhoto,
     payment,
@@ -360,8 +329,8 @@ export default function Page() {
   if (isCheckingAccess) {
     return (
       <section className="relative z-10 mx-auto min-h-screen max-w-5xl px-4 py-10 pt-24 sm:px-6">
-        <div className="rounded-2xl border border-cyan-300/60 bg-white/80 p-6 text-sm font-semibold text-gray-700 shadow-sm">
-          Verification de votre profil en cours...
+        <div className="rounded-2xl border border-blue-100 bg-white/80 p-6 text-sm font-semibold text-gray-500 shadow-sm">
+          Verifying your profile...
         </div>
       </section>
     );
@@ -375,13 +344,13 @@ export default function Page() {
     <section className="relative z-10 mx-auto min-h-screen max-w-6xl px-4 py-10 pt-24 sm:px-6">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.12),transparent_45%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.12),transparent_45%)]" />
 
-      <div className="relative mb-8 overflow-hidden rounded-3xl border border-cyan-300/40 bg-white/70 p-6 shadow-xl shadow-cyan-100 md:p-8">
-        <p className="text-xs uppercase tracking-[0.22em] text-cyan-700">Parcours de souscription</p>
+      <div className="relative mb-8 overflow-hidden rounded-3xl border border-blue-100 bg-white/80 p-6 shadow-lg md:p-8">
+        <p className="text-xs font-semibold uppercase tracking-widest text-blue-600 mb-1">New Insurance Contract</p>
         <h1 className="text-2xl font-extrabold text-gray-800 sm:text-3xl">
-          Nouveau contrat d&apos;assurance
+          Subscribe to Auto Insurance
         </h1>
         <p className="mt-2 text-sm text-gray-500">
-          Completez les 4 etapes: type, informations du vehicule, personnalisation, puis paiement.
+          Complete 4 steps: choose coverage → vehicle details → select options → payment & contract.
         </p>
       </div>
 
@@ -394,15 +363,7 @@ export default function Page() {
           <form onSubmit={handleSubmit}>
             {step === 1 && <StepAssuranceType assuranceType={assuranceType} basePrice={BASE_PRICE} setAssuranceType={setAssuranceType} setStep={setStep} />}
 
-            {step === 2 && assuranceType === "farmer" && (
-              <StepFarmerInfo
-                farmerInfo={farmerInfo}
-                setFarmerInfo={setFarmerInfo}
-                canGoNext={canGoNext}
-              />
-            )}
-
-            {step === 2 && assuranceType === "car" && (
+            {step === 2 && (
               <StepVehicleInfo
                 carInfo={carInfo}
                 setCarInfo={setCarInfo}
@@ -447,7 +408,7 @@ export default function Page() {
                 onPress={() => setStep((prev) => Math.max(1, prev - 1))}
                 className="rounded-xl border border-gray-300 bg-white px-5 py-2 text-sm font-semibold text-gray-700"
               >
-                Retour
+                Back
               </Button>
 
               {step < 4 ? (
@@ -455,13 +416,13 @@ export default function Page() {
                   type="button"
                   variant="primary"
                   onPress={() => setStep((prev) => Math.min(4, prev + 1))}
-                  className="rounded-xl bg-linear-to-r from-blue-600 to-cyan-500 px-5 py-2 text-sm font-semibold text-white"
+                  className="rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-2 text-sm font-semibold text-white shadow-md shadow-blue-500/25"
                 >
-                  Continuer
+                  Continue
                 </Button>
               ) : (
-                <Button type="submit" variant="secondary" className="rounded-xl bg-emerald-600 px-5 py-2 text-sm font-semibold text-white">
-                  Confirmer et payer
+                <Button type="submit" variant="secondary" className="rounded-xl bg-emerald-600 px-5 py-2 text-sm font-semibold text-white shadow-md shadow-emerald-500/25">
+                  Confirm & Pay
                 </Button>
               )}
             </div>

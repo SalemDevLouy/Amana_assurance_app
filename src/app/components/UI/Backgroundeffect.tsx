@@ -1,19 +1,34 @@
 
 export default function BackgroundEffect() {
   return (
-    <div className='pointer-events-none fixed inset-0 top-0 right-0 z-0 min-h-screen overflow-hidden '>
-        {/* Ambient blobs */}
-      <div className="pointer-events-none absolute -bottom-64 -left-48 w-[700px] h-[700px] rounded-full bg-blue-700/35 blur-[140px]" />
-      <div className="pointer-events-none absolute -top-48 -right-48 w-[700px] h-[700px] rounded-full bg-cyan-600/35 blur-[140px]" />
-      {/* Subtle grid overlay */}
+    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+      {/* Base gradient canvas */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#eef2ff] via-[#f4f6fb] to-[#f0fdf9]" />
+
+      {/* Top-center spotlight — gives the hero a premium "lit from above" feel */}
+      <div className="absolute -top-56 left-1/2 -translate-x-1/2 w-[900px] h-[700px] rounded-full bg-blue-400/15 blur-[130px]" />
+
+      {/* Bottom-left ambient */}
+      <div className="absolute -bottom-56 -left-48 w-[650px] h-[650px] rounded-full bg-blue-600/10 blur-[150px]" />
+
+      {/* Top-right ambient */}
+      <div className="absolute -top-40 -right-40 w-[580px] h-[580px] rounded-full bg-cyan-500/10 blur-[140px]" />
+
+      {/* Mid-page emerald accent */}
+      <div className="absolute top-2/3 -right-20 w-[380px] h-[380px] rounded-full bg-emerald-400/8 blur-[110px]" />
+
+      {/* Dot grid overlay */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.5]"
+        className="absolute inset-0 opacity-[0.45]"
         style={{
           backgroundImage:
-            'linear-gradient(rgba(255,255,255,.5) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.5) 1px,transparent 1px)',
-          backgroundSize: '60px 60px',
+            "radial-gradient(circle, rgba(37,99,235,0.13) 1.5px, transparent 1.5px)",
+          backgroundSize: "28px 28px",
         }}
       />
+
+      {/* Edge vignette — fades the dots out near borders for a clean finish */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,transparent_60%,rgba(240,244,255,0.6)_100%)]" />
     </div>
-  )
+  );
 }

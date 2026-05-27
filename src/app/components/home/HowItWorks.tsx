@@ -1,72 +1,96 @@
+"use client"
+import useAOS from '../../hooks/useAOS';
+import { FaShieldAlt, FaFileAlt, FaUserCheck, FaTools } from 'react-icons/fa';
+
+const steps = [
+  {
+    number: '01',
+    icon: FaShieldAlt,
+    color: 'from-blue-500 to-blue-600',
+    bg: 'bg-blue-50',
+    title: 'Choose Your Coverage',
+    description:
+      'Select your insurance type (third-party, full coverage, or commercial), pick a partner company, and enter your vehicle details.',
+  },
+  {
+    number: '02',
+    icon: FaFileAlt,
+    color: 'from-cyan-500 to-cyan-600',
+    bg: 'bg-cyan-50',
+    title: 'Submit Your Documents',
+    description:
+      'Upload your ID, driving license, and vehicle registration. Our OCR system auto-fills your data — no manual typing needed.',
+  },
+  {
+    number: '03',
+    icon: FaUserCheck,
+    color: 'from-emerald-500 to-emerald-600',
+    bg: 'bg-emerald-50',
+    title: 'Get AI-Scored & Pay',
+    description:
+      'Receive your personalized risk score and price instantly. Pay securely via card, Edahabia, or CIB — then download your contract.',
+  },
+  {
+    number: '04',
+    icon: FaTools,
+    color: 'from-indigo-500 to-indigo-600',
+    bg: 'bg-indigo-50',
+    title: 'Declare & Track Claims',
+    description:
+      'In case of an accident, declare it from your phone with photos and GPS. Track expert review, garage repair, and status updates in real-time.',
+  },
+];
 
 export default function HowItWorks() {
-  const steps = [
-    {
-      title: 'Connexion',
-      description: 'Connectez-vous à votre espace client sécurisé pour démarrer votre demande d’assurance.',
-    },
-    {
-      title: 'Informations personnelles',
-      description: 'Renseignez vos informations personnelles pour préparer une offre adaptée à votre profil.',
-    },
-    {
-      title: 'Personnalisez votre assurance',
-      description: 'Choisissez les garanties et options qui correspondent à vos besoins et à votre budget.',
-    },
-    {
-      title: 'Validation & suivi digital',
-      description: 'Suivez l’état de votre dossier et finalisez votre assurance directement depuis votre espace client.',
-    },
-  ];
-
+  useAOS();
   return (
-    <section id="how-it-works" className="py-28 overflow-hidden border-t border-white/5">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section label */}
-        <div className="flex justify-center mb-6" data-aos="fade-up">
-          <span className="text-xs font-semibold uppercase tracking-widest text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-4 py-1.5 rounded-full">
-            Processus
-          </span>
-        </div>
-        <h2
-          className="text-4xl sm:text-5xl font-extrabold text-gray-500 text-center leading-tight mb-4"
-          data-aos="fade-up"
-          data-aos-delay="50"
-        >
-          Comment ça{' '}
-          <span className="bg-linear-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
-            marche ?
-          </span>
-        </h2>
-        <p
-          className="text-base text-gray-500/45 text-center max-w-xl mx-auto mb-16"
-          data-aos="fade-up"
-          data-aos-delay="100"
-        >
-          Quatre étapes simples pour obtenir votre assurance en ligne.
-        </p>
+    <section id="how-it-works" className="py-28 px-4">
+      <div className="max-w-6xl mx-auto">
 
-        <div className="grid md:grid-cols-4 gap-6">
-          {steps.map((step, index) => (
+        <div className="text-center max-w-2xl mx-auto mb-16" data-aos="fade-up">
+          <span className="inline-block text-xs font-semibold uppercase tracking-widest text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1 rounded-full mb-4">
+            How It Works
+          </span>
+          <h2 className="text-4xl sm:text-5xl font-extrabold text-gray-800 leading-tight mb-4">
+            Insured in{' '}
+            <span className="bg-gradient-to-r from-emerald-500 to-cyan-500 bg-clip-text text-transparent">
+              4 simple steps.
+            </span>
+          </h2>
+          <p className="text-gray-500 text-lg leading-relaxed">
+            The entire insurance journey — from first quote to claim resolution — happens right here.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {steps.map((step, i) => (
             <div
-              key={step.title}
-              className="relative flex flex-col items-center text-center"
+              key={step.number}
+              className="relative bg-white/80 backdrop-blur-sm border border-gray-100 rounded-3xl p-7 hover:shadow-xl hover:shadow-blue-900/8 hover:-translate-y-1 transition-all duration-300"
               data-aos="fade-up"
-              data-aos-delay={index * 100}
+              data-aos-delay={i * 100}
             >
-              {/* Connector line */}
-              {index < steps.length - 1 && (
-                <div className="hidden md:block absolute top-6 left-[calc(50%+28px)] w-[calc(100%-56px)] h-px bg-linear-to-r from-blue-600/40 to-cyan-500/40" />
-              )}
-              {/* Step number bubble */}
-              <div className="relative z-10 w-12 h-12 rounded-full bg-linear-to-br from-blue-600 to-cyan-500 flex items-center justify-center text-gray-100 font-bold text-lg shadow-lg shadow-blue-600/25 mb-5">
-                {index + 1}
+              {/* Step number */}
+              <span className="absolute top-5 right-6 text-4xl font-black text-gray-100 select-none">
+                {step.number}
+              </span>
+
+              {/* Icon */}
+              <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${step.color} flex items-center justify-center mb-5 shadow-md`}>
+                <step.icon className="text-white text-base" />
               </div>
-              <h3 className="text-base font-bold text-gray-700 mb-2">{step.title}</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">{step.description}</p>
+
+              <h3 className="text-base font-bold text-gray-800 mb-2">{step.title}</h3>
+              <p className="text-sm text-gray-500 leading-relaxed">{step.description}</p>
+
+              {/* Connector line for desktop */}
+              {i < steps.length - 1 && (
+                <div className="hidden lg:block absolute top-11 -right-3 w-6 h-px bg-gradient-to-r from-gray-200 to-transparent z-10" />
+              )}
             </div>
           ))}
         </div>
+
       </div>
     </section>
   );

@@ -1,77 +1,94 @@
-import { FaGlobeAfrica, FaLightbulb, FaRocket } from 'react-icons/fa';
+"use client"
+import useAOS from '../../hooks/useAOS';
+import { FaShieldAlt, FaBrain, FaCar, FaCamera, FaTools, FaMapMarkerAlt } from 'react-icons/fa';
+
+const features = [
+  {
+    icon: FaShieldAlt,
+    color: 'bg-blue-50 text-blue-600',
+    ring: 'ring-blue-100',
+    title: 'Digital Subscription',
+    description:
+      'Subscribe to auto insurance in minutes — select coverage, upload documents, and receive your PDF contract with a verification QR code.',
+  },
+  {
+    icon: FaBrain,
+    color: 'bg-emerald-50 text-emerald-600',
+    ring: 'ring-emerald-100',
+    title: 'AI Risk Evaluation',
+    description:
+      'Our AI model analyzes your driver profile, vehicle type, mileage, and history to deliver a precise risk score and the best pricing for you.',
+  },
+  {
+    icon: FaCamera,
+    color: 'bg-cyan-50 text-cyan-600',
+    ring: 'ring-cyan-100',
+    title: 'Smart Accident Declaration',
+    description:
+      'Declare accidents from your phone with GPS capture, photo upload, and AI damage detection — no paperwork, no agency visits.',
+  },
+  {
+    icon: FaCar,
+    color: 'bg-indigo-50 text-indigo-600',
+    ring: 'ring-indigo-100',
+    title: 'Real-time Repair Tracking',
+    description:
+      "Follow your vehicle's repair progress live — from expert inspection to parts delivery and garage completion.",
+  },
+  {
+    icon: FaTools,
+    color: 'bg-orange-50 text-orange-600',
+    ring: 'ring-orange-100',
+    title: 'Partner Garage Network',
+    description:
+      'Get automatically matched with the nearest certified repair garage. Approved budgets and work orders handled digitally.',
+  },
+  {
+    icon: FaMapMarkerAlt,
+    color: 'bg-rose-50 text-rose-600',
+    ring: 'ring-rose-100',
+    title: 'Emergency Towing',
+    description:
+      'Request roadside assistance instantly. We locate the nearest towing partner and track their arrival in real-time on the map.',
+  },
+];
 
 export default function Features() {
-  const features = [
-    {
-      title: 'Parcours guidé',
-      description: 'De la connexion à la validation, chaque étape est claire pour compléter votre dossier sans complexité.',
-      icon: <FaRocket />,
-      color: 'from-blue-600 to-pink-500',
-      bg: 'bg-blue-600/10',
-      border: 'border-blue-600/20',
-    },
-    {
-      title: 'Assurance personnalisable',
-      description: 'Ajustez votre formule selon votre profil, vos besoins et votre budget, avec des options adaptées.',
-      icon: <FaGlobeAfrica />,
-      color: 'from-cyan-400 to-blue-500',
-      bg: 'bg-cyan-500/10',
-      border: 'border-cyan-500/20',
-    },
-    {
-      title: 'Gestion 100% numérique',
-      description: 'Suivez vos demandes, mises à jour et validations directement en ligne, sans démarches papier.',
-      icon: <FaLightbulb />,
-      color: 'from-amber-400 to-orange-400',
-      bg: 'bg-amber-400/10',
-      border: 'border-amber-400/20',
-    },
-  ];
-
+  useAOS();
   return (
-    <section className="relative py-28 overflow-hidden border-t border-white/5">
+    <section id="features" className="py-28 px-4">
+      <div className="max-w-6xl mx-auto">
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section label */}
-        <div className="flex justify-center mb-6" data-aos="fade-up">
-          <span className="text-xs font-semibold uppercase tracking-widest text-blue-500 bg-blue-600/10 border border-blue-600/20 px-4 py-1.5 rounded-full">
-            Fonctionnalités
+        <div className="text-center max-w-2xl mx-auto mb-16" data-aos="fade-up">
+          <span className="inline-block text-xs font-semibold uppercase tracking-widest text-blue-600 bg-blue-50 border border-blue-100 px-3 py-1 rounded-full mb-4">
+            Platform Features
           </span>
+          <h2 className="text-4xl sm:text-5xl font-extrabold text-gray-800 leading-tight mb-4">
+            Everything your insurance
+            <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent"> needs.</span>
+          </h2>
+          <p className="text-gray-500 text-lg leading-relaxed">
+            From subscription to claim resolution — Amaneka handles the entire lifecycle of your auto insurance digitally.
+          </p>
         </div>
-        <h2
-          className="text-4xl sm:text-5xl font-extrabold text-gray-700 text-center leading-tight mb-4"
-          data-aos="fade-up"
-          data-aos-delay="50"
-        >
-          Pourquoi choisir{' '}
-          <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-            Amana ?
-          </span>
-        </h2>
-        <p
-          className="text-base text-gray-500/45 text-center max-w-xl mx-auto mb-16"
-          data-aos="fade-up"
-          data-aos-delay="100"
-        >
-          Une expérience d&apos;assurance moderne, conçue pour être rapide et compréhensible.
-        </p>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {features.map((feature, index) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {features.map((f, i) => (
             <div
-              key={feature.title}
-              className={`p-8 rounded-2xl border ${feature.border} ${feature.bg} hover:scale-105 transition-all duration-300`}
+              key={f.title}
+              className="group bg-white/80 backdrop-blur-sm border border-gray-100 rounded-3xl p-7 hover:shadow-xl hover:shadow-blue-900/8 hover:-translate-y-1 transition-all duration-300"
               data-aos="fade-up"
-              data-aos-delay={index * 100}
+              data-aos-delay={i * 80}
             >
-              <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-linear-to-br ${feature.color} text-gray-100 text-xl mb-5 shadow-lg`}>
-                {feature.icon}
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ring-4 ${f.color} ${f.ring} mb-5`}>
+                <f.icon className="text-lg" />
               </div>
-              <h3 className="text-lg font-bold text-gray-500 mb-2">{feature.title}</h3>
-              <p className="text-gray-500/50 leading-relaxed text-sm">{feature.description}</p>
+              <h3 className="text-base font-bold text-gray-800 mb-2">{f.title}</h3>
+              <p className="text-sm text-gray-500 leading-relaxed">{f.description}</p>
             </div>
           ))}
         </div>
+
       </div>
     </section>
   );

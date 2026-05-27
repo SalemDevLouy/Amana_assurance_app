@@ -1,143 +1,209 @@
 'use client';
-import { FaLightbulb, FaRocket, FaUsers, FaGlobeAfrica, FaArrowRight } from 'react-icons/fa';
+import useAOS from '@/app/hooks/useAOS';
 import Link from 'next/link';
 import Footer from '../components/UI/Footer';
+import { FaShieldAlt, FaRocket, FaMapMarkerAlt, FaArrowRight, FaUsers, FaBrain, FaCar } from 'react-icons/fa';
+
+const values = [
+  {
+    icon: FaShieldAlt,
+    color: 'from-blue-500 to-blue-600',
+    bg: 'bg-blue-50',
+    border: 'border-blue-100',
+    title: 'Our Mission',
+    description: 'We make auto insurance accessible, transparent, and fast for every driver in Algeria — from subscription to claim resolution, all from a single digital space.',
+  },
+  {
+    icon: FaRocket,
+    color: 'from-cyan-500 to-blue-500',
+    bg: 'bg-cyan-50',
+    border: 'border-cyan-100',
+    title: 'Our Vision',
+    description: 'We aim to make Amaneka the leading insurtech platform in Algeria — where AI-powered tools eliminate bureaucracy and give every driver the modern experience they deserve.',
+  },
+  {
+    icon: FaMapMarkerAlt,
+    color: 'from-emerald-500 to-teal-500',
+    bg: 'bg-emerald-50',
+    border: 'border-emerald-100',
+    title: 'Built for Algeria',
+    description: 'Amaneka is designed around Algerian insurance regulations, partnering with SAA, CAAT, and CASH Assurance to deliver locally compliant, fully digital coverage.',
+  },
+];
+
+const team = [
+  { name: 'Karim Bellal', role: 'CEO & Co-Founder', avatar: 'KB', color: 'from-blue-500 to-cyan-500' },
+  { name: 'Samia Rahmouni', role: 'CTO & Co-Founder', avatar: 'SR', color: 'from-indigo-500 to-purple-500' },
+  { name: 'Mohamed Aissa', role: 'Head of Claims & AI', avatar: 'MA', color: 'from-emerald-500 to-teal-500' },
+];
 
 export default function AboutPage() {
-
-
-  const values = [
-    {
-      icon: <FaLightbulb />,
-      title: 'Notre Mission',
-      description:
-        "Chez Amana, nous simplifions l'accès à l'assurance pour chaque client. Notre mission est de rendre la souscription claire, rapide et compréhensible, du premier clic jusqu'au document final.",
-      color: 'from-amber-400 to-orange-400',
-      bg: 'bg-amber-400/50',
-      border: 'border-amber-400/20',
-    },
-    {
-      icon: <FaRocket />,
-      title: 'Notre Vision',
-      description:
-        "Nous voulons faire d'Amana la référence de l'assurance digitale en Algérie, avec une expérience moderne où chaque client peut personnaliser sa couverture en toute confiance.",
-      color: 'from-blue-600 to-pink-500',
-      bg: 'bg-blue-600/50',
-      border: 'border-blue-600/20',
-    },
-    {
-      icon: <FaGlobeAfrica />,
-      title: 'Ancré en Algérie',
-      description:
-        "Amana est conçu pour le marché algérien. Nos parcours, garanties et services tiennent compte des besoins réels des clients et du contexte local.",
-      color: 'from-cyan-400 to-blue-500',
-      bg: 'bg-cyan-500/50',
-      border: 'border-cyan-500/20',
-    },
-  ];
-
-  const stats = [
-     { value: '500+', label: 'Clients assurés' },
-      { value: '1K+', label: 'Devis traités' },
-    { value: '100%', label: 'Parcours digital' },
-  ];
-
+  useAOS();
   return (
-    <div className="min-h-screen bg-[#ededed] font-sans overflow-x-hidden" dir="ltr">
+    <div className="min-h-screen bg-[#f4f6fb] font-sans overflow-x-hidden">
 
-      {/* ── Hero ── */}
-      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden pt-24 pb-20">
-        {/* Blobs */}
-        <div className="pointer-events-none absolute -top-48 left-1/2 -translate-x-1/2 w-[700px] h-[400px] rounded-full bg-blue-700/20 blur-[140px]" />
-
-        <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 bg-white/30 border border-white/50 text-blue-600 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-8">
-            <FaUsers className="text-[10px]" />
-            Notre histoire
+      {/* Hero */}
+      <section className="relative min-h-[55vh] flex items-center justify-center overflow-hidden pt-24 pb-20 px-4">
+        <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] rounded-full bg-blue-500/10 blur-[140px]" />
+        <div className="relative z-10 max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 bg-white border border-blue-100 text-blue-600 text-xs font-semibold uppercase tracking-widest px-4 py-2 rounded-full mb-8 shadow-sm">
+            <FaUsers className="text-xs" />
+            Our Story
           </div>
-          <h1 className="text-5xl sm:text-6xl font-extrabold text-gray-700 leading-tight mb-6">
-            À propos de{' '}
-            <span className="bg-linear-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
-              Amana
+          <h1 className="text-5xl sm:text-6xl font-extrabold text-gray-800 leading-tight mb-6">
+            About{' '}
+            <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+              Amaneka
             </span>
           </h1>
           <p className="text-lg text-gray-500 leading-relaxed max-w-2xl mx-auto">
-            Une agence d&apos;assurance digitale née en Algérie, conçue pour
-            transformer les opérations d&apos;assurance en parcours simples,
-            rapides et entièrement numériques.
+            A digital insurance platform born in Algeria, built to replace every paper form and agency visit with a seamless, AI-powered experience for drivers.
           </p>
         </div>
       </section>
 
-      {/* ── Stats strip ── */}
-      <section className="border-t border-white/5 border-b py-10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 sm:grid-cols-3 gap-8">
-          {stats.map((s) => (
-            <div key={s.label} className="text-center">
-              <p className="text-3xl font-extrabold bg-linear-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
-                {s.value}
-              </p>
-              <p className="text-xs text-gray-500/85 uppercase tracking-widest mt-1">{s.label}</p>
+      {/* Stats */}
+      <section className="border-t border-gray-100 py-12 px-4">
+        <div className="max-w-3xl mx-auto grid grid-cols-3 gap-6 text-center">
+          {[
+            { value: '500+', label: 'Insured Clients' },
+            { value: '1K+', label: 'Claims Processed' },
+            { value: '100%', label: 'Digital Journey' },
+          ].map((s) => (
+            <div key={s.label} data-aos="fade-up">
+              <p className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">{s.value}</p>
+              <p className="text-xs text-gray-400 uppercase tracking-widest mt-1 font-medium">{s.label}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ── Mission / Vision / Values ── */}
-      <section className="py-28 border-t border-white/5">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-center mb-6">
-            <span className="text-xs font-semibold uppercase tracking-widest text-blue-500 bg-blue-600/10 border border-blue-600/20 px-4 py-1.5 rounded-full">
-              Nos valeurs
+      {/* Values */}
+      <section className="py-24 px-4 border-t border-gray-100">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-14" data-aos="fade-up">
+            <span className="inline-block text-xs font-semibold uppercase tracking-widest text-blue-600 bg-blue-50 border border-blue-100 px-3 py-1 rounded-full mb-4">
+              Our Values
             </span>
+            <h2 className="text-4xl sm:text-5xl font-extrabold text-gray-800 leading-tight mb-4">
+              What{' '}
+              <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                drives us
+              </span>
+            </h2>
+            <p className="text-gray-500 text-lg max-w-xl mx-auto">
+              Our commitments to every driver who trusts Amaneka with their insurance.
+            </p>
           </div>
-          <h2 className="text-4xl sm:text-5xl font-extrabold text-gray-500 text-center leading-tight mb-4">
-            Ce qui nous{' '}
-            <span className="bg-linear-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
-              définit
-            </span>
-          </h2>
-          <p className="text-base text-gray-500 text-center max-w-xl mx-auto mb-16">
-            Nos engagements envers chaque client qui souhaite une assurance simple et fiable.
-          </p>
-          <div className="grid md:grid-cols-3 gap-6">
-            {values.map((v) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {values.map((v, i) => (
               <div
                 key={v.title}
-                className={`p-8 rounded-2xl border ${v.border} ${v.bg} hover:scale-105 transition-all duration-300`}
+                className={`bg-white/80 border rounded-3xl p-7 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/8 transition-all duration-300 ${v.border}`}
+                data-aos="fade-up"
+                data-aos-delay={i * 100}
               >
-                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-linear-to-br ${v.color} text-gray-100 text-xl mb-5 shadow-lg`}>
-                  {v.icon}
+                <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${v.color} flex items-center justify-center mb-5 shadow-md`}>
+                  <v.icon className="text-white text-base" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-700 mb-2">{v.title}</h3>
-                <p className="text-gray-600 leading-relaxed text-sm">{v.description}</p>
+                <h3 className="text-base font-bold text-gray-800 mb-2">{v.title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{v.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
+      {/* How AI powers us */}
+      <section className="py-24 px-4 border-t border-gray-100">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div data-aos="fade-right">
+            <span className="inline-block text-xs font-semibold uppercase tracking-widest text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1 rounded-full mb-4">
+              Technology
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-800 leading-tight mb-4">
+              AI at the core of everything
+            </h2>
+            <p className="text-gray-500 leading-relaxed mb-6">
+              Amaneka uses machine learning and computer vision to automate the most painful parts of insurance — from pricing to fraud detection.
+            </p>
+            <ul className="space-y-3">
+              {[
+                { icon: FaBrain, text: 'AI Risk Scoring — personalized premiums based on your driving profile' },
+                { icon: FaCar, text: 'Damage Detection — computer vision analyzes accident photos in seconds' },
+                { icon: FaShieldAlt, text: 'Fraud Prevention — pattern recognition flags suspicious claims automatically' },
+              ].map((item) => (
+                <li key={item.text} className="flex items-start gap-3 text-sm text-gray-600">
+                  <div className="w-7 h-7 rounded-xl bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
+                    <item.icon className="text-blue-600 text-xs" />
+                  </div>
+                  {item.text}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="grid grid-cols-2 gap-4" data-aos="fade-left">
+            {[
+              { label: "AI Risk Score", value: "< 3s", sub: "Average scoring time" },
+              { label: "Fraud Detection", value: "94%", sub: "Accuracy rate" },
+              { label: "Claim Processing", value: "48h", sub: "Average resolution" },
+              { label: "Customer Satisfaction", value: "4.8★", sub: "Average rating" },
+            ].map((stat) => (
+              <div key={stat.label} className="bg-white/80 border border-gray-100 rounded-3xl p-5 shadow-sm">
+                <p className="text-2xl font-extrabold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">{stat.value}</p>
+                <p className="text-xs font-bold text-gray-700 mt-1">{stat.label}</p>
+                <p className="text-xs text-gray-400 mt-0.5">{stat.sub}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-      {/* ── CTA ── */}
-      <section className="relative py-28 overflow-hidden text-center border-t border-white/5">
-        <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-150 h-75 bg-blue-700/15 blur-[120px] rounded-full" />
-        <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl sm:text-5xl font-extrabold text-gray-700 leading-tight mb-6">
-            Prêt à lancer{' '}
-            <span className="bg-linear-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
-              votre assurance ?
+      {/* Team */}
+      <section className="py-24 px-4 border-t border-gray-100">
+        <div className="max-w-4xl mx-auto text-center mb-12" data-aos="fade-up">
+          <span className="inline-block text-xs font-semibold uppercase tracking-widest text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full mb-4">
+            Team
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-800">The people behind Amaneka</h2>
+        </div>
+        <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-5">
+          {team.map((member, i) => (
+            <div
+              key={member.name}
+              className="bg-white/80 border border-gray-100 rounded-3xl p-6 text-center shadow-sm hover:-translate-y-1 transition-transform"
+              data-aos="fade-up"
+              data-aos-delay={i * 100}
+            >
+              <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${member.color} flex items-center justify-center text-white text-xl font-extrabold mx-auto mb-4`}>
+                {member.avatar}
+              </div>
+              <p className="text-sm font-bold text-gray-800">{member.name}</p>
+              <p className="text-xs text-gray-500 mt-1">{member.role}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="relative py-24 px-4 border-t border-gray-100 text-center">
+        <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full bg-blue-500/8 blur-[120px]" />
+        <div className="relative z-10 max-w-2xl mx-auto" data-aos="fade-up">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-800 leading-tight mb-4">
+            Ready to experience{' '}
+            <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+              modern insurance?
             </span>
           </h2>
-          <p className="text-base text-gray-500 mb-10 max-w-lg mx-auto">
-            Rejoignez des centaines de clients qui font confiance à Amana pour
-            souscrire, personnaliser et suivre leur assurance sans complexité.
+          <p className="text-gray-500 text-base mb-8 max-w-lg mx-auto">
+            Join hundreds of Algerian drivers who manage their auto insurance entirely online. Get your quote in minutes.
           </p>
           <Link
             href="/signup"
-            className="group inline-flex items-center gap-2 bg-linear-to-r from-blue-600 to-cyan-500 text-gray-100 px-8 py-3.5 rounded-full text-base font-semibold shadow-xl shadow-blue-600/25 hover:shadow-blue-600/50 hover:scale-105 transition-all duration-300"
+            className="group inline-flex items-center gap-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-8 py-4 rounded-2xl text-sm font-bold shadow-xl shadow-blue-500/25 hover:shadow-blue-500/40 hover:scale-105 transition-all duration-300"
           >
-            Créer mon compte
-            <FaArrowRight className="text-sm group-hover:translate-x-1 transition-transform duration-300" />
+            Get a Free Quote
+            <FaArrowRight className="text-xs group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </section>

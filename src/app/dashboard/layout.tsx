@@ -4,8 +4,8 @@ import Wrapper from "../components/UI/Wrapper";
 // import { Sidebar } from "../components/Sidebar";
 
 export const metadata: Metadata = {
-  title: "Amana - Build Your Business in Algeria",
-  description: "Amana: AI-powered platform to create Business Model Canvases and Business Plans for Algerian entrepreneurs.",
+  title: "Amaneka Admin – Insurance Management Dashboard",
+  description: "Amaneka admin panel for managing customers, insurance contracts, claims, and analytics.",
 };
 
 export default function RootLayout({

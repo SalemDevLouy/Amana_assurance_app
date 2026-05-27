@@ -47,7 +47,7 @@ async function ensureDefaultCatalogExists(assuranceType: AssuranceQueryType) {
 
     if (group.options.length > 0) {
       await prisma.guaranteeOption.createMany({
-        data: group.options.map((option, optionIndex) => ({
+        data: group.options.map((option: { key: string; label: string; price: number }, optionIndex: number) => ({
           groupId: createdGroup.id,
           key: option.key,
           label: option.label,

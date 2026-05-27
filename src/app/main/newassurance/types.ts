@@ -1,4 +1,4 @@
-export type AssuranceType = "" | "car" | "farmer";
+export type AssuranceType = "" | "third_party" | "full_coverage" | "commercial";
 
 export type PaymentMethod = "card" | "transfer" | "cash";
 

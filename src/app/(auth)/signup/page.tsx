@@ -4,19 +4,17 @@ import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { SignupFormData, FormErrors } from '@/app/types/types';
 import Link from 'next/link';
-import { FaArrowRight, FaEnvelope, FaLock, FaUser } from 'react-icons/fa';
+import { FaArrowRight, FaEnvelope, FaLock, FaUser, FaShieldAlt } from 'react-icons/fa';
 import { signIn } from 'next-auth/react';
 
 const SignupForm: React.FC = () => {
   const router = useRouter();
-
   const [formData, setFormData] = useState<SignupFormData>({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
-
   const [errors, setErrors] = useState<FormErrors>({});
   const [errorsps, setErrorsps] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,27 +24,13 @@ const SignupForm: React.FC = () => {
     const passwordErrors: string[] = [];
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!formData.name) {
-      newErrors.name = 'Nom requis';
-    }
-
-    if (!formData.email) {
-      newErrors.email = 'Email requis';
-    } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'Format email invalide';
-    }
-
-    if (!formData.password) {
-      passwordErrors.push('Mot de passe requis');
-    } else if (formData.password.length < 6) {
-      passwordErrors.push('Le mot de passe doit contenir au moins 6 caractères');
-    }
-
-    if (!formData.confirmPassword) {
-      passwordErrors.push('Confirmation du mot de passe requise');
-    } else if (formData.password !== formData.confirmPassword) {
-      passwordErrors.push('Les mots de passe ne correspondent pas');
-    }
+    if (!formData.name) newErrors.name = 'Full name is required';
+    if (!formData.email) newErrors.email = 'Email is required';
+    else if (!emailRegex.test(formData.email)) newErrors.email = 'Invalid email format';
+    if (!formData.password) passwordErrors.push('Password is required');
+    else if (formData.password.length < 6) passwordErrors.push('Password must be at least 6 characters');
+    if (!formData.confirmPassword) passwordErrors.push('Please confirm your password');
+    else if (formData.password !== formData.confirmPassword) passwordErrors.push('Passwords do not match');
 
     return { fieldErrors: newErrors, passwordErrors };
   };
@@ -68,11 +52,11 @@ const SignupForm: React.FC = () => {
     try {
       const response = await fetch('/api/users', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message || 'Signup failed');
+      if (!response.ok) throw new Error(data.error || data.message || 'Signup failed');
 
       const signInResult = await signIn('credentials', {
         email: formData.email,
@@ -81,139 +65,157 @@ const SignupForm: React.FC = () => {
       });
 
       if (signInResult?.error) {
-        throw new Error('Compte cree, mais la connexion automatique a echoue. Connectez-vous manuellement.');
+        throw new Error('Account created, but auto sign-in failed. Please sign in manually.');
       }
 
       router.push('/main/profile?complete=1&welcome=1');
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        setErrors({ general: error.message });
-      } else {
-        setErrors({ general: 'An unknown error occurred. Please try again.' });
-      }
+      setErrors({ general: error instanceof Error ? error.message : 'An unknown error occurred. Please try again.' });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  return (
-    <div className="relative min-h-screen bg-[#06060f] overflow-hidden flex items-center justify-center px-4 py-20">
-      <div className="pointer-events-none absolute -top-40 -left-40 w-[420px] h-[420px] rounded-full bg-blue-700/25 blur-[120px]" />
-      <div className="pointer-events-none absolute -bottom-40 -right-40 w-[420px] h-[420px] rounded-full bg-cyan-600/20 blur-[120px]" />
+  const inputClass = (hasError: boolean) =>
+    `w-full rounded-2xl border px-4 py-3 bg-gray-50 text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 focus:bg-white transition-all text-sm ${
+      hasError ? 'border-rose-300 bg-rose-50' : 'border-gray-200'
+    }`;
 
-      <div className="relative z-10 w-full max-w-md rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl shadow-black/30 p-8 sm:p-10">
+  return (
+    <div className="relative min-h-screen bg-[#f4f6fb] overflow-hidden flex items-center justify-center px-4 py-20">
+      <div className="pointer-events-none absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-cyan-400/10 blur-[120px]" />
+      <div className="pointer-events-none absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-blue-500/10 blur-[100px]" />
+
+      <div className="relative z-10 w-full max-w-md">
+        {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-cyan-300 bg-cyan-500/10 border border-cyan-500/20 px-3 py-1.5 rounded-full mb-5">
-            Créer un compte
-          </div>
-          <h1 className="text-3xl font-extrabold text-gray-500">Inscription</h1>
-          <p className="text-gray-500/45 text-sm mt-2">Rejoignez Amana en quelques secondes.</p>
+          <Link href="/" className="inline-flex items-center gap-2.5 mb-6">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/30">
+              <FaShieldAlt className="text-white text-sm" />
+            </div>
+            <span className="text-xl font-extrabold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent tracking-tight">
+              Amaneka
+            </span>
+          </Link>
         </div>
 
-        {errors.general && (
-          <p className="text-rose-300 border border-rose-400/30 bg-rose-500/10 mb-5 text-sm text-center p-3 rounded-xl">
-            {errors.general}
-          </p>
-        )}
-
-        <form
-          className="space-y-5"
-          onSubmit={handleSubmit}
-        >
-          <div>
-            <label htmlFor="name" className="flex items-center gap-2 text-gray-500/70 text-sm mb-2">
-              <FaUser className="text-blue-500" />
-              Nom complet
-            </label>
-            <input
-              id="name"
-              type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className={`w-full rounded-xl border px-4 py-3 bg-white/5 text-gray-500 placeholder:text-gray-500/30 focus:outline-none focus:ring-2 focus:ring-blue-600/50 transition-all ${
-                errors.name ? 'border-rose-500/60' : 'border-white/15'
-              }`}
-              placeholder="Votre nom"
-            />
-            {errors.name && <p className="text-rose-300 text-xs mt-1.5">{errors.name}</p>}
+        <div className="bg-white/80 backdrop-blur-xl border border-gray-100 rounded-3xl shadow-2xl shadow-blue-900/8 p-8 sm:p-10">
+          <div className="mb-8">
+            <span className="inline-block text-xs font-semibold uppercase tracking-widest text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1 rounded-full mb-4">
+              Get started for free
+            </span>
+            <h1 className="text-2xl font-extrabold text-gray-800">Create your account</h1>
+            <p className="text-sm text-gray-500 mt-1.5">Join thousands of Algerian drivers on Amaneka.</p>
           </div>
 
-          <div>
-            <label htmlFor="email" className="flex items-center gap-2 text-gray-500/70 text-sm mb-2">
-              <FaEnvelope className="text-cyan-400" />
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className={`w-full rounded-xl border px-4 py-3 bg-white/5 text-gray-500 placeholder:text-gray-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all ${
-                errors.email ? 'border-rose-500/60' : 'border-white/15'
-              }`}
-              placeholder="vous@email.com"
-            />
-            {errors.email && <p className="text-rose-300 text-xs mt-1.5">{errors.email}</p>}
-          </div>
-
-          <div>
-            <label htmlFor="password" className="flex items-center gap-2 text-gray-500/70 text-sm mb-2">
-              <FaLock className="text-blue-500" />
-              Mot de passe
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="w-full rounded-xl border border-white/15 px-4 py-3 bg-white/5 text-gray-500 placeholder:text-gray-500/30 focus:outline-none focus:ring-2 focus:ring-blue-600/50 transition-all"
-              placeholder="••••••••"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="confirmPassword" className="flex items-center gap-2 text-gray-500/70 text-sm mb-2">
-              <FaLock className="text-cyan-400" />
-              Confirmer le mot de passe
-            </label>
-            <input
-              id="confirmPassword"
-              type="password"
-              value={formData.confirmPassword}
-              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-              className="w-full rounded-xl border border-white/15 px-4 py-3 bg-white/5 text-gray-500 placeholder:text-gray-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all"
-              placeholder="••••••••"
-            />
-          </div>
-
-          {errorsps.length > 0 && (
-            <div className="rounded-xl border border-rose-400/30 bg-rose-500/10 px-4 py-3">
-              <ul className="list-disc pl-5 text-rose-300 text-xs space-y-1">
-                {errorsps.map((error, i) => (
-                  <li key={i}>{error}</li>
-                ))}
-              </ul>
+          {errors.general && (
+            <div className="mb-5 flex items-start gap-3 text-sm text-rose-700 border border-rose-200 bg-rose-50 p-3.5 rounded-2xl">
+              <span className="mt-0.5">⚠</span>
+              {errors.general}
             </div>
           )}
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`w-full inline-flex items-center justify-center gap-2 bg-linear-to-r from-blue-600 to-cyan-500 text-gray-500 px-4 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg shadow-blue-600/25 ${
-              isSubmitting ? 'opacity-60 cursor-not-allowed' : 'hover:scale-[1.02] hover:shadow-blue-600/40'
-            }`}
-          >
-            {isSubmitting ? 'Inscription...' : 'Créer un compte'}
-            {!isSubmitting && <FaArrowRight className="text-xs" />}
-          </button>
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="name" className="flex items-center gap-2 text-sm font-medium text-gray-600 mb-2">
+                <FaUser className="text-blue-500 text-xs" />
+                Full name
+              </label>
+              <input
+                id="name"
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className={inputClass(!!errors.name)}
+                placeholder="Your full name"
+              />
+              {errors.name && <p className="text-rose-500 text-xs mt-1.5">{errors.name}</p>}
+            </div>
 
-          <div className="text-sm text-gray-500/45 text-center mt-5">
-            Vous avez déjà un compte ?{' '}
-            <Link href="/login" className="text-blue-300 hover:text-blue-200 font-semibold transition-colors">
-              Connectez-vous ici
+            <div>
+              <label htmlFor="email" className="flex items-center gap-2 text-sm font-medium text-gray-600 mb-2">
+                <FaEnvelope className="text-blue-500 text-xs" />
+                Email address
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className={inputClass(!!errors.email)}
+                placeholder="you@example.com"
+              />
+              {errors.email && <p className="text-rose-500 text-xs mt-1.5">{errors.email}</p>}
+            </div>
+
+            <div>
+              <label htmlFor="password" className="flex items-center gap-2 text-sm font-medium text-gray-600 mb-2">
+                <FaLock className="text-blue-500 text-xs" />
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                className={inputClass(false)}
+                placeholder="At least 6 characters"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="confirmPassword" className="flex items-center gap-2 text-sm font-medium text-gray-600 mb-2">
+                <FaLock className="text-cyan-500 text-xs" />
+                Confirm password
+              </label>
+              <input
+                id="confirmPassword"
+                type="password"
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                className={inputClass(false)}
+                placeholder="••••••••"
+              />
+            </div>
+
+            {errorsps.length > 0 && (
+              <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3">
+                <ul className="list-disc pl-4 text-rose-600 text-xs space-y-1">
+                  {errorsps.map((error, i) => <li key={i}>{error}</li>)}
+                </ul>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className={`w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-4 py-3.5 rounded-2xl text-sm font-semibold shadow-lg shadow-blue-500/25 transition-all duration-300 mt-2 ${
+                isSubmitting ? 'opacity-60 cursor-not-allowed' : 'hover:scale-[1.02] hover:shadow-blue-500/40'
+              }`}
+            >
+              {isSubmitting ? 'Creating account...' : 'Create Account'}
+              {!isSubmitting && <FaArrowRight className="text-xs" />}
+            </button>
+
+            <p className="text-xs text-gray-400 text-center mt-3">
+              By creating an account you agree to our{' '}
+              <Link href="/terms" className="text-blue-500 hover:underline">Terms</Link>
+              {' '}and{' '}
+              <Link href="/privacy" className="text-blue-500 hover:underline">Privacy Policy</Link>.
+            </p>
+          </form>
+
+          <p className="text-sm text-gray-500 text-center mt-5">
+            Already have an account?{' '}
+            <Link href="/login" className="text-blue-600 hover:text-blue-700 font-semibold transition-colors">
+              Sign in
             </Link>
-          </div>
-        </form>
+          </p>
+        </div>
+
+        <p className="text-center text-xs text-gray-400 mt-6">
+          Protected by Amaneka · Your data is encrypted
+        </p>
       </div>
     </div>
   );

@@ -76,63 +76,14 @@ export default function StepGuarantees({
   }
 
   if (!guaranteeGroups.length) {
-    return <p className="text-sm text-gray-500">Aucune garantie disponible pour ce type.</p>;
-  }
-
-  const title = assuranceType === "farmer" ? "3-Les garanties Agricole :" : "3. Les garanties Automobile";
-
-  if (assuranceType === "farmer") {
-    return (
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
-        <p className="mt-1 text-sm text-gray-500">
-          La responsabilite civile est obligatoire. Les autres garanties sont facultatives.
-        </p>
-
-        {guaranteeGroups.map((group) => {
-          const isMandatory = group.mandatory;
-          const selectedValues = selections[group.key] ?? [];
-
-          return (
-            <Card
-              key={group.id}
-              className={isMandatory ? "mt-5 rounded-2xl border border-emerald-200 bg-emerald-50" : "mt-4 rounded-2xl border border-gray-200 bg-white"}
-            >
-              <CardHeader className="pb-1 text-sm font-semibold text-gray-700">{group.title}</CardHeader>
-              <div className="space-y-2 px-4 pb-4 pt-2">
-                <CheckboxGroup
-                  name={group.key}
-                  value={selectedValues}
-                  onChange={(values) => onCheckboxChange(group.key, toStringArray(values))}
-                  isDisabled={isMandatory}
-                >
-                  <Label>{group.title}</Label>
-                  <Description>{group.description ?? "Choisissez toutes les options qui s'appliquent."}</Description>
-                  {group.options.map((option) => (
-                    <Checkbox key={option.id} value={option.id}>
-                      <Checkbox.Control>
-                        <Checkbox.Indicator />
-                      </Checkbox.Control>
-                      <Checkbox.Content>
-                        <Label>{option.label}</Label>
-                        <Description>{option.price > 0 ? `${option.price} DA` : "Inclus"}</Description>
-                      </Checkbox.Content>
-                    </Checkbox>
-                  ))}
-                </CheckboxGroup>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
-    );
+    return <p className="text-sm text-gray-500">No coverage options available for this type.</p>;
   }
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
-      <p className="mt-1 text-sm text-gray-500">
-        La responsabilite civile est obligatoire. Les autres garanties sont facultatives.
+      <h2 className="text-lg font-extrabold text-gray-800">Customize Your Coverage</h2>
+      <p className="text-sm text-gray-500">
+        Third-party liability is mandatory. All other options are optional — add what fits your needs.
       </p>
 
       {guaranteeGroups.map((group) => {
