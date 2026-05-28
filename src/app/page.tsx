@@ -9,7 +9,7 @@ import Footer from './components/UI/Footer';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-transparent font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-[#f4f6fb] font-sans overflow-x-hidden">
       <Hero />
       <ProblemSolution />
       <Features />
