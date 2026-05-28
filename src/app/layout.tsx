@@ -34,7 +34,7 @@ export default function RootLayout({
           <Provider>
               <BackgroundEffect  />
               <Navbar />
-              <main >{children}</main>
+              <main className="relative">{children}</main>
           </Provider>
         </body>
       </html>
