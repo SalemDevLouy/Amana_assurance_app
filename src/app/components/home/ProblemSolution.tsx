@@ -34,9 +34,9 @@ export default function ProblemSolution() {
             The Problem
           </span>
           <h2 className="text-4xl sm:text-5xl font-extrabold text-gray-800 leading-tight mb-4">
-            Traditional insurance is{' '}
+            Make insurance{' '}
             <span className="bg-gradient-to-r from-rose-500 to-orange-400 bg-clip-text text-transparent">
-              broken.
+              simple, fast, fair.
             </span>
           </h2>
           <p className="text-gray-500 text-lg leading-relaxed">

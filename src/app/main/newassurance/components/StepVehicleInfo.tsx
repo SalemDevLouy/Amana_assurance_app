@@ -16,6 +16,8 @@ type StepVehicleInfoProps = Readonly<{
   setChassisPhoto: React.Dispatch<React.SetStateAction<File | null>>;
   setPlatePhoto: React.Dispatch<React.SetStateAction<File | null>>;
   setOdometerPhoto: React.Dispatch<React.SetStateAction<File | null>>;
+  setCarteGriseFile: React.Dispatch<React.SetStateAction<File | null>>;
+  setPreviousInsuranceFile: React.Dispatch<React.SetStateAction<File | null>>;
   canGoNext: boolean;
 }>;
 
@@ -26,12 +28,16 @@ export default function StepVehicleInfo({
   setChassisPhoto,
   setPlatePhoto,
   setOdometerPhoto,
+  setCarteGriseFile,
+  setPreviousInsuranceFile,
   canGoNext,
 }: StepVehicleInfoProps) {
   const [vehiclePhotosList, setVehiclePhotosList] = useState<UploadedFile[]>([]);
   const [chassisPhotoFile, setChassisPhotoFile] = useState<UploadedFile | null>(null);
   const [platePhotoFile, setPlatePhotoFile] = useState<UploadedFile | null>(null);
   const [odometerPhotoFile, setOdometerPhotoFile] = useState<UploadedFile | null>(null);
+  const [carteGriseUploaded, setCarteGriseUploaded] = useState<UploadedFile | null>(null);
+  const [previousInsuranceUploaded, setPreviousInsuranceUploaded] = useState<UploadedFile | null>(null);
 
   const handleVehiclePhotosChange = (files: FileList | null) => {
     if (!files) {
@@ -108,7 +114,7 @@ export default function StepVehicleInfo({
           onChange={(event) =>
             setCarInfo((prev) => ({ ...prev, brand: event.target.value }))
           }
-          placeholder="Marque"
+          placeholder="Marque de véhicule"
         />
         <Input
           type="text"
@@ -116,7 +122,7 @@ export default function StepVehicleInfo({
           onChange={(event) =>
             setCarInfo((prev) => ({ ...prev, model: event.target.value }))
           }
-          placeholder="Modele"
+          placeholder="Modèle de véhicule"
         />
         <Input
           type="text"
@@ -124,7 +130,7 @@ export default function StepVehicleInfo({
           onChange={(event) =>
             setCarInfo((prev) => ({ ...prev, version: event.target.value }))
           }
-          placeholder="Version du vehicule"
+          placeholder="Version de véhicule"
         />
         <Input
           type="number"
@@ -132,7 +138,7 @@ export default function StepVehicleInfo({
           onChange={(event) =>
             setCarInfo((prev) => ({ ...prev, horsepower: event.target.value }))
           }
-          placeholder="Ex: 6"
+          placeholder="Puissance fiscale (CV)"
         />
         <Input
           type="text"
@@ -148,7 +154,7 @@ export default function StepVehicleInfo({
           onChange={(event) =>
             setCarInfo((prev) => ({ ...prev, seats: event.target.value }))
           }
-          placeholder="Ex: 5"
+          placeholder="Nombre de places"
         />
         <Input
           type="text"
@@ -156,7 +162,7 @@ export default function StepVehicleInfo({
           onChange={(event) =>
             setCarInfo((prev) => ({ ...prev, parking: event.target.value }))
           }
-          placeholder="Garage, rue..."
+          placeholder="Stationnement (garage, en route...)"
         />
         <Input
           type="text"
@@ -164,7 +170,15 @@ export default function StepVehicleInfo({
           onChange={(event) =>
             setCarInfo((prev) => ({ ...prev, registration: event.target.value }))
           }
-          placeholder="Plaque police"
+          placeholder="Numéro d'immatriculation"
+        />
+        <Input
+          type="text"
+          value={carInfo.carteGriseNumber ?? ""}
+          onChange={(event) =>
+            setCarInfo((prev) => ({ ...prev, carteGriseNumber: event.target.value }))
+          }
+          placeholder="Numéro de carte grise"
         />
         <Input
           type="text"
@@ -172,7 +186,7 @@ export default function StepVehicleInfo({
           onChange={(event) =>
             setCarInfo((prev) => ({ ...prev, chassisNumber: event.target.value }))
           }
-          placeholder="VIN"
+          placeholder="Numéro de châssis"
         />
         <Input
           type="date"
@@ -183,6 +197,7 @@ export default function StepVehicleInfo({
               firstRegistrationDate: event.target.value,
             }))
           }
+          placeholder="Date de mise en circulation"
         />
         <Input
           type="number"
@@ -190,7 +205,7 @@ export default function StepVehicleInfo({
           onChange={(event) =>
             setCarInfo((prev) => ({ ...prev, marketValue: event.target.value }))
           }
-          placeholder="Montant en DZD"
+          placeholder="Valeur vénale (DZD)"
         />
         <Input
           type="text"
@@ -198,7 +213,7 @@ export default function StepVehicleInfo({
           onChange={(event) =>
             setCarInfo((prev) => ({ ...prev, usage: event.target.value }))
           }
-          placeholder="Personnel, affaire, auto-ecole..."
+          placeholder="Usage du véhicule (personnel/affaire/auto-école/commerce...)"
         />
         <Input
           type="text"
@@ -209,7 +224,7 @@ export default function StepVehicleInfo({
               circulationZone: event.target.value,
             }))
           }
-          placeholder="Ville, wilaya, national..."
+          placeholder="Zone de circulation (ville, wilaya, national...)"
         />
         <Input
           type="text"
@@ -220,7 +235,7 @@ export default function StepVehicleInfo({
               insuredCapital: event.target.value,
             }))
           }
-          placeholder="100000 DZD, 200000 DZD..."
+          placeholder="Capital assuré (ex: 100000 DZD)"
         />
         <Input
           type="number"
@@ -228,7 +243,7 @@ export default function StepVehicleInfo({
           onChange={(event) =>
             setCarInfo((prev) => ({ ...prev, mileage: event.target.value }))
           }
-          placeholder="Km"
+          placeholder="Kilométrage actuel (Km)"
         />
         <Input
           type="number"
@@ -239,7 +254,7 @@ export default function StepVehicleInfo({
               estimatedKmPerYear: event.target.value,
             }))
           }
-          placeholder="Km/an"
+          placeholder="Estimation du nombre de Km par an"
         />
         <TextArea
           value={carInfo.technicalCertificate}
@@ -322,6 +337,46 @@ export default function StepVehicleInfo({
             )
           }
           hint="Photo du compteur kilometrique visible."
+        />
+
+        <UploadBlock
+          id="carte-grise"
+          title="Carte Grise (Registration Document)"
+          accept="application/pdf,image/*"
+          files={carteGriseUploaded ? [carteGriseUploaded] : []}
+          onChange={(files) =>
+            handleSinglePhotoChange(files, setCarteGriseUploaded, setCarteGriseFile)
+          }
+          onRemove={() =>
+            removeSinglePhoto(
+              setCarteGriseUploaded,
+              setCarteGriseFile,
+              carteGriseUploaded
+            )
+          }
+          hint="Upload a clear scan or photo of the carte grise."
+        />
+
+        <UploadBlock
+          id="previous-insurance"
+          title="Previous Insurance Contract"
+          accept="application/pdf,image/*"
+          files={previousInsuranceUploaded ? [previousInsuranceUploaded] : []}
+          onChange={(files) =>
+            handleSinglePhotoChange(
+              files,
+              setPreviousInsuranceUploaded,
+              setPreviousInsuranceFile
+            )
+          }
+          onRemove={() =>
+            removeSinglePhoto(
+              setPreviousInsuranceUploaded,
+              setPreviousInsuranceFile,
+              previousInsuranceUploaded
+            )
+          }
+          hint="Upload your previous insurance contract (optional)."
         />
       </div>
 

@@ -70,17 +70,46 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    await ensureDefaultCatalogExists(assuranceTypeParam);
+    // Try to ensure DB seed exists, but if anything fails we'll fall back to the in-memory defaults
+    try {
+      await ensureDefaultCatalogExists(assuranceTypeParam);
+    } catch (seedErr) {
+      console.warn("Guarantees DB seed failed, falling back to defaults:", seedErr);
+    }
 
-    const groups = await prisma.guaranteeGroup.findMany({
-      where: { assuranceType: assuranceTypeMap[assuranceTypeParam] },
-      orderBy: { sortOrder: "asc" },
-      include: {
-        options: {
-          orderBy: { sortOrder: "asc" },
+    let groups = [] as any[];
+
+    try {
+      groups = await prisma.guaranteeGroup.findMany({
+        where: { assuranceType: assuranceTypeMap[assuranceTypeParam] },
+        orderBy: { sortOrder: "asc" },
+        include: {
+          options: {
+            orderBy: { sortOrder: "asc" },
+          },
         },
-      },
-    });
+      });
+    } catch (dbErr) {
+      console.warn("Guarantees DB read failed, falling back to defaults:", dbErr);
+      groups = [];
+    }
+
+    if (!groups || groups.length === 0) {
+      // fallback to the in-memory DEFAULT_GUARANTEE_CATALOG
+      const fallback = DEFAULT_GUARANTEE_CATALOG[assuranceTypeParam as "car" | "farmer"] ?? [];
+      return NextResponse.json({
+        assuranceType: assuranceTypeParam,
+        groups: fallback.map((g) => ({
+          id: g.key,
+          key: g.key,
+          title: g.title,
+          description: g.description ?? undefined,
+          inputType: g.inputType,
+          mandatory: g.mandatory,
+          options: g.options.map((o) => ({ id: `${g.key}__${o.key}`, key: o.key, label: o.label, price: o.price })),
+        })),
+      });
+    }
 
     return NextResponse.json({
       assuranceType: assuranceTypeParam,

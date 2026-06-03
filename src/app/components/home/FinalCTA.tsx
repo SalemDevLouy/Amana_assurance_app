@@ -2,9 +2,15 @@
 import useAOS from '../../hooks/useAOS';
 import Link from 'next/link';
 import { FaArrowRight, FaShieldAlt } from 'react-icons/fa';
+import { useSession } from 'next-auth/react';
 
 export default function FinalCTA() {
   useAOS();
+  const { data: session, status } = useSession();
+  const ctaHref =
+    status === 'authenticated'
+      ? session?.user?.role === 'ADMIN' ? '/dashboard' : '/main'
+      : '/signup';
   return (
     <section className="py-28 px-4">
       <div className="max-w-4xl mx-auto" data-aos="fade-up">
@@ -29,18 +35,20 @@ export default function FinalCTA() {
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
-                href="/signup"
+                href={ctaHref}
                 className="group inline-flex items-center gap-2.5 bg-white text-blue-600 px-8 py-4 rounded-2xl text-sm font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
               >
-                Get a Free Quote
+                {status === 'authenticated' ? 'Go to My Space' : 'Get a Free Quote'}
                 <FaArrowRight className="text-xs group-hover:translate-x-1 transition-transform duration-300" />
               </Link>
-              <Link
-                href="/login"
-                className="inline-flex items-center gap-2 text-white/80 hover:text-white border border-white/30 hover:border-white/60 px-8 py-4 rounded-2xl text-sm font-medium transition-all duration-300"
-              >
-                Sign In to My Account
-              </Link>
+              {status !== 'authenticated' && (
+                <Link
+                  href="/login"
+                  className="inline-flex items-center gap-2 text-white/80 hover:text-white border border-white/30 hover:border-white/60 px-8 py-4 rounded-2xl text-sm font-medium transition-all duration-300"
+                >
+                  Sign In to My Account
+                </Link>
+              )}
             </div>
 
             <p className="text-blue-100/70 text-xs mt-8">

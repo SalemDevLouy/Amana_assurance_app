@@ -25,6 +25,7 @@ import {
   readGuaranteesCache,
   writeGuaranteesCache,
 } from "@/app/lib/clientCache";
+import { DEFAULT_GUARANTEE_CATALOG } from "./constants";
 
 function getInitialSelections(groups: GuaranteeGroup[]): GuaranteeSelections {
   const selections: GuaranteeSelections = {};
@@ -112,6 +113,8 @@ export default function Page() {
   const [chassisPhoto, setChassisPhoto] = useState<File | null>(null);
   const [platePhoto, setPlatePhoto] = useState<File | null>(null);
   const [odometerPhoto, setOdometerPhoto] = useState<File | null>(null);
+  const [carteGriseFile, setCarteGriseFile] = useState<File | null>(null);
+  const [previousInsuranceFile, setPreviousInsuranceFile] = useState<File | null>(null);
   const [guaranteeGroups, setGuaranteeGroups] = useState<GuaranteeGroup[]>([]);
   const [guaranteeSelections, setGuaranteeSelections] = useState<GuaranteeSelections>({});
   const [guaranteesLoading, setGuaranteesLoading] = useState(false);
@@ -183,39 +186,45 @@ export default function Page() {
         if (cachedGroups && cachedGroups.length > 0) {
           setGuaranteeGroups(cachedGroups);
           setGuaranteeSelections(getInitialSelections(cachedGroups));
+          console.debug("Loaded guarantees from cache:", cachedGroups);
           setGuaranteesLoading(false);
           return;
         }
 
+        // Load guarantees from local static catalog instead of calling the API
         const apiType = assuranceType ? COVERAGE_TO_API_TYPE[assuranceType] : "car";
-        const response = await fetch(`/api/guarantees?assuranceType=${apiType}`, {
-          cache: "force-cache",
-        });
+        const seedGroups = DEFAULT_GUARANTEE_CATALOG[apiType] ?? DEFAULT_GUARANTEE_CATALOG.car;
 
-        if (!response.ok) {
-          throw new Error("Impossible de charger les garanties.");
-        }
+        // Map seed groups to the GuaranteeGroup shape expected by the UI (add ids)
+        const mappedGroups: GuaranteeGroup[] = seedGroups.map((g, gi) => ({
+          key: g.key,
+          title: g.title,
+          description: g.description,
+          inputType: g.inputType,
+          mandatory: !!g.mandatory,
+          options: g.options.map((opt, oi) => ({
+            id: `${g.key}--${opt.key}`,
+            key: opt.key,
+            label: opt.label,
+            price: opt.price,
+          })),
+        }));
 
-        const data = (await response.json()) as { groups: GuaranteeGroup[] };
+        if (isCancelled) return;
 
-        if (isCancelled) {
-          return;
-        }
-
-        setGuaranteeGroups(data.groups);
-        writeGuaranteesCache(cacheKey, data.groups);
-
-        setGuaranteeSelections(getInitialSelections(data.groups));
-      } catch {
+        setGuaranteeGroups(mappedGroups);
+        writeGuaranteesCache(cacheKey, mappedGroups);
+        setGuaranteeSelections(getInitialSelections(mappedGroups));
+        console.debug("Loaded guarantees from local catalog:", mappedGroups);
+      } catch (err) {
         if (!isCancelled) {
+          console.error("Failed to load local guarantees:", err);
           setGuaranteesError("Failed to load coverage options. Please try again.");
           setGuaranteeGroups([]);
           setGuaranteeSelections({});
         }
       } finally {
-        if (!isCancelled) {
-          setGuaranteesLoading(false);
-        }
+        if (!isCancelled) setGuaranteesLoading(false);
       }
     };
 
@@ -371,6 +380,8 @@ export default function Page() {
                 setChassisPhoto={setChassisPhoto}
                 setPlatePhoto={setPlatePhoto}
                 setOdometerPhoto={setOdometerPhoto}
+                setCarteGriseFile={setCarteGriseFile}
+                setPreviousInsuranceFile={setPreviousInsuranceFile}
                 canGoNext={canGoNext}
               />
             )}

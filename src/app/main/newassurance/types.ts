@@ -41,6 +41,8 @@ export type CarInfo = {
   estimatedKmPerYear: string;
   horsepower: string;
   technicalCertificate: string;
+  carteGriseNumber?: string;
+  previousInsuranceNumber?: string;
 };
 
 export type PaymentInfo = {

@@ -19,14 +19,15 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const isAdmin = status === 'authenticated' && session?.user?.role === 'ADMIN';
+  const isUser  = status === 'authenticated' && session?.user?.role === 'USER';
+
   const navLinks = [
     { href: '/#features', label: 'Features' },
     { href: '/#how-it-works', label: 'How It Works' },
     { href: '/about', label: 'About' },
-    ...(status === 'authenticated' ? [{ href: '/main', label: 'My Space' }] : []),
-    ...(status === 'authenticated' && session?.user?.role === 'ADMIN'
-      ? [{ href: '/dashboard', label: 'Dashboard' }]
-      : []),
+    ...(isUser  ? [{ href: '/main',      label: 'My Space'  }] : []),
+    ...(isAdmin ? [{ href: '/dashboard', label: 'Dashboard' }] : []),
   ];
 
   return (
@@ -80,13 +81,17 @@ export default function Navbar() {
                     <UserAvatar username={session?.user?.name || 'User'} />
                   </div>
                   <div className="absolute right-0 top-full mt-2 w-44 bg-white border border-blue-50 rounded-2xl shadow-xl shadow-blue-900/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-1.5">
-                    <Link
-                      href="/main/profile"
-                      className="block px-4 py-2 text-xs text-gray-600 hover:text-blue-600 hover:bg-blue-50/60 transition-colors"
-                    >
-                      My Profile
-                    </Link>
-                    <div className="border-t border-blue-50 my-1" />
+                    {isUser && (
+                      <>
+                        <Link
+                          href="/main/profile"
+                          className="block px-4 py-2 text-xs text-gray-600 hover:text-blue-600 hover:bg-blue-50/60 transition-colors"
+                        >
+                          My Profile
+                        </Link>
+                        <div className="border-t border-blue-50 my-1" />
+                      </>
+                    )}
                     <div className="px-4 py-1">
                       <LogOut />
                     </div>

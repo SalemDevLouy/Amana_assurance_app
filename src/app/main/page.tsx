@@ -10,7 +10,7 @@ import { getProfileStatusCached } from '@/app/lib/clientCache';
 
 const mockContracts = [
   { id: 'AMT-2026-001', vehicle: 'Peugeot 208 – 2021', coverage: 'Full Coverage', status: 'Active', premium: '18 500 DA/yr', expires: '2027-03-15' },
-  { id: 'AMT-2026-047', vehicle: 'Renault Symbol – 2019', coverage: 'Third-Party', status: 'Pending', premium: '9 200 DA/yr', expires: '2027-06-01' },
+  //{ id: 'AMT-2026-047', vehicle: 'Renault Symbol – 2019', coverage: 'Third-Party', status: 'Pending', premium: '9 200 DA/yr', expires: '2027-06-01' },
 ];
 
 const mockClaims = [

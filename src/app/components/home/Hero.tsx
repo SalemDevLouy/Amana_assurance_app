@@ -2,9 +2,15 @@
 import useAOS from '../../hooks/useAOS';
 import Link from 'next/link';
 import { FaArrowRight, FaShieldAlt, FaCar, FaBrain } from 'react-icons/fa';
+import { useSession } from 'next-auth/react';
 
 export default function Hero() {
   useAOS();
+  const { data: session, status } = useSession();
+  const ctaHref =
+    status === 'authenticated'
+      ? session?.user?.role === 'ADMIN' ? '/dashboard' : '/main'
+      : '/signup';
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Gradient orbs */}
@@ -52,11 +58,11 @@ export default function Hero() {
           data-aos-delay="200"
         >
           <Link
-            href="/signup"
+            href={ctaHref}
             className="group inline-flex items-center gap-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-8 py-4 rounded-2xl text-sm font-semibold shadow-xl shadow-blue-500/30 hover:shadow-blue-600/50 hover:scale-105 transition-all duration-300"
           >
             <FaShieldAlt className="text-xs" />
-            Get a Free Quote
+            {status === 'authenticated' ? 'Go to My Space' : 'Get a Free Quote'}
             <FaArrowRight className="text-xs group-hover:translate-x-1 transition-transform duration-300" />
           </Link>
           <Link
