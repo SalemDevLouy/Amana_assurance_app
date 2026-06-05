@@ -71,6 +71,13 @@ export default function CustomerDashboard() {
           </div>
           <div className="flex items-center gap-3">
             <Link
+              href="/main/contract"
+              className="inline-flex items-center gap-2 bg-white border border-blue-200 text-blue-600 hover:bg-blue-50 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all shadow-sm"
+            >
+              <FaRegIdCard className="text-xs" />
+              My Card
+            </Link>
+            <Link
               href="/main/accident"
               className="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-4 py-2.5 rounded-2xl text-xs font-bold transition-all shadow-md shadow-rose-500/20"
             >
@@ -161,6 +168,9 @@ export default function CustomerDashboard() {
                     <span className="text-xs font-semibold text-gray-600">{c.premium}</span>
                     <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${statusBadge(c.status)}`}>{c.status}</span>
                     <span className="text-xs text-gray-400">Exp: {c.expires}</span>
+                    <Link href="/main/contract" className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-100 px-2.5 py-1 rounded-xl transition-all">
+                      <FaRegIdCard className="text-xs" /> Carte
+                    </Link>
                   </div>
                 </div>
               ))}
