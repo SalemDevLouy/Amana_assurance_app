@@ -197,6 +197,7 @@ export default function Page() {
 
         // Map seed groups to the GuaranteeGroup shape expected by the UI (add ids)
         const mappedGroups: GuaranteeGroup[] = seedGroups.map((g, gi) => ({
+          id: `${g.key}--${gi}`,
           key: g.key,
           title: g.title,
           description: g.description,

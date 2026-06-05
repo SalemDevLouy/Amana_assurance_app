@@ -118,9 +118,9 @@ export async function GET(request: NextRequest) {
         key: group.key,
         title: group.title,
         description: group.description ?? undefined,
-        inputType: inputTypeMap[group.inputType],
+        inputType: inputTypeMap[group.inputType as GuaranteeInputType],
         mandatory: group.mandatory,
-        options: group.options.map((option) => ({
+        options: group.options.map((option: { id: string; key: string; label: string; price: number }) => ({
           id: option.id,
           key: option.key,
           label: option.label,
