@@ -29,6 +29,34 @@ const IMPACT_ZONES = [
 const LICENSE_CATS = ["A", "B", "C", "D", "E", "EB", "EC", "ED"];
 const WEATHER_OPTS = ["Clear", "Rainy", "Foggy", "Windy", "Icy", "Night"];
 
+// Auto-fill Véhicule A from the user's contract
+const CONTRACT_DATA: Record<string, Partial<AccidentForm>> = {
+  "AMT-2026-001": {
+    vaMarque: "Peugeot", vaType: "Berline", vaPlateNumber: "123-456-16",
+    vaInsuredLastName: "Louafi", vaInsuredFirstName: "Salem",
+    vaInsuredAddress: "123 Rue Didouche Mourad, Alger",
+    vaInsuranceCompany: "Amana Assurance", vaPolicyNumber: "AMT-2026-001",
+    vaAttestationFrom: "2026-03-15", vaAttestationTo: "2027-03-15",
+    vaAgency: "Amana Alger Centre",
+    vaDriverLastName: "Louafi", vaDriverFirstName: "Salem",
+    vaDriverAddress: "123 Rue Didouche Mourad, Alger",
+    vaLicenseNumber: "DZ-09-12345", vaLicenseDate: "2020-05-10",
+    vaLicenseWilaya: "Alger", vaLicenseCategory: "B",
+  },
+  "AMT-2026-047": {
+    vaMarque: "Renault", vaType: "Berline", vaPlateNumber: "789-012-09",
+    vaInsuredLastName: "Louafi", vaInsuredFirstName: "Salem",
+    vaInsuredAddress: "123 Rue Didouche Mourad, Alger",
+    vaInsuranceCompany: "Amana Assurance", vaPolicyNumber: "AMT-2026-047",
+    vaAttestationFrom: "2026-06-01", vaAttestationTo: "2027-06-01",
+    vaAgency: "Amana Alger Centre",
+    vaDriverLastName: "Louafi", vaDriverFirstName: "Salem",
+    vaDriverAddress: "123 Rue Didouche Mourad, Alger",
+    vaLicenseNumber: "DZ-09-12345", vaLicenseDate: "2020-05-10",
+    vaLicenseWilaya: "Alger", vaLicenseCategory: "B",
+  },
+};
+
 const CONSTAT_LABELS = [
   "Informations de l'accident",
   "Véhicule A",
@@ -236,6 +264,12 @@ export default function AccidentDeclarationPage() {
   const set = <K extends keyof AccidentForm>(f: K, v: AccidentForm[K]) =>
     setForm((p) => ({ ...p, [f]: v }));
 
+  // When the user picks a contract, auto-fill Véhicule A from contract data
+  const handleContractChange = (contractId: string) => {
+    const prefill = CONTRACT_DATA[contractId] ?? {};
+    setForm((p) => ({ ...p, contractId, ...prefill }));
+  };
+
   const inp = "w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all";
   const sec = "text-xs font-bold uppercase tracking-widest text-blue-600 mb-3 pb-1 border-b border-blue-100";
 
@@ -337,6 +371,16 @@ export default function AccidentDeclarationPage() {
           {/* ── STEP 1: Incident Details ────────────────────────────────────── */}
           {step === 1 && (
             <div className="space-y-5">
+              <div className={`flex items-start gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all ${form.needTowing ? "border-amber-400 bg-amber-50" : "border-gray-200 bg-gray-50"}`}
+                onClick={() => set("needTowing", !form.needTowing)}>
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${form.needTowing ? "bg-amber-100" : "bg-white border border-gray-200"}`}>
+                  <FaTruck className={`text-sm ${form.needTowing ? "text-amber-600" : "text-gray-400"}`} />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-gray-800">I need a towing service</p>
+                  <p className="text-xs text-gray-500 mt-0.5">We'll dispatch the nearest available towing partner.</p>
+                </div>
+              </div>
               <div>
                 <h2 className="text-lg font-extrabold text-gray-800 mb-1">Incident Details</h2>
                 <p className="text-sm text-gray-500">Provide the basic information about the accident.</p>
@@ -371,11 +415,16 @@ export default function AccidentDeclarationPage() {
                 </div>
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Insurance Contract</label>
-                  <select value={form.contractId} onChange={(e) => set("contractId", e.target.value)} className={inp}>
+                  <select value={form.contractId} onChange={(e) => handleContractChange(e.target.value)} className={inp}>
                     <option value="">Select contract...</option>
                     <option value="AMT-2026-001">AMT-2026-001 – Peugeot 208</option>
                     <option value="AMT-2026-047">AMT-2026-047 – Renault Symbol</option>
                   </select>
+                  {form.contractId && (
+                    <p className="text-xs text-emerald-600 font-medium mt-1.5">
+                      ✓ Véhicule A pre-filled from contract {form.contractId}
+                    </p>
+                  )}
                 </div>
               </div>
               <div>
@@ -383,16 +432,7 @@ export default function AccidentDeclarationPage() {
                 <textarea value={form.description} onChange={(e) => set("description", e.target.value)} rows={4}
                   placeholder="Describe what happened in detail..." className={inp} />
               </div>
-              <div className={`flex items-start gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all ${form.needTowing ? "border-amber-400 bg-amber-50" : "border-gray-200 bg-gray-50"}`}
-                onClick={() => set("needTowing", !form.needTowing)}>
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${form.needTowing ? "bg-amber-100" : "bg-white border border-gray-200"}`}>
-                  <FaTruck className={`text-sm ${form.needTowing ? "text-amber-600" : "text-gray-400"}`} />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-gray-800">I need a towing service</p>
-                  <p className="text-xs text-gray-500 mt-0.5">We'll dispatch the nearest available towing partner.</p>
-                </div>
-              </div>
+              
             </div>
           )}
 
@@ -448,23 +488,12 @@ export default function AccidentDeclarationPage() {
               {/* ── Sub-step 1: Informations de l'accident ─────────────────── */}
               {constatStep === 1 && (
                 <div className="space-y-5">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Date de l'accident</label>
-                      <input type="date" value={form.date} onChange={(e) => set("date", e.target.value)} className={inp} />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Heure</label>
-                      <input type="time" value={form.time} onChange={(e) => set("time", e.target.value)} className={inp} />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Lieu précis</label>
-                      <input type="text" placeholder="Adresse, croisement, RN..." value={form.location} onChange={(e) => set("location", e.target.value)} className={inp} />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Dégâts matériels autres</label>
-                      <textarea rows={3} placeholder="Dommages causés à d'autres biens..." value={form.otherPropertyDamage} onChange={(e) => set("otherPropertyDamage", e.target.value)} className={inp} />
-                    </div>
+                
+
+                  {/* Unique fields for this sub-step */}
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Dégâts matériels autres</label>
+                    <textarea rows={3} placeholder="Dommages causés à d'autres biens (mobilier urbain, clôture, autre véhicule non impliqué…)" value={form.otherPropertyDamage} onChange={(e) => set("otherPropertyDamage", e.target.value)} className={inp} />
                   </div>
 
                   {/* Témoins */}
@@ -502,49 +531,41 @@ export default function AccidentDeclarationPage() {
                 </div>
               )}
 
-              {/* ── Sub-step 2: Véhicule A ─────────────────────────────────── */}
+              {/* ── Sub-step 2: Véhicule A (user) ─────────────────────────── */}
               {constatStep === 2 && (
-                <div className="space-y-7">
-                  <div>
-                    <h3 className={sec}>Informations véhicule A</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div><label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Marque</label><input type="text" placeholder="Ex: Renault" value={form.vaMarque} onChange={(e) => set("vaMarque", e.target.value)} className={inp} /></div>
-                      <div><label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Type</label><input type="text" placeholder="Ex: Berline, SUV…" value={form.vaType} onChange={(e) => set("vaType", e.target.value)} className={inp} /></div>
-                      <div><label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Numéro d'immatriculation</label><input type="text" value={form.vaPlateNumber} onChange={(e) => set("vaPlateNumber", e.target.value)} className={inp} /></div>
-                      <div><label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Provenance</label><input type="text" value={form.vaProvenance} onChange={(e) => set("vaProvenance", e.target.value)} className={inp} /></div>
-                      <div><label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Destination</label><input type="text" value={form.vaDestination} onChange={(e) => set("vaDestination", e.target.value)} className={inp} /></div>
+                <div className="space-y-6">
+
+                  {/* Read-only identity card from contract */}
+                  <div className="rounded-2xl border border-gray-200 bg-gray-50 overflow-hidden">
+                    <div className="flex items-center gap-2 px-5 py-3 bg-emerald-50 border-b border-emerald-100">
+                      <FaCheckCircle className="text-emerald-500 text-xs" />
+                      <p className="text-xs font-bold text-emerald-700">
+                        Véhicule A — vos données (contrat {form.contractId || "—"})
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-2 px-5 py-4 text-sm">
+                      <div><span className="text-[10px] text-gray-400 uppercase tracking-wide block">Véhicule</span><span className="font-semibold text-gray-800">{[form.vaMarque, form.vaType].filter(Boolean).join(" · ") || "—"}</span></div>
+                      <div><span className="text-[10px] text-gray-400 uppercase tracking-wide block">Plaque</span><span className="font-semibold text-gray-800 font-mono">{form.vaPlateNumber || "—"}</span></div>
+                      <div><span className="text-[10px] text-gray-400 uppercase tracking-wide block">Assuré</span><span className="font-semibold text-gray-800">{[form.vaInsuredFirstName, form.vaInsuredLastName].filter(Boolean).join(" ") || "—"}</span></div>
+                      <div><span className="text-[10px] text-gray-400 uppercase tracking-wide block">N° Police</span><span className="font-semibold text-gray-800 font-mono">{form.vaPolicyNumber || "—"}</span></div>
+                      <div><span className="text-[10px] text-gray-400 uppercase tracking-wide block">Société</span><span className="font-semibold text-gray-800">{form.vaInsuranceCompany || "—"}</span></div>
+                      <div><span className="text-[10px] text-gray-400 uppercase tracking-wide block">Attestation</span><span className="font-semibold text-gray-800">{form.vaAttestationFrom && form.vaAttestationTo ? `${form.vaAttestationFrom} → ${form.vaAttestationTo}` : "—"}</span></div>
+                      <div><span className="text-[10px] text-gray-400 uppercase tracking-wide block">Conducteur</span><span className="font-semibold text-gray-800">{[form.vaDriverFirstName, form.vaDriverLastName].filter(Boolean).join(" ") || "—"}</span></div>
+                      <div><span className="text-[10px] text-gray-400 uppercase tracking-wide block">Permis</span><span className="font-semibold text-gray-800 font-mono">{form.vaLicenseNumber || "—"} {form.vaLicenseCategory ? `(${form.vaLicenseCategory})` : ""}</span></div>
                     </div>
                   </div>
 
+                  {/* Only fields unique to this accident */}
                   <div>
-                    <h3 className={sec}>Assuré (A)</h3>
+                    <h3 className={sec}>Trajet au moment de l'accident</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div><label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Nom</label><input type="text" value={form.vaInsuredLastName} onChange={(e) => set("vaInsuredLastName", e.target.value)} className={inp} /></div>
-                      <div><label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Prénom</label><input type="text" value={form.vaInsuredFirstName} onChange={(e) => set("vaInsuredFirstName", e.target.value)} className={inp} /></div>
-                      <div className="sm:col-span-2"><label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Adresse</label><input type="text" value={form.vaInsuredAddress} onChange={(e) => set("vaInsuredAddress", e.target.value)} className={inp} /></div>
-                      <div><label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Société d'assurance</label><input type="text" value={form.vaInsuranceCompany} onChange={(e) => set("vaInsuranceCompany", e.target.value)} className={inp} /></div>
-                      <div><label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">N° Police</label><input type="text" value={form.vaPolicyNumber} onChange={(e) => set("vaPolicyNumber", e.target.value)} className={inp} /></div>
-                      <div><label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Attestation valable du</label><input type="date" value={form.vaAttestationFrom} onChange={(e) => set("vaAttestationFrom", e.target.value)} className={inp} /></div>
-                      <div><label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Attestation valable au</label><input type="date" value={form.vaAttestationTo} onChange={(e) => set("vaAttestationTo", e.target.value)} className={inp} /></div>
-                      <div><label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Agence</label><input type="text" value={form.vaAgency} onChange={(e) => set("vaAgency", e.target.value)} className={inp} /></div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className={sec}>Conducteur (A)</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div><label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Nom</label><input type="text" value={form.vaDriverLastName} onChange={(e) => set("vaDriverLastName", e.target.value)} className={inp} /></div>
-                      <div><label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Prénom</label><input type="text" value={form.vaDriverFirstName} onChange={(e) => set("vaDriverFirstName", e.target.value)} className={inp} /></div>
-                      <div className="sm:col-span-2"><label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Adresse</label><input type="text" value={form.vaDriverAddress} onChange={(e) => set("vaDriverAddress", e.target.value)} className={inp} /></div>
-                      <div><label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">N° Permis</label><input type="text" value={form.vaLicenseNumber} onChange={(e) => set("vaLicenseNumber", e.target.value)} className={inp} /></div>
-                      <div><label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Date de délivrance</label><input type="date" value={form.vaLicenseDate} onChange={(e) => set("vaLicenseDate", e.target.value)} className={inp} /></div>
-                      <div><label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Wilaya de délivrance</label><input type="text" value={form.vaLicenseWilaya} onChange={(e) => set("vaLicenseWilaya", e.target.value)} className={inp} /></div>
                       <div>
-                        <label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Catégorie permis</label>
-                        <select value={form.vaLicenseCategory} onChange={(e) => set("vaLicenseCategory", e.target.value)} className={inp}>
-                          <option value="">— Sélectionner —</option>
-                          {LICENSE_CATS.map((c) => <option key={c} value={c}>{c}</option>)}
-                        </select>
+                        <label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Provenance</label>
+                        <input type="text" placeholder="Lieu de départ" value={form.vaProvenance} onChange={(e) => set("vaProvenance", e.target.value)} className={inp} />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Destination</label>
+                        <input type="text" placeholder="Lieu de destination" value={form.vaDestination} onChange={(e) => set("vaDestination", e.target.value)} className={inp} />
                       </div>
                     </div>
                   </div>
@@ -562,6 +583,7 @@ export default function AccidentDeclarationPage() {
                   </div>
                 </div>
               )}
+
 
               {/* ── Sub-step 3: Véhicule B ─────────────────────────────────── */}
               {constatStep === 3 && (
