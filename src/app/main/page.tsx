@@ -7,6 +7,7 @@ import {
   FaPlus, FaClipboardList, FaCheckCircle, FaClock, FaChevronRight,
   FaRegIdCard, FaBuilding, FaTimes, FaCheckDouble,
   FaTruck, FaWrench, FaSearch, FaTools, FaPhone, FaMapMarkerAlt, FaStar,
+  FaHome, FaPlaneDeparture, FaIndustry, FaStore, FaUmbrella, FaLock,
 } from 'react-icons/fa';
 import { getProfileStatusCached } from '@/app/lib/clientCache';
 
@@ -41,6 +42,94 @@ const AGENCIES = [
     light: 'bg-amber-50 border-amber-200 hover:border-amber-400',
     badge: 'bg-amber-100 text-amber-700 border-amber-200',
     dot: 'bg-amber-500',
+  },
+];
+
+// ── Insurance services ─────────────────────────────────────────────────────────
+const INSURANCE_SERVICES = [
+  {
+    id: 'auto',
+    label: 'Automobile',
+    desc: 'Tous risques, tiers et plus',
+    icon: FaCar,
+    gradient: 'from-blue-600 to-cyan-500',
+    bg: 'bg-blue-50',
+    color: 'text-blue-600',
+    border: 'border-blue-200',
+    available: true,
+    href: '/main/services/automobile',
+  },
+  {
+    id: 'habitation',
+    label: 'Habitation',
+    desc: 'Maison, appartement, locataire',
+    icon: FaHome,
+    gradient: 'from-emerald-500 to-teal-600',
+    bg: 'bg-emerald-50',
+    color: 'text-emerald-600',
+    border: 'border-emerald-200',
+    available: false,
+    href: '#',
+  },
+  {
+    id: 'voyage',
+    label: 'Voyage',
+    desc: 'Couverture nationale et internationale',
+    icon: FaPlaneDeparture,
+    gradient: 'from-violet-500 to-purple-600',
+    bg: 'bg-violet-50',
+    color: 'text-violet-600',
+    border: 'border-violet-200',
+    available: false,
+    href: '#',
+  },
+  {
+    id: 'industrie',
+    label: 'Industrie',
+    desc: 'Risques industriels et équipements',
+    icon: FaIndustry,
+    gradient: 'from-gray-600 to-gray-800',
+    bg: 'bg-gray-50',
+    color: 'text-gray-600',
+    border: 'border-gray-200',
+    available: false,
+    href: '#',
+  },
+  {
+    id: 'commerce',
+    label: 'Commerce',
+    desc: 'Fonds de commerce et locaux pros',
+    icon: FaStore,
+    gradient: 'from-amber-500 to-orange-500',
+    bg: 'bg-amber-50',
+    color: 'text-amber-600',
+    border: 'border-amber-200',
+    available: false,
+    href: '#',
+  },
+  {
+    id: 'multirisque',
+    label: 'Multirisque',
+    desc: 'Protection globale personnalisée',
+    icon: FaUmbrella,
+    gradient: 'from-rose-500 to-pink-600',
+    bg: 'bg-rose-50',
+    color: 'text-rose-600',
+    border: 'border-rose-200',
+    available: false,
+    href: '#',
+  },
+  {
+    id: 'agricole',
+    label: 'Agricole',
+    desc: 'Récoltes, matériel et cheptel',
+    icon: FaIndustry,
+    gradient: 'from-lime-500 to-green-600',
+    bg: 'bg-lime-50',
+    color: 'text-lime-700',
+    border: 'border-lime-200',
+    available: false,
+    href: '#',
   },
 ];
 
@@ -290,7 +379,7 @@ export default function CustomerDashboard() {
               className="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-4 py-2.5 rounded-2xl text-xs font-bold transition-all shadow-md shadow-rose-500/20">
               <FaExclamationTriangle className="text-xs" /> Declare Accident
             </Link>
-            <Link href="/main/newassurance"
+            <Link href="/main/services/automobile"
               className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-4 py-2.5 rounded-2xl text-xs font-bold transition-all shadow-md shadow-blue-500/20 hover:shadow-blue-500/40">
               <FaPlus className="text-xs" /> New Insurance
             </Link>
@@ -330,6 +419,51 @@ export default function CustomerDashboard() {
           </div>
         )}
 
+        {/* Insurance services — primary section */}
+        <div className="bg-white/80 border border-gray-100 rounded-3xl p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wide">Nos services d'assurance</h2>
+              <p className="text-xs text-gray-500 mt-0.5">Souscrivez en ligne — disponible maintenant ou bientôt</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {INSURANCE_SERVICES.map((svc) => {
+              const Card = (
+                <div
+                  key={svc.id}
+                  className={`relative flex flex-col gap-3 p-4 rounded-2xl border-2 transition-all ${
+                    svc.available
+                      ? `${svc.border} ${svc.bg} hover:shadow-md hover:scale-[1.02] cursor-pointer`
+                      : 'border-gray-200 bg-gray-50/60 opacity-60 cursor-not-allowed select-none'
+                  }`}
+                >
+                  {!svc.available && (
+                    <span className="absolute top-2.5 right-2.5 inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-gray-200 text-gray-500 border border-gray-300">
+                      <FaLock className="text-[8px]" /> Bientôt
+                    </span>
+                  )}
+                  <div className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${svc.gradient} flex items-center justify-center shadow-md`}>
+                    <svc.icon className="text-white text-base" />
+                  </div>
+                  <div>
+                    <p className={`text-sm font-extrabold ${svc.available ? svc.color : 'text-gray-500'}`}>{svc.label}</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5 leading-tight">{svc.desc}</p>
+                  </div>
+                  {svc.available && (
+                    <span className={`inline-flex items-center gap-1 text-[10px] font-bold ${svc.color}`}>
+                      Souscrire <FaChevronRight className="text-[8px]" />
+                    </span>
+                  )}
+                </div>
+              );
+              return svc.available
+                ? <Link key={svc.id} href={svc.href}>{Card}</Link>
+                : <div key={svc.id}>{Card}</div>;
+            })}
+          </div>
+        </div>
+
         {/* KPI strip */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
@@ -358,7 +492,7 @@ export default function CustomerDashboard() {
               <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wide">My Contracts</h2>
               <span className="bg-blue-50 border border-blue-100 text-blue-600 text-xs font-semibold px-2 py-0.5 rounded-full">{mockContracts.length}</span>
             </div>
-            <Link href="/main/newassurance" className="text-xs text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-1">
+            <Link href="/main/services/automobile" className="text-xs text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-1">
               + New <FaChevronRight className="text-xs" />
             </Link>
           </div>
@@ -544,7 +678,7 @@ export default function CustomerDashboard() {
           <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wide mb-4">Quick Actions</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { label: 'New Insurance', href: '/main/newassurance', icon: FaPlus, color: 'bg-blue-50 text-blue-600 hover:bg-blue-100 border-blue-100' },
+              { label: 'New Insurance', href: '/main/services/automobile', icon: FaPlus, color: 'bg-blue-50 text-blue-600 hover:bg-blue-100 border-blue-100' },
               { label: 'Declare Accident', href: '/main/accident', icon: FaExclamationTriangle, color: 'bg-rose-50 text-rose-600 hover:bg-rose-100 border-rose-100' },
               { label: 'Track Claims', href: '/main/claims', icon: FaClipboardList, color: 'bg-amber-50 text-amber-600 hover:bg-amber-100 border-amber-100' },
               { label: 'My Profile', href: '/main/profile', icon: FaRegIdCard, color: 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border-emerald-100' },

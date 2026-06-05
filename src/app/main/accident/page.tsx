@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import {
   FaMapMarkerAlt, FaCamera, FaFileAlt, FaUserCheck, FaArrowLeft,
   FaArrowRight, FaCheckCircle, FaTruck, FaCar, FaCloudSun, FaPlus, FaTrash,
+  FaTimes, FaPhone, FaStar, FaClock,
 } from "react-icons/fa";
 
 // ── Constants ──────────────────────────────────────────────────────────────────
@@ -28,6 +29,14 @@ const IMPACT_ZONES = [
 
 const LICENSE_CATS = ["A", "B", "C", "D", "E", "EB", "EC", "ED"];
 const WEATHER_OPTS = ["Clear", "Rainy", "Foggy", "Windy", "Icy", "Night"];
+
+// Towing service partners
+const TOWING_PARTNERS = [
+  { id: 't1', name: 'Dépannage Express Alger',    wilaya: 'Alger',        address: 'Rue Hassiba Ben Bouali, Alger-Centre',  phone: '+213 21 63 00 11', rating: 4.8, available: true,  hours: '24h/24',  eta: '~12 min' },
+  { id: 't2', name: 'SOS Route Oran',             wilaya: 'Oran',         address: 'Bd Millenium, Oran',                    phone: '+213 41 33 55 77', rating: 4.6, available: true,  hours: '24h/24',  eta: '~25 min' },
+  { id: 't3', name: 'Remorquage Rapide Annaba',   wilaya: 'Annaba',       address: 'Zone Industrielle, Annaba',             phone: '+213 38 86 20 44', rating: 4.4, available: false, hours: '06h–22h', eta: null },
+  { id: 't4', name: 'Assistance Auto Constantine', wilaya: 'Constantine',  address: 'Route nationale 3, Constantine',        phone: '+213 31 68 90 12', rating: 4.5, available: true,  hours: '24h/24',  eta: '~30 min' },
+];
 
 // Auto-fill Véhicule A from the user's contract
 const CONTRACT_DATA: Record<string, Partial<AccidentForm>> = {
@@ -149,6 +158,7 @@ type AccidentForm = {
 
   // Other
   responsible: "me" | "other" | "shared" | "";
+  selectedTowingPartnerId: string;
 };
 
 // ── Signature Canvas ───────────────────────────────────────────────────────────
@@ -223,6 +233,7 @@ export default function AccidentDeclarationPage() {
   const [step, setStep] = useState<MainStep>(1);
   const [constatStep, setConstatStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
+  const [showTowingModal, setShowTowingModal] = useState(false);
 
   const [form, setForm] = useState<AccidentForm>({
     date: "", time: "", location: "", wilaya: "", weather: "",
@@ -259,6 +270,7 @@ export default function AccidentDeclarationPage() {
     injuries: [],
     signatureA: "", signatureB: "", signatureInsured: "",
     responsible: "",
+    selectedTowingPartnerId: "",
   });
 
   const set = <K extends keyof AccidentForm>(f: K, v: AccidentForm[K]) =>
@@ -329,6 +341,116 @@ export default function AccidentDeclarationPage() {
 
   return (
     <div className="min-h-screen bg-[#f4f6fb] pt-24 pb-16 px-4 sm:px-6">
+
+      {/* ── Towing modal ────────────────────────────────────────────────────── */}
+      {showTowingModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden">
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center">
+                  <FaTruck className="text-amber-600 text-sm" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-extrabold text-gray-800">Choisir un dépanneur</h2>
+                  <p className="text-xs text-gray-400">Partenaires agréés Amaneka disponibles</p>
+                </div>
+              </div>
+              <button type="button" onClick={() => setShowTowingModal(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1">
+                <FaTimes />
+              </button>
+            </div>
+
+            {/* Partner cards */}
+            <div className="p-4 space-y-3 max-h-[60vh] overflow-y-auto">
+              {TOWING_PARTNERS.map((p) => {
+                const isSelected = form.selectedTowingPartnerId === p.id;
+                return (
+                  <div key={p.id}
+                    className={`rounded-2xl border-2 p-4 transition-all ${
+                      isSelected
+                        ? "border-amber-400 bg-amber-50"
+                        : p.available
+                          ? "border-gray-200 bg-white hover:border-amber-200 hover:bg-amber-50/30"
+                          : "border-gray-100 bg-gray-50 opacity-60"
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      {/* Icon */}
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isSelected ? "bg-amber-200" : "bg-amber-100"}`}>
+                        <FaTruck className="text-amber-600 text-sm" />
+                      </div>
+
+                      {/* Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="text-sm font-bold text-gray-800">{p.name}</p>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${
+                            p.available
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                              : "bg-gray-100 text-gray-400 border-gray-200"
+                          }`}>
+                            {p.available ? "● Disponible" : "○ Indisponible"}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-1 mt-0.5 mb-1.5">
+                          <FaStar className="text-amber-400 text-[10px]" />
+                          <span className="text-[10px] font-semibold text-gray-600">{p.rating}</span>
+                          <span className="text-[10px] text-gray-400">· {p.wilaya}</span>
+                          {p.eta && <span className="text-[10px] text-emerald-600 font-semibold ml-1">· ETA {p.eta}</span>}
+                        </div>
+
+                        <p className="text-xs text-gray-500 mb-1">{p.address}</p>
+
+                        <div className="flex items-center gap-1 text-xs text-gray-400">
+                          <FaClock className="text-[10px]" />
+                          <span>{p.hours}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    {p.available && (
+                      <div className="flex gap-2 mt-3">
+                        <a href={`tel:${p.phone}`}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 bg-white text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-all"
+                          onClick={(e) => e.stopPropagation()}>
+                          <FaPhone className="text-[10px]" /> {p.phone}
+                        </a>
+                        <button type="button"
+                          onClick={() => {
+                            set("selectedTowingPartnerId", p.id);
+                            set("needTowing", true);
+                            setShowTowingModal(false);
+                          }}
+                          className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                            isSelected
+                              ? "bg-amber-500 text-white"
+                              : "bg-amber-100 text-amber-700 hover:bg-amber-200"
+                          }`}
+                        >
+                          {isSelected ? "✓ Sélectionné" : "Choisir ce dépanneur"}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="px-6 pb-5 pt-2 border-t border-gray-100">
+              <p className="text-[10px] text-center text-gray-400">
+                Le dépanneur sera notifié automatiquement dès la soumission de votre déclaration.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-3xl mx-auto">
 
         {/* Header */}
@@ -371,16 +493,43 @@ export default function AccidentDeclarationPage() {
           {/* ── STEP 1: Incident Details ────────────────────────────────────── */}
           {step === 1 && (
             <div className="space-y-5">
-              <div className={`flex items-start gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all ${form.needTowing ? "border-amber-400 bg-amber-50" : "border-gray-200 bg-gray-50"}`}
-                onClick={() => set("needTowing", !form.needTowing)}>
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${form.needTowing ? "bg-amber-100" : "bg-white border border-gray-200"}`}>
-                  <FaTruck className={`text-sm ${form.needTowing ? "text-amber-600" : "text-gray-400"}`} />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-gray-800">I need a towing service</p>
-                  <p className="text-xs text-gray-500 mt-0.5">We'll dispatch the nearest available towing partner.</p>
-                </div>
-              </div>
+              {/* Towing card */}
+              {(() => {
+                const partner = TOWING_PARTNERS.find(p => p.id === form.selectedTowingPartnerId);
+                return (
+                  <div
+                    onClick={() => setShowTowingModal(true)}
+                    className={`flex items-start gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all ${
+                      form.needTowing ? "border-amber-400 bg-amber-50" : "border-gray-200 bg-gray-50"
+                    }`}
+                  >
+                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${form.needTowing ? "bg-amber-100" : "bg-white border border-gray-200"}`}>
+                      <FaTruck className={`text-sm ${form.needTowing ? "text-amber-600" : "text-gray-400"}`} />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-bold text-gray-800">I need a towing service</p>
+                      {partner ? (
+                        <div className="mt-1 space-y-0.5">
+                          <p className="text-xs font-semibold text-amber-700">{partner.name}</p>
+                          <p className="text-xs text-gray-500">{partner.address} · ETA {partner.eta}</p>
+                          <p className="text-xs font-mono text-gray-500">{partner.phone}</p>
+                        </div>
+                      ) : (
+                        <p className="text-xs text-gray-500 mt-0.5">Cliquez pour choisir un prestataire de dépannage.</p>
+                      )}
+                    </div>
+                    {partner && (
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); set("needTowing", false); set("selectedTowingPartnerId", ""); }}
+                        className="text-gray-300 hover:text-red-400 transition-colors shrink-0 mt-0.5"
+                      >
+                        <FaTimes className="text-xs" />
+                      </button>
+                    )}
+                  </div>
+                );
+              })()}
               <div>
                 <h2 className="text-lg font-extrabold text-gray-800 mb-1">Incident Details</h2>
                 <p className="text-sm text-gray-500">Provide the basic information about the accident.</p>

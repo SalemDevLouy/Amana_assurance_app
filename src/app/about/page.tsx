@@ -32,9 +32,9 @@ const values = [
 ];
 
 const team = [
-  { name: 'Karim Bellal', role: 'CEO & Co-Founder', avatar: 'KB', color: 'from-blue-500 to-cyan-500' },
-  { name: 'Samia Rahmouni', role: 'CTO & Co-Founder', avatar: 'SR', color: 'from-indigo-500 to-purple-500' },
-  { name: 'Mohamed Aissa', role: 'Head of Claims & AI', avatar: 'MA', color: 'from-emerald-500 to-teal-500' },
+  { name: 'Amani.C', role: 'CEO & Co-Founder', avatar: 'AC', color: 'from-blue-500 to-cyan-500' },
+  { name: 'Hadjer.G', role: 'CEO & Co-Founder', avatar: 'HG', color: 'from-indigo-500 to-purple-500' },
+  { name: 'Salem.L', role: 'CTO', avatar: 'SL', color: 'from-emerald-500 to-teal-500' },
 ];
 
 export default function AboutPage() {
