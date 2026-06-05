@@ -75,7 +75,7 @@ function fmt(iso: string) {
 // ── Printable card ─────────────────────────────────────────────────────────────
 function ContractCard({ contract }: { contract: typeof CONTRACTS[0] }) {
   const cfg = statusCfg[contract.status];
-  const verifyUrl = `https://amana-assurance.dz/verify/${contract.id}`;
+  const verifyUrl = `https://amana-assurance-app.vercel.app/verify/${contract.id}`;
 
   return (
     <div
