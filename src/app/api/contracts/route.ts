@@ -29,9 +29,11 @@ export async function POST(request: NextRequest) {
       optionsTotal: number;
       totalCost: number;
       paymentMethod: string;
+      vehiclePhotoUrls?: string[];
+      documentUrls?: Record<string, string>;
     };
 
-    const { assuranceType, carInfo, selectedGuarantees, basePrice, optionsTotal, totalCost, paymentMethod } = body;
+    const { assuranceType, carInfo, selectedGuarantees, basePrice, optionsTotal, totalCost, paymentMethod, vehiclePhotoUrls, documentUrls } = body;
 
     if (!assuranceType || !carInfo?.brand || !carInfo?.registration) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -71,6 +73,9 @@ export async function POST(request: NextRequest) {
         totalCost,
         selectedGuarantees,
         paymentMethod,
+        vehiclePhotoUrls: vehiclePhotoUrls ?? [],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        documentUrls: (documentUrls ?? null) as any,
       },
     });
 
@@ -105,7 +110,9 @@ export async function GET() {
         model: true,
         registration: true,
         chassisNumber: true,
+        firstRegistrationDate: true,
         totalCost: true,
+        vehiclePhotoUrls: true,
         createdAt: true,
       },
     });

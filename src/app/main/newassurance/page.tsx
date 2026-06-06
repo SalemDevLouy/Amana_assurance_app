@@ -11,6 +11,7 @@ import StepIndicator from "./components/StepIndicator";
 import StepPayment from "./components/StepPayment";
 import StepVehicleInfo from "./components/StepVehicleInfo";
 import SubmissionSuccess from "./components/SubmissionSuccess";
+import { compressAll } from "@/lib/compressImage";
 import {
   AssuranceType,
   CarInfo,
@@ -260,35 +261,38 @@ export default function Page() {
   const basePrice = assuranceType ? BASE_PRICE[assuranceType] : 0;
   const totalCost = basePrice + optionsTotal;
 
+  const step2Missing = useMemo(() => {
+    const missing: string[] = [];
+    if (!carInfo.brand.trim()) missing.push("Marque");
+    if (!carInfo.model.trim()) missing.push("Modèle");
+    if (!carInfo.version.trim()) missing.push("Version");
+    if (!carInfo.horsepower.trim()) missing.push("Puissance fiscale");
+    if (!carInfo.energy.trim()) missing.push("Énergie");
+    if (!carInfo.seats.trim()) missing.push("Nombre de places");
+    if (!carInfo.parking.trim()) missing.push("Stationnement");
+    if (!carInfo.registration.trim()) missing.push("Immatriculation");
+    if (!carInfo.chassisNumber.trim()) missing.push("N° châssis");
+    if (!carInfo.firstRegistrationDate.trim()) missing.push("Date de mise en circulation");
+    if (!carInfo.marketValue.trim()) missing.push("Valeur vénale");
+    if (!carInfo.usage.trim()) missing.push("Usage");
+    if (!carInfo.circulationZone.trim()) missing.push("Zone de circulation");
+    if (!carInfo.insuredCapital.trim()) missing.push("Capital assuré");
+    if (!carInfo.mileage.trim()) missing.push("Kilométrage");
+    if (!carInfo.estimatedKmPerYear.trim()) missing.push("Km/an estimé");
+    if (vehiclePhotos.length === 0) missing.push("Au moins 1 photo du véhicule");
+    if (!chassisPhoto) missing.push("Photo châssis");
+    if (!platePhoto) missing.push("Photo plaque");
+    if (!odometerPhoto) missing.push("Photo compteur");
+    return missing;
+  }, [carInfo, vehiclePhotos.length, chassisPhoto, platePhoto, odometerPhoto]);
+
   const canGoNext = useMemo(() => {
     if (step === 1) {
       return assuranceType !== "";
     }
 
     if (step === 2) {
-      return (
-        carInfo.brand.trim() !== "" &&
-        carInfo.model.trim() !== "" &&
-        carInfo.version.trim() !== "" &&
-        carInfo.horsepower.trim() !== "" &&
-        carInfo.energy.trim() !== "" &&
-        carInfo.seats.trim() !== "" &&
-        carInfo.parking.trim() !== "" &&
-        carInfo.registration.trim() !== "" &&
-        carInfo.chassisNumber.trim() !== "" &&
-        carInfo.firstRegistrationDate.trim() !== "" &&
-        carInfo.marketValue.trim() !== "" &&
-        carInfo.usage.trim() !== "" &&
-        carInfo.circulationZone.trim() !== "" &&
-        carInfo.insuredCapital.trim() !== "" &&
-        carInfo.mileage.trim() !== "" &&
-        carInfo.estimatedKmPerYear.trim() !== "" &&
-        carInfo.technicalCertificate.trim() !== "" &&
-        vehiclePhotos.length >= 4 &&
-        chassisPhoto !== null &&
-        platePhoto !== null &&
-        odometerPhoto !== null
-      );
+      return step2Missing.length === 0;
     }
 
     if (step === 3) {
@@ -307,15 +311,11 @@ export default function Page() {
     return false;
   }, [
     assuranceType,
-    carInfo,
-    chassisPhoto,
-    odometerPhoto,
+    step2Missing,
     payment,
-    platePhoto,
     step,
     guaranteeGroups.length,
     guaranteesLoading,
-    vehiclePhotos.length,
   ]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -326,6 +326,37 @@ export default function Page() {
     setSubmitError(null);
 
     try {
+      // Step 1: Upload photos to Cloudinary
+      let vehiclePhotoUrls: string[] = [];
+      const documentUrls: Record<string, string> = {};
+
+      const orderedDocs: { key: string; file: File | null }[] = [
+        { key: "chassis", file: chassisPhoto },
+        { key: "plate", file: platePhoto },
+        { key: "odometer", file: odometerPhoto },
+        { key: "carteGrise", file: carteGriseFile },
+        { key: "previousInsurance", file: previousInsuranceFile },
+      ];
+
+      const rawFiles: File[] = [...vehiclePhotos, ...orderedDocs.map((d) => d.file).filter((f): f is File => f !== null)];
+      const allFiles = rawFiles.length > 0 ? await compressAll(rawFiles) : [];
+
+      if (allFiles.length > 0) {
+        const fd = new FormData();
+        for (const f of allFiles) fd.append("files", f);
+        const uploadRes = await fetch("/api/upload", { method: "POST", body: fd });
+        const uploadData = (await uploadRes.json()) as { urls?: string[]; error?: string };
+        if (!uploadRes.ok) throw new Error(uploadData.error ?? "Photo upload failed");
+        const urls = uploadData.urls ?? [];
+        vehiclePhotoUrls = urls.slice(0, vehiclePhotos.length);
+        const docUrls = urls.slice(vehiclePhotos.length);
+        let di = 0;
+        for (const { key, file } of orderedDocs) {
+          if (file) documentUrls[key] = docUrls[di++] ?? "";
+        }
+      }
+
+      // Step 2: Save contract
       const response = await fetch("/api/contracts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -337,6 +368,8 @@ export default function Page() {
           optionsTotal,
           totalCost,
           paymentMethod: payment.method,
+          vehiclePhotoUrls,
+          documentUrls,
         }),
       });
 
@@ -349,8 +382,8 @@ export default function Page() {
 
       setContractNumber(data.contract?.contractNumber ?? null);
       setSubmitted(true);
-    } catch {
-      setSubmitError("Network error. Please try again.");
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Network error. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -403,7 +436,7 @@ export default function Page() {
                 setOdometerPhoto={setOdometerPhoto}
                 setCarteGriseFile={setCarteGriseFile}
                 setPreviousInsuranceFile={setPreviousInsuranceFile}
-                canGoNext={canGoNext}
+                missingFields={step2Missing}
               />
             )}
 

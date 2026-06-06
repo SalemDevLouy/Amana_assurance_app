@@ -31,12 +31,17 @@ const LICENSE_CATS = ["A", "B", "C", "D", "E", "EB", "EC", "ED"];
 const WEATHER_OPTS = ["Clear", "Rainy", "Foggy", "Windy", "Icy", "Night"];
 
 // Towing service partners
-const TOWING_PARTNERS = [
-  { id: 't1', name: 'Dépannage Express Alger',    wilaya: 'Alger',        address: 'Rue Hassiba Ben Bouali, Alger-Centre',  phone: '+213 21 63 00 11', rating: 4.8, available: true,  hours: '24h/24',  eta: '~12 min' },
-  { id: 't2', name: 'SOS Route Oran',             wilaya: 'Oran',         address: 'Bd Millenium, Oran',                    phone: '+213 41 33 55 77', rating: 4.6, available: true,  hours: '24h/24',  eta: '~25 min' },
-  { id: 't3', name: 'Remorquage Rapide Annaba',   wilaya: 'Annaba',       address: 'Zone Industrielle, Annaba',             phone: '+213 38 86 20 44', rating: 4.4, available: false, hours: '06h–22h', eta: null },
-  { id: 't4', name: 'Assistance Auto Constantine', wilaya: 'Constantine',  address: 'Route nationale 3, Constantine',        phone: '+213 31 68 90 12', rating: 4.5, available: true,  hours: '24h/24',  eta: '~30 min' },
-];
+type TowingPartner = {
+  id: string;
+  name: string;
+  wilaya: string;
+  address: string;
+  phone: string;
+  rating: number;
+  available: boolean;
+  hours: string;
+  eta?: string | null;
+};
 
 type UserContract = {
   id: string;
@@ -219,6 +224,7 @@ export default function AccidentDeclarationPage() {
 
   const [userContracts, setUserContracts] = useState<UserContract[]>([]);
   const [contractsLoading, setContractsLoading] = useState(true);
+  const [towingPartners, setTowingPartners] = useState<TowingPartner[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [caseNumber, setCaseNumber] = useState<string | null>(null);
@@ -235,6 +241,18 @@ export default function AccidentDeclarationPage() {
       } finally {
         setContractsLoading(false);
       }
+    };
+    void load();
+  }, []);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch("/api/partners?type=towing");
+        if (!res.ok) return;
+        const data = (await res.json()) as { partners: TowingPartner[] };
+        setTowingPartners(data.partners ?? []);
+      } catch { /* ignore */ }
     };
     void load();
   }, []);
@@ -308,6 +326,59 @@ export default function AccidentDeclarationPage() {
   const constatNext = () => constatStep < 9 ? setConstatStep((s) => s + 1) : setStep(4);
   const constatPrev = () => constatStep > 1 ? setConstatStep((s) => s - 1) : setStep(2);
 
+  const handleAccidentSubmit = async () => {
+    if (submitting) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      // Upload photos and sketch files to Cloudinary
+      let photoUrls: string[] = [];
+      let sketchUrls: string[] = [];
+
+      if (form.photos.length > 0 || form.sketchFiles.length > 0) {
+        const fd = new FormData();
+        for (const f of form.photos) fd.append("files", f);
+        for (const f of form.sketchFiles) fd.append("files", f);
+        const uploadRes = await fetch("/api/upload", { method: "POST", body: fd });
+        const uploadData = (await uploadRes.json()) as { urls?: string[]; error?: string };
+        if (!uploadRes.ok) throw new Error(uploadData.error ?? "Photo upload failed");
+        const urls = uploadData.urls ?? [];
+        photoUrls = urls.slice(0, form.photos.length);
+        sketchUrls = urls.slice(form.photos.length);
+      }
+
+      const { photos, sketchFiles, ...serialisableForm } = form;
+      void photos; void sketchFiles;
+
+      const res = await fetch("/api/accidents", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contractId: form.contractId,
+          accidentDate: form.date,
+          accidentTime: form.time,
+          location: form.location,
+          wilaya: form.wilaya,
+          weather: form.weather,
+          description: form.description,
+          vehiclePlate: form.vaPlateNumber || form.vaPolicyNumber,
+          formData: serialisableForm,
+          photoUrls,
+          sketchUrls,
+        }),
+      });
+
+      const data = (await res.json()) as { accident?: { caseNumber: string }; error?: string };
+      if (!res.ok) { setSubmitError(data.error ?? "Submission failed."); return; }
+      setCaseNumber(data.accident?.caseNumber ?? null);
+      setSubmitted(true);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const impactBtn = (zone: string, field: "vaPointOfImpact" | "vbPointOfImpact") => (
     <button key={zone} type="button"
       onClick={() => set(field, form[field] === zone ? "" : zone)}
@@ -373,7 +444,7 @@ export default function AccidentDeclarationPage() {
 
             {/* Partner cards */}
             <div className="p-4 space-y-3 max-h-[60vh] overflow-y-auto">
-              {TOWING_PARTNERS.map((p) => {
+              {towingPartners.map((p) => {
                 const isSelected = form.selectedTowingPartnerId === p.id;
                 return (
                   <div key={p.id}
@@ -526,7 +597,7 @@ export default function AccidentDeclarationPage() {
             <div className="space-y-5">
               {/* Towing card */}
               {(() => {
-                const partner = TOWING_PARTNERS.find(p => p.id === form.selectedTowingPartnerId);
+                const partner = towingPartners.find(p => p.id === form.selectedTowingPartnerId);
                 return (
                   <div
                     onClick={() => setShowTowingModal(true)}
@@ -1129,39 +1200,7 @@ export default function AccidentDeclarationPage() {
                 <button
                   type="button"
                   disabled={submitting}
-                  onClick={async () => {
-                    if (submitting) return;
-                    setSubmitting(true);
-                    setSubmitError(null);
-                    try {
-                      // Strip non-serialisable File objects before sending
-                      const { photos, sketchFiles, ...serialisableForm } = form;
-                      void photos; void sketchFiles;
-                      const res = await fetch("/api/accidents", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          contractId: form.contractId,
-                          accidentDate: form.date,
-                          accidentTime: form.time,
-                          location: form.location,
-                          wilaya: form.wilaya,
-                          weather: form.weather,
-                          description: form.description,
-                          vehiclePlate: form.vaPlateNumber || form.vaPolicyNumber,
-                          formData: serialisableForm,
-                        }),
-                      });
-                      const data = (await res.json()) as { accident?: { caseNumber: string }; error?: string };
-                      if (!res.ok) { setSubmitError(data.error ?? "Submission failed."); return; }
-                      setCaseNumber(data.accident?.caseNumber ?? null);
-                      setSubmitted(true);
-                    } catch {
-                      setSubmitError("Network error. Please try again.");
-                    } finally {
-                      setSubmitting(false);
-                    }
-                  }}
+                  onClick={() => void handleAccidentSubmit()}
                   className="inline-flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-rose-600 text-white text-sm font-bold shadow-md shadow-rose-500/25 hover:bg-rose-700 disabled:opacity-60 transition-all">
                   {submitting ? "Envoi en cours..." : <><FaCheckCircle className="text-xs" /> Submit Declaration</>}
                 </button>
@@ -1212,38 +1251,7 @@ export default function AccidentDeclarationPage() {
             <button
               type="button"
               disabled={submitting}
-              onClick={async () => {
-                if (submitting) return;
-                setSubmitting(true);
-                setSubmitError(null);
-                try {
-                  const { photos, sketchFiles, ...serialisableForm } = form;
-                  void photos; void sketchFiles;
-                  const res = await fetch("/api/accidents", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      contractId: form.contractId,
-                      accidentDate: form.date,
-                      accidentTime: form.time,
-                      location: form.location,
-                      wilaya: form.wilaya,
-                      weather: form.weather,
-                      description: form.description,
-                      vehiclePlate: form.vaPlateNumber || form.vaPolicyNumber,
-                      formData: serialisableForm,
-                    }),
-                  });
-                  const data = (await res.json()) as { accident?: { caseNumber: string }; error?: string };
-                  if (!res.ok) { setSubmitError(data.error ?? "Submission failed."); return; }
-                  setCaseNumber(data.accident?.caseNumber ?? null);
-                  setSubmitted(true);
-                } catch {
-                  setSubmitError("Network error. Please try again.");
-                } finally {
-                  setSubmitting(false);
-                }
-              }}
+              onClick={() => void handleAccidentSubmit()}
               className="flex-1 rounded-2xl bg-rose-600 py-3 text-sm font-bold text-white shadow-md disabled:opacity-60 active:opacity-90"
             >
               {submitting ? "Envoi…" : "Soumettre la déclaration"}

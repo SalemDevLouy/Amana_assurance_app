@@ -25,6 +25,14 @@ enum GuaranteeInputType {
   SELECTGROUP
 }
 
+enum PartnerType {
+  TOWING
+  MECHANIC
+  EXPERT
+  BODY_SHOP
+  INSURANCE
+}
+
 // User model
 model User {
   id               String    @id @default(auto()) @map("_id") @db.ObjectId
@@ -97,6 +105,10 @@ model Contract {
   // Payment
   paymentMethod        String
 
+  // Photos (Cloudinary URLs)
+  vehiclePhotoUrls     String[]  @default([])
+  documentUrls         Json?
+
   // Admin
   adminNotes           String[]  @default([])
 
@@ -127,6 +139,10 @@ model AccidentDeclaration {
 
   // Full form data as JSON
   formData      Json
+
+  // Photos (Cloudinary URLs)
+  photoUrls     String[]  @default([])
+  sketchUrls    String[]  @default([])
 
   internalNotes String[]  @default([])
 
@@ -168,4 +184,26 @@ model GuaranteeOption {
 
   @@unique([groupId, key])
   @@index([groupId, sortOrder])
+}
+
+model Partner {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  type        PartnerType
+  wilaya      String
+  city        String?
+  address     String
+  phone       String
+  rating      Float       @default(0)
+  available   Boolean     @default(true)
+  hours       String
+  eta         String?
+  description String?
+  logoUrl     String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([type])
+  @@index([wilaya])
+  @@index([type, wilaya])
 }

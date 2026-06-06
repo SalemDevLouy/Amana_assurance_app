@@ -31,9 +31,11 @@ export async function POST(request: NextRequest) {
       description: string;
       vehiclePlate: string;
       formData: Record<string, unknown> | null;
+      photoUrls?: string[];
+      sketchUrls?: string[];
     };
 
-    const { contractId, accidentDate, accidentTime, location, wilaya, weather, description, vehiclePlate, formData } = body;
+    const { contractId, accidentDate, accidentTime, location, wilaya, weather, description, vehiclePlate, formData, photoUrls, sketchUrls } = body;
 
     if (!contractId || !accidentDate || !location) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -65,6 +67,8 @@ export async function POST(request: NextRequest) {
         vehiclePlate: vehiclePlate ?? contract.registration,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         formData: (formData ?? {}) as any,
+        photoUrls: photoUrls ?? [],
+        sketchUrls: sketchUrls ?? [],
       },
     });
 

@@ -18,7 +18,7 @@ type StepVehicleInfoProps = Readonly<{
   setOdometerPhoto: React.Dispatch<React.SetStateAction<File | null>>;
   setCarteGriseFile: React.Dispatch<React.SetStateAction<File | null>>;
   setPreviousInsuranceFile: React.Dispatch<React.SetStateAction<File | null>>;
-  canGoNext: boolean;
+  missingFields: string[];
 }>;
 
 export default function StepVehicleInfo({
@@ -30,7 +30,7 @@ export default function StepVehicleInfo({
   setOdometerPhoto,
   setCarteGriseFile,
   setPreviousInsuranceFile,
-  canGoNext,
+  missingFields,
 }: StepVehicleInfoProps) {
   const [vehiclePhotosList, setVehiclePhotosList] = useState<UploadedFile[]>([]);
   const [chassisPhotoFile, setChassisPhotoFile] = useState<UploadedFile | null>(null);
@@ -380,10 +380,13 @@ export default function StepVehicleInfo({
         />
       </div>
 
-      {!canGoNext && (
-        <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">
-          Tous les champs et documents de l&apos;etape 2 sont obligatoires.
-        </p>
+      {missingFields.length > 0 && (
+        <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">
+          <p className="mb-1 font-semibold">Champs manquants :</p>
+          <ul className="list-disc pl-4 space-y-0.5">
+            {missingFields.map((f) => <li key={f}>{f}</li>)}
+          </ul>
+        </div>
       )}
     </div>
   );
