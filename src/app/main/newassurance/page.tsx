@@ -25,7 +25,6 @@ import {
   readGuaranteesCache,
   writeGuaranteesCache,
 } from "@/app/lib/clientCache";
-import { DEFAULT_GUARANTEE_CATALOG } from "./constants";
 
 function getInitialSelections(groups: GuaranteeGroup[]): GuaranteeSelections {
   const selections: GuaranteeSelections = {};
@@ -119,13 +118,16 @@ export default function Page() {
   const [guaranteeSelections, setGuaranteeSelections] = useState<GuaranteeSelections>({});
   const [guaranteesLoading, setGuaranteesLoading] = useState(false);
   const [guaranteesError, setGuaranteesError] = useState<string | null>(null);
-  const [payment] = useState<PaymentInfo>({
+  const [payment, setPayment] = useState<PaymentInfo>({
     fullName: "",
     email: "",
     phone: "",
     method: "card",
     acceptTerms: false,
   });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [contractNumber, setContractNumber] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "loading") {
@@ -186,37 +188,25 @@ export default function Page() {
         if (cachedGroups && cachedGroups.length > 0) {
           setGuaranteeGroups(cachedGroups);
           setGuaranteeSelections(getInitialSelections(cachedGroups));
-          console.debug("Loaded guarantees from cache:", cachedGroups);
           setGuaranteesLoading(false);
           return;
         }
 
-        // Load guarantees from local static catalog instead of calling the API
         const apiType = assuranceType ? COVERAGE_TO_API_TYPE[assuranceType] : "car";
-        const seedGroups = DEFAULT_GUARANTEE_CATALOG[apiType] ?? DEFAULT_GUARANTEE_CATALOG.car;
+        const response = await fetch(`/api/guarantees?assuranceType=${apiType}`);
+        const data = (await response.json()) as { groups?: GuaranteeGroup[]; error?: string };
 
-        // Map seed groups to the GuaranteeGroup shape expected by the UI (add ids)
-        const mappedGroups: GuaranteeGroup[] = seedGroups.map((g, gi) => ({
-          id: `${g.key}--${gi}`,
-          key: g.key,
-          title: g.title,
-          description: g.description,
-          inputType: g.inputType,
-          mandatory: !!g.mandatory,
-          options: g.options.map((opt, oi) => ({
-            id: `${g.key}--${opt.key}`,
-            key: opt.key,
-            label: opt.label,
-            price: opt.price,
-          })),
-        }));
+        if (!response.ok) {
+          throw new Error(data.error ?? "Failed to load coverage options.");
+        }
+
+        const fetchedGroups: GuaranteeGroup[] = data.groups ?? [];
 
         if (isCancelled) return;
 
-        setGuaranteeGroups(mappedGroups);
-        writeGuaranteesCache(cacheKey, mappedGroups);
-        setGuaranteeSelections(getInitialSelections(mappedGroups));
-        console.debug("Loaded guarantees from local catalog:", mappedGroups);
+        setGuaranteeGroups(fetchedGroups);
+        writeGuaranteesCache(cacheKey, fetchedGroups);
+        setGuaranteeSelections(getInitialSelections(fetchedGroups));
       } catch (err) {
         if (!isCancelled) {
           console.error("Failed to load local guarantees:", err);
@@ -328,12 +318,42 @@ export default function Page() {
     vehiclePhotos.length,
   ]);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!canGoNext) {
-      return;
+    if (!canGoNext || submitting) return;
+
+    setSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const response = await fetch("/api/contracts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          assuranceType,
+          carInfo,
+          selectedGuarantees: selectedGuaranteesSummary,
+          basePrice,
+          optionsTotal,
+          totalCost,
+          paymentMethod: payment.method,
+        }),
+      });
+
+      const data = (await response.json()) as { contract?: { contractNumber: string }; error?: string };
+
+      if (!response.ok) {
+        setSubmitError(data.error ?? "Failed to submit contract.");
+        return;
+      }
+
+      setContractNumber(data.contract?.contractNumber ?? null);
+      setSubmitted(true);
+    } catch {
+      setSubmitError("Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitted(true);
   };
 
   if (isCheckingAccess) {
@@ -347,20 +367,20 @@ export default function Page() {
   }
 
   if (submitted) {
-    return <SubmissionSuccess totalCost={totalCost} />;
+    return <SubmissionSuccess totalCost={totalCost} contractNumber={contractNumber} />;
   }
 
   return (
-    <section className="relative z-10 mx-auto min-h-screen max-w-6xl px-4 py-10 pt-24 sm:px-6">
+    <section className="relative z-10 mx-auto min-h-screen max-w-6xl px-3 py-10 pt-20 pb-28 sm:px-6 sm:pt-24 sm:pb-10">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.12),transparent_45%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.12),transparent_45%)]" />
 
-      <div className="relative mb-8 overflow-hidden rounded-3xl border border-blue-100 bg-white/80 p-6 shadow-lg md:p-8">
-        <p className="text-xs font-semibold uppercase tracking-widest text-blue-600 mb-1">New Insurance Contract</p>
-        <h1 className="text-2xl font-extrabold text-gray-800 sm:text-3xl">
-          Subscribe to Auto Insurance
+      <div className="relative mb-5 overflow-hidden rounded-3xl border border-blue-100 bg-white/80 p-5 shadow-lg sm:mb-8 sm:p-8">
+        <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-blue-600">Nouveau contrat</p>
+        <h1 className="text-xl font-extrabold text-gray-800 sm:text-3xl">
+          Souscrire à l&apos;assurance auto
         </h1>
-        <p className="mt-2 text-sm text-gray-500">
-          Complete 4 steps: choose coverage → vehicle details → select options → payment & contract.
+        <p className="mt-1 text-xs text-gray-500 sm:mt-2 sm:text-sm">
+          4 étapes : couverture → véhicule → garanties → paiement.
         </p>
       </div>
 
@@ -369,8 +389,8 @@ export default function Page() {
       </div>
 
       <Card className="relative rounded-3xl border border-cyan-200 bg-white/85 shadow-2xl shadow-blue-100">
-        <div className="p-5 sm:p-8 md:p-10">
-          <form onSubmit={handleSubmit}>
+        <div className="p-4 sm:p-8 md:p-10">
+          <form id="assurance-form" onSubmit={handleSubmit}>
             {step === 1 && <StepAssuranceType assuranceType={assuranceType} basePrice={BASE_PRICE} setAssuranceType={setAssuranceType} setStep={setStep} />}
 
             {step === 2 && (
@@ -402,6 +422,7 @@ export default function Page() {
             {step === 4 && (
               <StepPayment
                 payment={payment}
+                setPayment={setPayment}
                 assuranceType={assuranceType}
                 carBrand={carInfo.brand}
                 carModel={carInfo.model}
@@ -413,34 +434,77 @@ export default function Page() {
               />
             )}
 
-            <div className="mt-8 flex items-center justify-between border-t border-gray-200 pt-6">
+            {submitError ? (
+              <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">{submitError}</p>
+            ) : null}
+
+            {/* ── Desktop nav (inside card) ─────────────────────── */}
+            <div className="mt-8 hidden items-center justify-between border-t border-gray-200 pt-6 sm:flex">
               <Button
                 type="button"
                 variant="outline"
                 onPress={() => setStep((prev) => Math.max(1, prev - 1))}
                 className="rounded-xl border border-gray-300 bg-white px-5 py-2 text-sm font-semibold text-gray-700"
               >
-                Back
+                Retour
               </Button>
-
               {step < 4 ? (
                 <Button
                   type="button"
                   variant="primary"
+                  isDisabled={!canGoNext}
                   onPress={() => setStep((prev) => Math.min(4, prev + 1))}
-                  className="rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-2 text-sm font-semibold text-white shadow-md shadow-blue-500/25"
+                  className="rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-2 text-sm font-semibold text-white shadow-md shadow-blue-500/25 disabled:opacity-50"
                 >
-                  Continue
+                  Continuer
                 </Button>
               ) : (
-                <Button type="submit" variant="secondary" className="rounded-xl bg-emerald-600 px-5 py-2 text-sm font-semibold text-white shadow-md shadow-emerald-500/25">
-                  Confirm & Pay
+                <Button
+                  type="submit"
+                  variant="secondary"
+                  isDisabled={submitting || !canGoNext}
+                  className="rounded-xl bg-emerald-600 px-5 py-2 text-sm font-semibold text-white shadow-md shadow-emerald-500/25 disabled:opacity-50"
+                >
+                  {submitting ? "Envoi en cours…" : "Confirmer & Payer"}
                 </Button>
               )}
             </div>
           </form>
         </div>
       </Card>
+
+      {/* ── Mobile sticky bottom bar ──────────────────────────────── */}
+      <div className="fixed bottom-16 left-0 right-0 z-30 border-t border-gray-100 bg-white/95 px-4 py-3 shadow-[0_-4px_24px_rgba(0,0,0,0.07)] backdrop-blur-xl sm:hidden">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setStep((prev) => Math.max(1, prev - 1))}
+            className="flex-shrink-0 rounded-2xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 active:bg-gray-50"
+          >
+            Retour
+          </button>
+          {step < 4 ? (
+            <button
+              type="button"
+              disabled={!canGoNext}
+              onClick={() => setStep((prev) => Math.min(4, prev + 1))}
+              className="flex-1 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 py-3 text-sm font-bold text-white shadow-md shadow-blue-500/25 disabled:opacity-50 active:opacity-90"
+            >
+              Continuer
+            </button>
+          ) : (
+            <button
+              type="submit"
+              form="assurance-form"
+              disabled={submitting || !canGoNext}
+              className="flex-1 rounded-2xl bg-emerald-600 py-3 text-sm font-bold text-white shadow-md shadow-emerald-500/25 disabled:opacity-50 active:opacity-90"
+            >
+              {submitting ? "Envoi…" : "Confirmer & Payer"}
+            </button>
+          )}
+        </div>
+        <div style={{ height: "env(safe-area-inset-bottom)" }} />
+      </div>
     </section>
   );
 }

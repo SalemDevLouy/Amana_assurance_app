@@ -1,10 +1,20 @@
 @import "tailwindcss";
-@import "@heroui/styles"; 
+@import "@heroui/styles";
 
 * {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer and Edge */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 ::-webkit-scrollbar {
   display: none;
+}
+
+/* Constrain content to viewport without hiding overflow globally.
+   Each page/section is responsible for its own overflow containment. */
+html {
+  max-width: 100%;
+}
+
+body {
+  min-width: 0;
 }

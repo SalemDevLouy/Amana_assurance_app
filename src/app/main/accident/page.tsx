@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -38,32 +38,14 @@ const TOWING_PARTNERS = [
   { id: 't4', name: 'Assistance Auto Constantine', wilaya: 'Constantine',  address: 'Route nationale 3, Constantine',        phone: '+213 31 68 90 12', rating: 4.5, available: true,  hours: '24h/24',  eta: '~30 min' },
 ];
 
-// Auto-fill Véhicule A from the user's contract
-const CONTRACT_DATA: Record<string, Partial<AccidentForm>> = {
-  "AMT-2026-001": {
-    vaMarque: "Peugeot", vaType: "Berline", vaPlateNumber: "123-456-16",
-    vaInsuredLastName: "Louafi", vaInsuredFirstName: "Salem",
-    vaInsuredAddress: "123 Rue Didouche Mourad, Alger",
-    vaInsuranceCompany: "Amana Assurance", vaPolicyNumber: "AMT-2026-001",
-    vaAttestationFrom: "2026-03-15", vaAttestationTo: "2027-03-15",
-    vaAgency: "Amana Alger Centre",
-    vaDriverLastName: "Louafi", vaDriverFirstName: "Salem",
-    vaDriverAddress: "123 Rue Didouche Mourad, Alger",
-    vaLicenseNumber: "DZ-09-12345", vaLicenseDate: "2020-05-10",
-    vaLicenseWilaya: "Alger", vaLicenseCategory: "B",
-  },
-  "AMT-2026-047": {
-    vaMarque: "Renault", vaType: "Berline", vaPlateNumber: "789-012-09",
-    vaInsuredLastName: "Louafi", vaInsuredFirstName: "Salem",
-    vaInsuredAddress: "123 Rue Didouche Mourad, Alger",
-    vaInsuranceCompany: "Amana Assurance", vaPolicyNumber: "AMT-2026-047",
-    vaAttestationFrom: "2026-06-01", vaAttestationTo: "2027-06-01",
-    vaAgency: "Amana Alger Centre",
-    vaDriverLastName: "Louafi", vaDriverFirstName: "Salem",
-    vaDriverAddress: "123 Rue Didouche Mourad, Alger",
-    vaLicenseNumber: "DZ-09-12345", vaLicenseDate: "2020-05-10",
-    vaLicenseWilaya: "Alger", vaLicenseCategory: "B",
-  },
+type UserContract = {
+  id: string;
+  contractNumber: string;
+  brand: string;
+  model: string;
+  registration: string;
+  status: string;
+  prefill: Partial<AccidentForm>;
 };
 
 const CONSTAT_LABELS = [
@@ -235,6 +217,28 @@ export default function AccidentDeclarationPage() {
   const [submitted, setSubmitted] = useState(false);
   const [showTowingModal, setShowTowingModal] = useState(false);
 
+  const [userContracts, setUserContracts] = useState<UserContract[]>([]);
+  const [contractsLoading, setContractsLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [caseNumber, setCaseNumber] = useState<string | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch("/api/contracts");
+        if (!res.ok) return;
+        const data = (await res.json()) as { contracts: UserContract[] };
+        setUserContracts(data.contracts ?? []);
+      } catch {
+        // silently ignore — user can still fill manually
+      } finally {
+        setContractsLoading(false);
+      }
+    };
+    void load();
+  }, []);
+
   const [form, setForm] = useState<AccidentForm>({
     date: "", time: "", location: "", wilaya: "", weather: "",
     description: "", needTowing: false, contractId: "", photos: [],
@@ -276,9 +280,9 @@ export default function AccidentDeclarationPage() {
   const set = <K extends keyof AccidentForm>(f: K, v: AccidentForm[K]) =>
     setForm((p) => ({ ...p, [f]: v }));
 
-  // When the user picks a contract, auto-fill Véhicule A from contract data
   const handleContractChange = (contractId: string) => {
-    const prefill = CONTRACT_DATA[contractId] ?? {};
+    const contract = userContracts.find((c) => c.id === contractId);
+    const prefill = contract?.prefill ?? {};
     setForm((p) => ({ ...p, contractId, ...prefill }));
   };
 
@@ -328,8 +332,8 @@ export default function AccidentDeclarationPage() {
             A regional expert has been assigned to your case. You will receive a notification within 2 hours.
           </p>
           <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4 mb-6 text-left">
-            <p className="text-xs text-gray-500 mb-1">Reference Number</p>
-            <p className="text-base font-extrabold text-blue-600">CLM-2026-{Math.floor(Math.random() * 900 + 100)}</p>
+            <p className="text-xs text-gray-500 mb-1">Numéro de dossier</p>
+            <p className="text-base font-extrabold text-blue-600">{caseNumber ?? "—"}</p>
           </div>
           <Link href="/main" className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-6 py-3 rounded-2xl text-sm font-bold shadow-md shadow-blue-500/25 hover:shadow-blue-500/40 transition-all">
             Back to Dashboard <FaArrowRight className="text-xs" />
@@ -340,12 +344,15 @@ export default function AccidentDeclarationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f6fb] pt-24 pb-16 px-4 sm:px-6">
+    <div className="min-h-screen bg-[#f4f6fb] pt-20 pb-28 px-3 sm:px-6 sm:pt-24 sm:pb-16">
 
       {/* ── Towing modal ────────────────────────────────────────────────────── */}
       {showTowingModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-t-3xl md:rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden">
+            <div className="flex justify-center pt-3 md:hidden">
+              <div className="h-1 w-10 rounded-full bg-gray-200" />
+            </div>
 
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
@@ -454,41 +461,65 @@ export default function AccidentDeclarationPage() {
       <div className="max-w-3xl mx-auto">
 
         {/* Header */}
-        <div className="mb-6">
-          <Link href="/main" className="inline-flex items-center gap-2 text-xs text-gray-500 hover:text-blue-600 mb-4 transition-colors">
-            <FaArrowLeft className="text-xs" /> Back to Dashboard
-          </Link>
+        <div className="mb-5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-rose-100 flex items-center justify-center">
-              <FaCar className="text-rose-600 text-sm" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-rose-100">
+              <FaCar className="text-sm text-rose-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-extrabold text-gray-800">Declare an Accident</h1>
-              <p className="text-sm text-gray-500">Complete all 4 steps to submit your claim.</p>
+              <h1 className="text-lg font-extrabold text-gray-800 sm:text-2xl">Déclarer un accident</h1>
+              <p className="text-xs text-gray-500 sm:text-sm">Complétez les 4 étapes pour soumettre votre déclaration.</p>
             </div>
           </div>
         </div>
 
         {/* Main step indicator */}
-        <div className="grid grid-cols-4 gap-2 mb-8">
+        {/* Mobile: dot trail */}
+        <div className="mb-5 sm:hidden flex flex-col items-center gap-2.5">
+          <div className="flex items-center gap-0">
+            {MAIN_STEPS.map((s, i) => {
+              const num = (i + 1) as MainStep;
+              const done = step > num;
+              const active = step === num;
+              return (
+                <div key={num} className="flex items-center">
+                  <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all ${
+                    done ? "bg-emerald-500 text-white" : active ? "bg-rose-600 text-white scale-110 shadow-md shadow-rose-400/40" : "bg-gray-200 text-gray-400"
+                  }`}>
+                    {done ? "✓" : <s.icon className="text-xs" />}
+                  </div>
+                  {i < MAIN_STEPS.length - 1 && (
+                    <div className={`h-[2px] w-8 rounded-full ${done ? "bg-emerald-400" : "bg-gray-200"}`} />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-xs font-semibold text-gray-500">
+            Étape {step} sur {MAIN_STEPS.length} : <span className="font-bold text-rose-600">{MAIN_STEPS[step - 1]?.label}</span>
+          </p>
+        </div>
+
+        {/* Desktop: card grid */}
+        <div className="hidden sm:grid grid-cols-4 gap-2 mb-8">
           {MAIN_STEPS.map((s, i) => {
             const num = (i + 1) as MainStep;
             const done = step > num;
             const active = step === num;
             return (
-              <div key={num} className={`rounded-2xl border p-3 transition-all ${active ? "border-blue-300 bg-blue-50" : done ? "border-emerald-200 bg-emerald-50" : "border-gray-200 bg-white"}`}>
-                <div className={`w-7 h-7 rounded-xl flex items-center justify-center mb-1.5 ${active ? "bg-blue-600" : done ? "bg-emerald-500" : "bg-gray-200"}`}>
+              <div key={num} className={`rounded-2xl border p-3 transition-all ${active ? "border-rose-300 bg-rose-50" : done ? "border-emerald-200 bg-emerald-50" : "border-gray-200 bg-white"}`}>
+                <div className={`w-7 h-7 rounded-xl flex items-center justify-center mb-1.5 ${active ? "bg-rose-600" : done ? "bg-emerald-500" : "bg-gray-200"}`}>
                   {done ? <FaCheckCircle className="text-white text-xs" /> : <s.icon className={`text-xs ${active ? "text-white" : "text-gray-400"}`} />}
                 </div>
-                <p className={`text-[10px] font-semibold uppercase tracking-wide ${active ? "text-blue-600" : done ? "text-emerald-600" : "text-gray-400"}`}>Step {num}</p>
-                <p className={`text-xs font-bold leading-tight ${active ? "text-blue-800" : done ? "text-emerald-800" : "text-gray-500"}`}>{s.label}</p>
+                <p className={`text-[10px] font-semibold uppercase tracking-wide ${active ? "text-rose-600" : done ? "text-emerald-600" : "text-gray-400"}`}>Step {num}</p>
+                <p className={`text-xs font-bold leading-tight ${active ? "text-rose-800" : done ? "text-emerald-800" : "text-gray-500"}`}>{s.label}</p>
               </div>
             );
           })}
         </div>
 
         {/* Content card */}
-        <div className="bg-white/80 border border-gray-100 rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div className="bg-white/80 border border-gray-100 rounded-3xl p-4 sm:p-8 shadow-sm">
 
           {/* ── STEP 1: Incident Details ────────────────────────────────────── */}
           {step === 1 && (
@@ -564,14 +595,17 @@ export default function AccidentDeclarationPage() {
                 </div>
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">Insurance Contract</label>
-                  <select value={form.contractId} onChange={(e) => handleContractChange(e.target.value)} className={inp}>
-                    <option value="">Select contract...</option>
-                    <option value="AMT-2026-001">AMT-2026-001 – Peugeot 208</option>
-                    <option value="AMT-2026-047">AMT-2026-047 – Renault Symbol</option>
+                  <select value={form.contractId} onChange={(e) => handleContractChange(e.target.value)} className={inp} disabled={contractsLoading}>
+                    <option value="">{contractsLoading ? "Loading contracts..." : "Select contract..."}</option>
+                    {userContracts.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.contractNumber} – {c.brand} {c.model} ({c.registration})
+                      </option>
+                    ))}
                   </select>
                   {form.contractId && (
                     <p className="text-xs text-emerald-600 font-medium mt-1.5">
-                      ✓ Véhicule A pre-filled from contract {form.contractId}
+                      ✓ Véhicule A pre-filled from contract {userContracts.find((c) => c.id === form.contractId)?.contractNumber ?? form.contractId}
                     </p>
                   )}
                 </div>
@@ -1009,8 +1043,8 @@ export default function AccidentDeclarationPage() {
                 </div>
               )}
 
-              {/* Constat navigation */}
-              <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
+              {/* Constat navigation (desktop only — mobile uses sticky bar) */}
+              <div className="hidden sm:flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
                 <button type="button" onClick={constatPrev}
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-gray-200 bg-white text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
                   <FaArrowLeft className="text-xs" /> {constatStep === 1 ? "Photos" : "Retour"}
@@ -1072,28 +1106,151 @@ export default function AccidentDeclarationPage() {
 
           {/* Main navigation — steps 1, 2, 4 only (step 3 has its own nav) */}
           {step !== 3 && (
-            <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
+            <>
+              {submitError ? (
+                <p className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm text-red-700">{submitError}</p>
+              ) : null}
+
+              {/* Desktop nav */}
+              <div className="hidden sm:flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
               <button type="button"
                 onClick={() => setStep((s) => Math.max(1, s - 1) as MainStep)}
                 disabled={step === 1}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-gray-200 bg-white text-sm font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
-                <FaArrowLeft className="text-xs" /> Back
+                <FaArrowLeft className="text-xs" /> Retour
               </button>
               {step < 4 ? (
                 <button type="button"
                   onClick={() => { if (step === 2) setConstatStep(1); setStep((s) => Math.min(4, s + 1) as MainStep); }}
                   className="inline-flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-bold shadow-md shadow-blue-500/25 hover:shadow-blue-500/40 transition-all">
-                  Continue <FaArrowRight className="text-xs" />
+                  Continuer <FaArrowRight className="text-xs" />
                 </button>
               ) : (
-                <button type="button" onClick={() => setSubmitted(true)}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-rose-600 text-white text-sm font-bold shadow-md shadow-rose-500/25 hover:bg-rose-700 transition-all">
-                  Submit Declaration <FaCheckCircle className="text-xs" />
+                <button
+                  type="button"
+                  disabled={submitting}
+                  onClick={async () => {
+                    if (submitting) return;
+                    setSubmitting(true);
+                    setSubmitError(null);
+                    try {
+                      // Strip non-serialisable File objects before sending
+                      const { photos, sketchFiles, ...serialisableForm } = form;
+                      void photos; void sketchFiles;
+                      const res = await fetch("/api/accidents", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          contractId: form.contractId,
+                          accidentDate: form.date,
+                          accidentTime: form.time,
+                          location: form.location,
+                          wilaya: form.wilaya,
+                          weather: form.weather,
+                          description: form.description,
+                          vehiclePlate: form.vaPlateNumber || form.vaPolicyNumber,
+                          formData: serialisableForm,
+                        }),
+                      });
+                      const data = (await res.json()) as { accident?: { caseNumber: string }; error?: string };
+                      if (!res.ok) { setSubmitError(data.error ?? "Submission failed."); return; }
+                      setCaseNumber(data.accident?.caseNumber ?? null);
+                      setSubmitted(true);
+                    } catch {
+                      setSubmitError("Network error. Please try again.");
+                    } finally {
+                      setSubmitting(false);
+                    }
+                  }}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-rose-600 text-white text-sm font-bold shadow-md shadow-rose-500/25 hover:bg-rose-700 disabled:opacity-60 transition-all">
+                  {submitting ? "Envoi en cours..." : <><FaCheckCircle className="text-xs" /> Submit Declaration</>}
                 </button>
               )}
-            </div>
+              </div>
+            </>
+          )}
+
+          {/* Constat nav — hide on mobile (sticky bar handles it) */}
+        </div>
+      </div>
+
+      {/* ── Mobile sticky bottom nav ─────────────────────────────────────── */}
+      <div className="fixed bottom-16 left-0 right-0 z-30 border-t border-gray-100 bg-white/95 px-4 py-3 shadow-[0_-4px_24px_rgba(0,0,0,0.07)] backdrop-blur-xl sm:hidden">
+        <div className="flex items-center gap-3">
+          {/* Back button */}
+          <button
+            type="button"
+            disabled={step === 1 && constatStep === 1}
+            onClick={() => {
+              if (step === 3 && constatStep > 1) return setConstatStep((s) => s - 1);
+              if (step === 3 && constatStep === 1) return setStep(2);
+              setStep((s) => Math.max(1, s - 1) as MainStep);
+            }}
+            className="shrink-0 rounded-2xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 disabled:opacity-40 active:bg-gray-50"
+          >
+            Retour
+          </button>
+
+          {/* Forward button */}
+          {step === 3 ? (
+            <button
+              type="button"
+              onClick={constatNext}
+              className="flex-1 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 py-3 text-sm font-bold text-white shadow-md active:opacity-90"
+            >
+              {constatStep < 9 ? "Suivant" : "Terminer"}
+            </button>
+          ) : step < 4 ? (
+            <button
+              type="button"
+              onClick={() => { if (step === 2) setConstatStep(1); setStep((s) => Math.min(4, s + 1) as MainStep); }}
+              className="flex-1 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 py-3 text-sm font-bold text-white shadow-md active:opacity-90"
+            >
+              Continuer
+            </button>
+          ) : (
+            <button
+              type="button"
+              disabled={submitting}
+              onClick={async () => {
+                if (submitting) return;
+                setSubmitting(true);
+                setSubmitError(null);
+                try {
+                  const { photos, sketchFiles, ...serialisableForm } = form;
+                  void photos; void sketchFiles;
+                  const res = await fetch("/api/accidents", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      contractId: form.contractId,
+                      accidentDate: form.date,
+                      accidentTime: form.time,
+                      location: form.location,
+                      wilaya: form.wilaya,
+                      weather: form.weather,
+                      description: form.description,
+                      vehiclePlate: form.vaPlateNumber || form.vaPolicyNumber,
+                      formData: serialisableForm,
+                    }),
+                  });
+                  const data = (await res.json()) as { accident?: { caseNumber: string }; error?: string };
+                  if (!res.ok) { setSubmitError(data.error ?? "Submission failed."); return; }
+                  setCaseNumber(data.accident?.caseNumber ?? null);
+                  setSubmitted(true);
+                } catch {
+                  setSubmitError("Network error. Please try again.");
+                } finally {
+                  setSubmitting(false);
+                }
+              }}
+              className="flex-1 rounded-2xl bg-rose-600 py-3 text-sm font-bold text-white shadow-md disabled:opacity-60 active:opacity-90"
+            >
+              {submitting ? "Envoi…" : "Soumettre la déclaration"}
+            </button>
           )}
         </div>
+        <div style={{ height: "env(safe-area-inset-bottom)" }} />
       </div>
     </div>
   );

@@ -54,7 +54,7 @@ export async function getProfileStatusCached(forceRefresh = false) {
 }
 
 export function makeGuaranteesCacheKey(assuranceType: string) {
-  return `amana_guarantees_${assuranceType}`;
+  return `amana_guarantees_v2_${assuranceType}`;
 }
 
 export function readGuaranteesCache<T>(key: string) {

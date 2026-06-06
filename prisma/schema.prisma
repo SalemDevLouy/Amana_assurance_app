@@ -47,6 +47,99 @@ model User {
   updatedAt        DateTime  @updatedAt
 }
 
+enum ContractStatus {
+  EN_ATTENTE
+  APPROUVE
+  REFUSE
+  EXPIRE
+}
+
+enum AccidentStatus {
+  EN_ATTENTE
+  EN_REVUE
+  ACCEPTEE
+  REFUSEE
+}
+
+model Contract {
+  id                   String         @id @default(auto()) @map("_id") @db.ObjectId
+  contractNumber       String         @unique
+  userId               String         @db.ObjectId
+  status               ContractStatus @default(EN_ATTENTE)
+  assuranceType        String
+
+  // Vehicle info
+  brand                String
+  model                String
+  version              String
+  energy               String
+  seats                String
+  parking              String
+  registration         String
+  chassisNumber        String
+  firstRegistrationDate String
+  marketValue          String
+  usage                String
+  circulationZone      String
+  insuredCapital       String
+  mileage              String
+  estimatedKmPerYear   String
+  horsepower           String
+
+  // Pricing
+  basePrice            Int
+  optionsTotal         Int
+  totalCost            Int
+
+  // Selected guarantees stored as JSON
+  selectedGuarantees   Json
+
+  // Payment
+  paymentMethod        String
+
+  // Admin
+  adminNotes           String[]  @default([])
+
+  accidents            AccidentDeclaration[]
+
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model AccidentDeclaration {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  caseNumber    String         @unique
+  contractId    String         @db.ObjectId
+  userId        String         @db.ObjectId
+  status        AccidentStatus @default(EN_ATTENTE)
+
+  // Key fields for admin list view
+  accidentDate  String
+  accidentTime  String
+  location      String
+  wilaya        String
+  weather       String
+  description   String
+  vehiclePlate  String
+
+  // Full form data as JSON
+  formData      Json
+
+  internalNotes String[]  @default([])
+
+  contract      Contract  @relation(fields: [contractId], references: [id])
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([contractId])
+  @@index([status])
+}
+
 model GuaranteeGroup {
   id            String               @id @default(auto()) @map("_id") @db.ObjectId
   assuranceType AssuranceCatalogType

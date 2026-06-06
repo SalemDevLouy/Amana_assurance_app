@@ -147,48 +147,50 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f6fb] pt-24 pb-16 px-4 sm:px-6">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="min-h-screen bg-[#f4f6fb] pt-20 pb-24 px-3 sm:px-6 sm:pt-24 sm:pb-16">
+      <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-blue-600 mb-1">Customer Space</p>
-            <h1 className="text-2xl font-extrabold text-gray-800 flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center">
-                <FaUser className="text-white text-xs" />
+        <div className="rounded-3xl border border-gray-100 bg-white/90 p-4 shadow-sm sm:p-5">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500">
+                <FaUser className="text-xs text-white" />
               </div>
-              My Profile
-            </h1>
-          </div>
-          <div className="flex items-center gap-2">
-            {isEditing ? (
-              <>
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-blue-600">Espace client</p>
+                <h1 className="text-lg font-extrabold text-gray-800 sm:text-2xl">Mon profil</h1>
+              </div>
+            </div>
+            <div className="flex shrink-0 items-center gap-2">
+              {isEditing ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => { setIsEditing(false); setMessage(null); }}
+                    className="inline-flex items-center gap-1.5 rounded-2xl border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100"
+                  >
+                    <FaTimes className="text-xs" /> Annuler
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="inline-flex items-center gap-1.5 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-3 py-2 text-xs font-semibold text-white shadow-md disabled:opacity-60"
+                  >
+                    <FaSave className="text-xs" /> {isSaving ? "…" : "Sauvegarder"}
+                  </button>
+                </>
+              ) : (
                 <button
                   type="button"
-                  onClick={() => { setIsEditing(false); setMessage(null); }}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-all"
+                  onClick={() => setIsEditing(true)}
+                  className="inline-flex items-center gap-1.5 rounded-2xl bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700"
                 >
-                  <FaTimes className="text-xs" /> Cancel
+                  <FaEdit className="text-xs" /> Modifier
                 </button>
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-semibold shadow-md shadow-blue-500/25 hover:shadow-blue-500/40 disabled:opacity-60 transition-all"
-                >
-                  <FaSave className="text-xs" /> {isSaving ? "Saving..." : "Save Changes"}
-                </button>
-              </>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setIsEditing(true)}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-all"
-              >
-                <FaEdit className="text-xs" /> Edit Profile
-              </button>
-            )}
+              )}
+            </div>
           </div>
         </div>
 
@@ -200,7 +202,7 @@ export default function ProfilePage() {
         )}
 
         {/* Personal Info */}
-        <div className="bg-white/80 border border-gray-100 rounded-3xl p-6 shadow-sm">
+        <div className="bg-white/80 border border-gray-100 rounded-3xl p-4 sm:p-6 shadow-sm">
           <h2 className="flex items-center gap-2 text-sm font-bold text-gray-700 uppercase tracking-wide mb-5">
             <FaUser className="text-blue-500" /> Personal Information
           </h2>

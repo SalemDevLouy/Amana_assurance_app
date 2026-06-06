@@ -186,8 +186,8 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="relative py-24 px-4 border-t border-gray-100 text-center">
-        <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full bg-blue-500/8 blur-[120px]" />
+      <section className="relative overflow-hidden py-24 px-4 border-t border-gray-100 text-center">
+        <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-3/4 max-w-[600px] h-[300px] rounded-full bg-blue-500/8 blur-[120px]" />
         <div className="relative z-10 max-w-2xl mx-auto" data-aos="fade-up">
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-800 leading-tight mb-4">
             Ready to experience{' '}
