@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
+import { FaImage } from "react-icons/fa";
 
 type ContractStatus = "EN_ATTENTE" | "APPROUVE" | "REFUSE" | "EXPIRE";
 
@@ -18,6 +19,8 @@ type Contract = {
   optionsTotal: number;
   paymentMethod: string;
   adminNotes: string[];
+  vehiclePhotoUrls: string[];
+  documentUrls: Record<string, string> | null;
   createdAt: string;
   updatedAt: string;
   user: { id: string; name: string | null; email: string; phone: string | null } | null;
@@ -305,6 +308,66 @@ export default function Page() {
                   ))}
                 </div>
               </section>
+
+              {/* Photos */}
+              {((selectedContract.vehiclePhotoUrls?.length > 0) || (selectedContract.documentUrls && Object.keys(selectedContract.documentUrls).length > 0)) && (
+                <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+                  <div className="mb-5 flex items-center gap-3">
+                    <FaImage className="text-blue-400" />
+                    <h3 className="text-base font-bold text-slate-900">Photos & documents soumis</h3>
+                  </div>
+
+                  {selectedContract.vehiclePhotoUrls?.length > 0 && (
+                    <div className="mb-6">
+                      <p className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-400">
+                        Photos du véhicule ({selectedContract.vehiclePhotoUrls.length})
+                      </p>
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        {selectedContract.vehiclePhotoUrls.map((url, i) => (
+                          <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="group block overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 aspect-video">
+                            <img
+                              src={url}
+                              alt={`Photo véhicule ${i + 1}`}
+                              className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+                            />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedContract.documentUrls && Object.keys(selectedContract.documentUrls).length > 0 && (
+                    <div>
+                      <p className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-400">Documents</p>
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        {Object.entries(selectedContract.documentUrls).map(([key, url]) => {
+                          const labels: Record<string, string> = {
+                            chassis: "Châssis (VIN)",
+                            plate: "Plaque",
+                            odometer: "Compteur",
+                            carteGrise: "Carte grise",
+                            previousInsurance: "Ancienne assurance",
+                          };
+                          return (
+                            <a key={key} href={url} target="_blank" rel="noopener noreferrer" className="group block overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
+                              <div className="aspect-video overflow-hidden">
+                                <img
+                                  src={url}
+                                  alt={labels[key] ?? key}
+                                  className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+                                />
+                              </div>
+                              <p className="truncate px-3 py-2 text-xs font-semibold text-slate-600">
+                                {labels[key] ?? key}
+                              </p>
+                            </a>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </section>
+              )}
 
               {/* Admin notes */}
               <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">

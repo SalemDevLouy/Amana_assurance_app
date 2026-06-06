@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import {
   FaCalendarAlt, FaCheckCircle, FaClock, FaExclamationTriangle,
-  FaFileAlt, FaMapMarkerAlt, FaPhone, FaSearch, FaShieldAlt,
+  FaFileAlt, FaImage, FaMapMarkerAlt, FaPhone, FaSearch, FaShieldAlt,
   FaTimesCircle, FaUser,
 } from "react-icons/fa";
 
@@ -22,6 +22,8 @@ type AccidentDemand = {
   description: string;
   vehiclePlate: string;
   internalNotes: string[];
+  photoUrls: string[];
+  sketchUrls: string[];
   createdAt: string;
   updatedAt: string;
   user: { id: string; name: string | null; email: string; phone: string | null } | null;
@@ -303,6 +305,56 @@ export default function Page() {
                   <DetailRow label="Description" value={selectedDemand.description} />
                 </div>
               </section>
+
+              {(selectedDemand.photoUrls?.length > 0 || selectedDemand.sketchUrls?.length > 0) && (
+                <section className="rounded-3xl border border-slate-200 bg-white/90 p-5 shadow-xl md:p-6">
+                  <div className="mb-5 flex items-center gap-3">
+                    <div className="rounded-2xl bg-cyan-50 p-3 text-cyan-700"><FaImage /></div>
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">Photos & documents</h3>
+                      <p className="text-sm text-slate-500">Pièces jointes soumises par l'assuré.</p>
+                    </div>
+                  </div>
+
+                  {selectedDemand.photoUrls?.length > 0 && (
+                    <div className="mb-5">
+                      <p className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-400">
+                        Photos de l'accident ({selectedDemand.photoUrls.length})
+                      </p>
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        {selectedDemand.photoUrls.map((url, i) => (
+                          <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="group block overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 aspect-video">
+                            <img
+                              src={url}
+                              alt={`Photo accident ${i + 1}`}
+                              className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+                            />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedDemand.sketchUrls?.length > 0 && (
+                    <div>
+                      <p className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-400">
+                        Croquis ({selectedDemand.sketchUrls.length})
+                      </p>
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        {selectedDemand.sketchUrls.map((url, i) => (
+                          <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="group block overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 aspect-video">
+                            <img
+                              src={url}
+                              alt={`Croquis ${i + 1}`}
+                              className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+                            />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </section>
+              )}
 
               <section className="rounded-3xl border border-slate-200 bg-white/90 p-5 shadow-xl md:p-6">
                 <div className="mb-5 flex items-center gap-3">
