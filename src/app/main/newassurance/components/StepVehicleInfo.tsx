@@ -1,8 +1,53 @@
 "use client";
 
 import React, { useState } from "react";
-import { Input, TextArea } from "@heroui/react";
 import { CarInfo } from "../types";
+
+// ── Shared field primitives ───────────────────────────────────────────────────
+
+function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="text-xs font-semibold text-gray-600">
+        {label}{required && <span className="ml-0.5 text-rose-500">*</span>}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+const inputCls = "w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-800 outline-none transition focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100 placeholder:text-gray-400";
+
+function TextInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder?: string }) {
+  return <input type="text" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className={inputCls} />;
+}
+
+function NumericInput({ value, onChange, placeholder, min = 0 }: { value: string; onChange: (v: string) => void; placeholder?: string; min?: number }) {
+  return (
+    <input
+      type="text"
+      inputMode="numeric"
+      pattern="[0-9]*"
+      value={value}
+      placeholder={placeholder}
+      className={inputCls}
+      onChange={(e) => {
+        const cleaned = e.target.value.replace(/[^0-9]/g, "");
+        if (min !== undefined && cleaned !== "" && Number(cleaned) < min) return;
+        onChange(cleaned);
+      }}
+    />
+  );
+}
+
+function SelectInput({ value, onChange, options, placeholder }: { value: string; onChange: (v: string) => void; options: string[]; placeholder?: string }) {
+  return (
+    <select value={value} onChange={(e) => onChange(e.target.value)} className={`${inputCls} appearance-none`}>
+      <option value="">{placeholder ?? "Sélectionner..."}</option>
+      {options.map((o) => <option key={o} value={o}>{o}</option>)}
+    </select>
+  );
+}
 
 type UploadedFile = {
   file: File;
@@ -108,177 +153,173 @@ export default function StepVehicleInfo({
       </p>
 
       <div className="mt-5 grid grid-cols-1 gap-4 rounded-2xl border border-gray-200 bg-white p-4 sm:grid-cols-2 sm:p-5">
-        <Input
-          type="text"
-          value={carInfo.brand}
-          onChange={(event) =>
-            setCarInfo((prev) => ({ ...prev, brand: event.target.value }))
-          }
-          placeholder="Marque de véhicule"
-        />
-        <Input
-          type="text"
-          value={carInfo.model}
-          onChange={(event) =>
-            setCarInfo((prev) => ({ ...prev, model: event.target.value }))
-          }
-          placeholder="Modèle de véhicule"
-        />
-        <Input
-          type="text"
-          value={carInfo.version}
-          onChange={(event) =>
-            setCarInfo((prev) => ({ ...prev, version: event.target.value }))
-          }
-          placeholder="Version de véhicule"
-        />
-        <Input
-          type="number"
-          value={carInfo.horsepower}
-          onChange={(event) =>
-            setCarInfo((prev) => ({ ...prev, horsepower: event.target.value }))
-          }
-          placeholder="Puissance fiscale (CV)"
-        />
-        <Input
-          type="text"
-          value={carInfo.energy}
-          onChange={(event) =>
-            setCarInfo((prev) => ({ ...prev, energy: event.target.value }))
-          }
-          placeholder="Essence, Diesel, Hybride..."
-        />
-        <Input
-          type="number"
-          value={carInfo.seats}
-          onChange={(event) =>
-            setCarInfo((prev) => ({ ...prev, seats: event.target.value }))
-          }
-          placeholder="Nombre de places"
-        />
-        <Input
-          type="text"
-          value={carInfo.parking}
-          onChange={(event) =>
-            setCarInfo((prev) => ({ ...prev, parking: event.target.value }))
-          }
-          placeholder="Stationnement (garage, en route...)"
-        />
-        <Input
-          type="text"
-          value={carInfo.registration}
-          onChange={(event) =>
-            setCarInfo((prev) => ({ ...prev, registration: event.target.value }))
-          }
-          placeholder="Numéro d'immatriculation"
-        />
-        <Input
-          type="text"
-          value={carInfo.carteGriseNumber ?? ""}
-          onChange={(event) =>
-            setCarInfo((prev) => ({ ...prev, carteGriseNumber: event.target.value }))
-          }
-          placeholder="Numéro de carte grise"
-        />
-        <Input
-          type="text"
-          value={carInfo.chassisNumber}
-          onChange={(event) =>
-            setCarInfo((prev) => ({ ...prev, chassisNumber: event.target.value }))
-          }
-          placeholder="Numéro de châssis"
-        />
-        <Input
-          type="date"
-          value={carInfo.firstRegistrationDate}
-          onChange={(event) =>
-            setCarInfo((prev) => ({
-              ...prev,
-              firstRegistrationDate: event.target.value,
-            }))
-          }
-          placeholder="Date de mise en circulation"
-        />
-        <Input
-          type="number"
-          value={carInfo.marketValue}
-          onChange={(event) =>
-            setCarInfo((prev) => ({ ...prev, marketValue: event.target.value }))
-          }
-          placeholder="Valeur vénale (DZD)"
-        />
-        <Input
-          type="text"
-          value={carInfo.usage}
-          onChange={(event) =>
-            setCarInfo((prev) => ({ ...prev, usage: event.target.value }))
-          }
-          placeholder="Usage du véhicule (personnel/affaire/auto-école/commerce...)"
-        />
-        <Input
-          type="text"
-          value={carInfo.circulationZone}
-          onChange={(event) =>
-            setCarInfo((prev) => ({
-              ...prev,
-              circulationZone: event.target.value,
-            }))
-          }
-          placeholder="Zone de circulation (ville, wilaya, national...)"
-        />
-        <Input
-          type="text"
-          value={carInfo.insuredCapital}
-          onChange={(event) =>
-            setCarInfo((prev) => ({
-              ...prev,
-              insuredCapital: event.target.value,
-            }))
-          }
-          placeholder="Capital assuré (ex: 100000 DZD)"
-        />
-        <Input
-          type="number"
-          value={carInfo.mileage}
-          onChange={(event) =>
-            setCarInfo((prev) => ({ ...prev, mileage: event.target.value }))
-          }
-          placeholder="Kilométrage actuel (Km)"
-        />
-        <Input
-          type="number"
-          value={carInfo.estimatedKmPerYear}
-          onChange={(event) =>
-            setCarInfo((prev) => ({
-              ...prev,
-              estimatedKmPerYear: event.target.value,
-            }))
-          }
-          placeholder="Estimation du nombre de Km par an"
-        />
-        <TextArea
-          value={carInfo.technicalCertificate}
-          onChange={(event) =>
-            setCarInfo((prev) => ({
-              ...prev,
-              technicalCertificate: event.target.value,
-            }))
-          }
-          placeholder="Redigez le certificat de visite technique..."
-          className="sm:col-span-2"
-        />
+        <Field label="Vehicle Brand" required>
+          <TextInput
+            value={carInfo.brand}
+            onChange={(v) => setCarInfo((p) => ({ ...p, brand: v }))}
+            placeholder="e.g. Toyota"
+          />
+        </Field>
+
+        <Field label="Vehicle Model" required>
+          <TextInput
+            value={carInfo.model}
+            onChange={(v) => setCarInfo((p) => ({ ...p, model: v }))}
+            placeholder="e.g. Corolla"
+          />
+        </Field>
+
+        <Field label="Version / Trim" required>
+          <TextInput
+            value={carInfo.version}
+            onChange={(v) => setCarInfo((p) => ({ ...p, version: v }))}
+            placeholder="e.g. 1.6 GX"
+          />
+        </Field>
+
+        <Field label="Fiscal Power (CV)" required>
+          <NumericInput
+            value={carInfo.horsepower}
+            onChange={(v) => setCarInfo((p) => ({ ...p, horsepower: v }))}
+            placeholder="e.g. 8"
+            min={1}
+          />
+        </Field>
+
+        <Field label="Fuel Type" required>
+          <SelectInput
+            value={carInfo.energy}
+            onChange={(v) => setCarInfo((p) => ({ ...p, energy: v }))}
+            options={["Essence", "Diesel", "Hybride", "Électrique", "GPL"]}
+            placeholder="Select fuel type..."
+          />
+        </Field>
+
+        <Field label="Number of Seats" required>
+          <NumericInput
+            value={carInfo.seats}
+            onChange={(v) => setCarInfo((p) => ({ ...p, seats: v }))}
+            placeholder="e.g. 5"
+            min={1}
+          />
+        </Field>
+
+        <Field label="Parking Type" required>
+          <SelectInput
+            value={carInfo.parking}
+            onChange={(v) => setCarInfo((p) => ({ ...p, parking: v }))}
+            options={["Garage privé", "Parking couvert", "Voie publique", "Résidence sécurisée"]}
+            placeholder="Select parking type..."
+          />
+        </Field>
+
+        <Field label="Registration Number" required>
+          <TextInput
+            value={carInfo.registration}
+            onChange={(v) => setCarInfo((p) => ({ ...p, registration: v }))}
+            placeholder="e.g. 12345-678-09"
+          />
+        </Field>
+
+        <Field label="Carte Grise Number" required>
+          <TextInput
+            value={carInfo.carteGriseNumber ?? ""}
+            onChange={(v) => setCarInfo((p) => ({ ...p, carteGriseNumber: v }))}
+            placeholder="e.g. 09-123456-16"
+          />
+        </Field>
+
+        <Field label="Chassis Number (VIN)" required>
+          <TextInput
+            value={carInfo.chassisNumber}
+            onChange={(v) => setCarInfo((p) => ({ ...p, chassisNumber: v }))}
+            placeholder="17-character VIN"
+          />
+        </Field>
+
+        <Field label="First Registration Date" required>
+          <input
+            type="date"
+            value={carInfo.firstRegistrationDate}
+            onChange={(e) => setCarInfo((p) => ({ ...p, firstRegistrationDate: e.target.value }))}
+            className={inputCls}
+          />
+        </Field>
+
+        <Field label="Market Value (DZD)" required>
+          <NumericInput
+            value={carInfo.marketValue}
+            onChange={(v) => setCarInfo((p) => ({ ...p, marketValue: v }))}
+            placeholder="e.g. 2500000"
+          />
+        </Field>
+
+        <Field label="Vehicle Usage" required>
+          <SelectInput
+            value={carInfo.usage}
+            onChange={(v) => setCarInfo((p) => ({ ...p, usage: v }))}
+            options={["Personnel", "Affaires", "Auto-École", "Commerce", "Transport"]}
+            placeholder="Select usage..."
+          />
+        </Field>
+
+        <Field label="Circulation Zone" required>
+          <SelectInput
+            value={carInfo.circulationZone}
+            onChange={(v) => setCarInfo((p) => ({ ...p, circulationZone: v }))}
+            options={["Ville", "Wilaya", "National"]}
+            placeholder="Select zone..."
+          />
+        </Field>
+
+        <Field label="Insured Capital (DZD)" required>
+          <NumericInput
+            value={carInfo.insuredCapital}
+            onChange={(v) => setCarInfo((p) => ({ ...p, insuredCapital: v }))}
+            placeholder="e.g. 100000"
+          />
+        </Field>
+
+        <Field label="Current Mileage (km)" required>
+          <NumericInput
+            value={carInfo.mileage}
+            onChange={(v) => setCarInfo((p) => ({ ...p, mileage: v }))}
+            placeholder="e.g. 45000"
+          />
+        </Field>
+
+        <Field label="Estimated km / Year" required>
+          <NumericInput
+            value={carInfo.estimatedKmPerYear}
+            onChange={(v) => setCarInfo((p) => ({ ...p, estimatedKmPerYear: v }))}
+            placeholder="e.g. 15000"
+          />
+        </Field>
+
+        <div className="sm:col-span-2">
+          <Field label="Technical Certificate Notes">
+            <textarea
+              value={carInfo.technicalCertificate}
+              onChange={(e) => setCarInfo((p) => ({ ...p, technicalCertificate: e.target.value }))}
+              placeholder="Observations from the last technical inspection..."
+              rows={3}
+              className={`${inputCls} resize-none`}
+            />
+          </Field>
+        </div>
       </div>
 
       {/* ── Driver behaviour ─────────────────────────────── */}
       <div className="mt-5 rounded-2xl border border-gray-200 bg-white p-4 sm:p-5">
         <h3 className="mb-4 text-sm font-bold text-gray-800">Driver Information</h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Input
-            type="number"
-            value={carInfo.peakHoursDriving ?? ""}
-            onChange={(e) => setCarInfo((p) => ({ ...p, peakHoursDriving: e.target.value }))}
-            placeholder="Peak-hour driving (hours/day)"
-          />
+          <Field label="Peak-hour driving (hours/day)">
+            <NumericInput
+              value={carInfo.peakHoursDriving ?? ""}
+              onChange={(v) => setCarInfo((p) => ({ ...p, peakHoursDriving: v }))}
+              placeholder="e.g. 2"
+            />
+          </Field>
 
           <div className="flex flex-col gap-1.5">
             <p className="text-xs font-semibold text-gray-500">Night driving?</p>
