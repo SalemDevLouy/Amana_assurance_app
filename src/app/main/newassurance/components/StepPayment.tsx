@@ -30,15 +30,15 @@ export default function StepPayment({
   return (
     <div className="space-y-5">
       <h2 className="text-lg font-semibold text-gray-800">4. Payment</h2>
-      <p className="mt-1 text-sm text-gray-500">Finalisez votre demande et confirmez le paiement.</p>
+      <p className="mt-1 text-sm text-gray-500">Finalize your request and confirm payment.</p>
 
       <div className="mt-5 grid grid-cols-1 gap-4 rounded-2xl border border-gray-200 bg-white p-4 sm:grid-cols-2 sm:p-5">
         <div>
-          <Label className="mb-1 block text-xs font-semibold text-gray-500">Nom complet</Label>
+          <Label className="mb-1 block text-xs font-semibold text-gray-500">Full Name</Label>
           <Input
             type="text"
             value={payment.fullName}
-            placeholder="Nom complet"
+            placeholder="Full name"
             onChange={(e) => setPayment((prev) => ({ ...prev, fullName: e.target.value }))}
           />
         </div>
@@ -52,33 +52,33 @@ export default function StepPayment({
           />
         </div>
         <div className="sm:col-span-2">
-          <Label className="mb-1 block text-xs font-semibold text-gray-500">Téléphone</Label>
+          <Label className="mb-1 block text-xs font-semibold text-gray-500">Phone</Label>
           <Input
             type="tel"
             value={payment.phone}
-            placeholder="Téléphone"
+            placeholder="Phone number"
             onChange={(e) => setPayment((prev) => ({ ...prev, phone: e.target.value }))}
           />
         </div>
       </div>
 
       <Card className="mt-5 rounded-2xl border border-cyan-200 bg-cyan-50/60">
-        <CardHeader className="pb-0 text-sm font-semibold text-cyan-900">Résumé du contrat</CardHeader>
+        <CardHeader className="pb-0 text-sm font-semibold text-cyan-900">Contract Summary</CardHeader>
         <div className="space-y-2 px-4 pb-4 pt-2">
-          <p className="text-sm text-gray-600">Type assurance: {assuranceType || "-"}</p>
+          <p className="text-sm text-gray-600">Insurance type: {assuranceType || "-"}</p>
           <p className="mt-1 text-sm text-gray-600">
-            Véhicule: {carBrand || "-"} {carModel || "-"} ({registration || "-"})
+            Vehicle: {carBrand || "-"} {carModel || "-"} ({registration || "-"})
           </p>
 
           <div className="mt-3 space-y-1">
-            <p className="text-sm font-semibold text-gray-700">Garanties sélectionnées</p>
+            <p className="text-sm font-semibold text-gray-700">Selected Guarantees</p>
             {selectedGuaranteesSummary.length === 0 ? (
-              <p className="text-sm text-gray-500">Aucune option additionnelle.</p>
+              <p className="text-sm text-gray-500">No additional options.</p>
             ) : (
               selectedGuaranteesSummary.map((guarantee) => (
                 <div key={guarantee.id} className="flex items-center justify-between text-sm text-gray-600">
                   <span>{guarantee.label}</span>
-                  <span>{guarantee.price > 0 ? `${guarantee.price} DA` : "Inclus"}</span>
+                  <span>{guarantee.price > 0 ? `${guarantee.price} DA` : "Included"}</span>
                 </div>
               ))
             )}
@@ -97,20 +97,20 @@ export default function StepPayment({
           value={payment.method}
           onChange={(val) => setPayment((prev) => ({ ...prev, method: val as PaymentInfo["method"] }))}
         >
-          <Label>Méthode de paiement</Label>
-          <Description>Choisissez le mode de paiement que vous préférez.</Description>
+          <Label>Payment Method</Label>
+          <Description>Choose your preferred payment method.</Description>
           <Radio value="card">
             <Radio.Control><Radio.Indicator /></Radio.Control>
             <Radio.Content>
-              <Label>Carte bancaire</Label>
-              <Description>Paiement sécurisé par carte.</Description>
+              <Label>Bank Card</Label>
+              <Description>Secure card payment.</Description>
             </Radio.Content>
           </Radio>
           <Radio value="transfer">
             <Radio.Control><Radio.Indicator /></Radio.Control>
             <Radio.Content>
-              <Label>Virement</Label>
-              <Description>Transfert bancaire classique.</Description>
+              <Label>Bank Transfer</Label>
+              <Description>Standard bank transfer.</Description>
             </Radio.Content>
           </Radio>
         </RadioGroup>
@@ -119,7 +119,7 @@ export default function StepPayment({
           isSelected={payment.acceptTerms}
           onChange={(checked) => setPayment((prev) => ({ ...prev, acceptTerms: checked }))}
         >
-          J&apos;accepte les conditions générales du contrat.
+          I accept the general terms and conditions.
         </Checkbox>
       </div>
     </div>

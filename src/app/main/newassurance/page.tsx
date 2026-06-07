@@ -263,26 +263,26 @@ export default function Page() {
 
   const step2Missing = useMemo(() => {
     const missing: string[] = [];
-    if (!carInfo.brand.trim()) missing.push("Marque");
-    if (!carInfo.model.trim()) missing.push("Modèle");
-    if (!carInfo.version.trim()) missing.push("Version");
-    if (!carInfo.horsepower.trim()) missing.push("Puissance fiscale");
-    if (!carInfo.energy.trim()) missing.push("Énergie");
-    if (!carInfo.seats.trim()) missing.push("Nombre de places");
-    if (!carInfo.parking.trim()) missing.push("Stationnement");
-    if (!carInfo.registration.trim()) missing.push("Immatriculation");
-    if (!carInfo.chassisNumber.trim()) missing.push("N° châssis");
-    if (!carInfo.firstRegistrationDate.trim()) missing.push("Date de mise en circulation");
-    if (!carInfo.marketValue.trim()) missing.push("Valeur vénale");
-    if (!carInfo.usage.trim()) missing.push("Usage");
-    if (!carInfo.circulationZone.trim()) missing.push("Zone de circulation");
-    if (!carInfo.insuredCapital.trim()) missing.push("Capital assuré");
-    if (!carInfo.mileage.trim()) missing.push("Kilométrage");
-    if (!carInfo.estimatedKmPerYear.trim()) missing.push("Km/an estimé");
-    if (vehiclePhotos.length === 0) missing.push("Au moins 1 photo du véhicule");
-    if (!chassisPhoto) missing.push("Photo châssis");
-    if (!platePhoto) missing.push("Photo plaque");
-    if (!odometerPhoto) missing.push("Photo compteur");
+    if (!carInfo.brand.trim()) missing.push("Vehicle Brand");
+    if (!carInfo.model.trim()) missing.push("Vehicle Model");
+    if (!carInfo.version.trim()) missing.push("Version / Trim");
+    if (!carInfo.horsepower.trim()) missing.push("Fiscal Power (CV)");
+    if (!carInfo.energy.trim()) missing.push("Fuel Type");
+    if (!carInfo.seats.trim()) missing.push("Number of Seats");
+    if (!carInfo.parking.trim()) missing.push("Parking Type");
+    if (!carInfo.registration.trim()) missing.push("Registration Number");
+    if (!carInfo.chassisNumber.trim()) missing.push("Chassis Number (VIN)");
+    if (!carInfo.firstRegistrationDate.trim()) missing.push("First Registration Date");
+    if (!carInfo.marketValue.trim()) missing.push("Market Value (DZD)");
+    if (!carInfo.usage.trim()) missing.push("Vehicle Usage");
+    if (!carInfo.circulationZone.trim()) missing.push("Circulation Zone");
+    if (!carInfo.insuredCapital.trim()) missing.push("Insured Capital (DZD)");
+    if (!carInfo.mileage.trim()) missing.push("Current Mileage (km)");
+    if (!carInfo.estimatedKmPerYear.trim()) missing.push("Estimated km / Year");
+    if (vehiclePhotos.length === 0) missing.push("At least 1 vehicle photo");
+    if (!chassisPhoto) missing.push("Chassis photo");
+    if (!platePhoto) missing.push("License plate photo");
+    if (!odometerPhoto) missing.push("Odometer photo");
     return missing;
   }, [carInfo, vehiclePhotos.length, chassisPhoto, platePhoto, odometerPhoto]);
 
@@ -408,12 +408,12 @@ export default function Page() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.12),transparent_45%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.12),transparent_45%)]" />
 
       <div className="relative mb-5 overflow-hidden rounded-3xl border border-blue-100 bg-white/80 p-5 shadow-lg sm:mb-8 sm:p-8">
-        <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-blue-600">Nouveau contrat</p>
+        <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-blue-600">New Contract</p>
         <h1 className="text-xl font-extrabold text-gray-800 sm:text-3xl">
-          Souscrire à l&apos;assurance auto
+          Get Auto Insurance
         </h1>
         <p className="mt-1 text-xs text-gray-500 sm:mt-2 sm:text-sm">
-          4 étapes : couverture → véhicule → garanties → paiement.
+          4 steps: coverage → vehicle → guarantees → payment.
         </p>
       </div>
 
@@ -479,7 +479,7 @@ export default function Page() {
                 onPress={() => setStep((prev) => Math.max(1, prev - 1))}
                 className="rounded-xl border border-gray-300 bg-white px-5 py-2 text-sm font-semibold text-gray-700"
               >
-                Retour
+                Back
               </Button>
               {step < 4 ? (
                 <Button
@@ -489,7 +489,7 @@ export default function Page() {
                   onPress={() => setStep((prev) => Math.min(4, prev + 1))}
                   className="rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-2 text-sm font-semibold text-white shadow-md shadow-blue-500/25 disabled:opacity-50"
                 >
-                  Continuer
+                  Continue
                 </Button>
               ) : (
                 <Button
@@ -498,7 +498,7 @@ export default function Page() {
                   isDisabled={submitting || !canGoNext}
                   className="rounded-xl bg-emerald-600 px-5 py-2 text-sm font-semibold text-white shadow-md shadow-emerald-500/25 disabled:opacity-50"
                 >
-                  {submitting ? "Envoi en cours…" : "Confirmer & Payer"}
+                  {submitting ? "Submitting…" : "Confirm & Pay"}
                 </Button>
               )}
             </div>
@@ -532,7 +532,7 @@ export default function Page() {
               disabled={submitting || !canGoNext}
               className="flex-1 rounded-2xl bg-emerald-600 py-3 text-sm font-bold text-white shadow-md shadow-emerald-500/25 disabled:opacity-50 active:opacity-90"
             >
-              {submitting ? "Envoi…" : "Confirmer & Payer"}
+              {submitting ? "Submitting…" : "Confirm & Pay"}
             </button>
           )}
         </div>

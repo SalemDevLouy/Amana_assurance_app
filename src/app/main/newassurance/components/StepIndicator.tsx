@@ -1,6 +1,6 @@
 type StepIndicatorProps = Readonly<{ step: number }>;
 
-const STEPS = ["Couverture", "Véhicule", "Garanties", "Paiement"];
+const STEPS = ["Coverage", "Vehicle", "Guarantees", "Payment"];
 
 export default function StepIndicator({ step }: StepIndicatorProps) {
   return (
@@ -31,7 +31,7 @@ export default function StepIndicator({ step }: StepIndicatorProps) {
           })}
         </div>
         <p className="mt-2.5 text-center text-xs font-semibold text-gray-500">
-          Étape {step} sur {STEPS.length} :{" "}
+          Step {step} of {STEPS.length}:{" "}
           <span className="font-bold text-blue-600">{STEPS[step - 1]}</span>
         </p>
       </div>
@@ -54,7 +54,7 @@ export default function StepIndicator({ step }: StepIndicatorProps) {
               <p className={`mb-1 text-[10px] font-semibold uppercase tracking-widest ${
                 active ? "text-blue-500" : done ? "text-emerald-600" : "text-gray-400"
               }`}>
-                {done ? "✓ Terminé" : `Étape ${num}`}
+                {done ? "✓ Done" : `Step ${num}`}
               </p>
               <p className={`text-sm font-bold ${
                 active ? "text-blue-800" : done ? "text-emerald-800" : "text-gray-500"

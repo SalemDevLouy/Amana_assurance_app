@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { FaCamera } from "react-icons/fa";
 import { CarInfo } from "../types";
 
 // ── Shared field primitives ───────────────────────────────────────────────────
@@ -146,10 +147,10 @@ export default function StepVehicleInfo({
   return (
     <div className="space-y-5">
       <h2 className="text-lg font-semibold text-gray-800">
-        2. Informations Vehicule (obligatoire)
+        2. Vehicle Information (required)
       </h2>
       <p className="mt-1 text-sm text-gray-500">
-        Renseignez toutes les donnees obligatoires pour valider le contrat.
+        Fill in all required fields to validate the contract.
       </p>
 
       <div className="mt-5 grid grid-cols-1 gap-4 rounded-2xl border border-gray-200 bg-white p-4 sm:grid-cols-2 sm:p-5">
@@ -386,18 +387,18 @@ export default function StepVehicleInfo({
       <div className="mt-6 space-y-4">
         <UploadBlock
           id="vehicle-photos"
-          title="Photos du vehicule (tous les angles)"
+          title="Vehicle Photos (all angles)"
           accept="image/*"
           files={vehiclePhotosList}
           onChange={(files) => handleVehiclePhotosChange(files)}
           onRemove={(index) => removeVehiclePhoto(index)}
-          hint="Ajoutez au minimum 4 photos."
+          hint="Add at least 1 photo."
           multiple
         />
 
         <UploadBlock
           id="chassis-photo"
-          title="Photo du chassis (VIN)"
+          title="Chassis Photo (VIN)"
           accept="image/*"
           files={chassisPhotoFile ? [chassisPhotoFile] : []}
           onChange={(files) =>
@@ -414,12 +415,12 @@ export default function StepVehicleInfo({
               chassisPhotoFile
             )
           }
-          hint="Photo claire du numero de chassis."
+          hint="Clear photo of the chassis number."
         />
 
         <UploadBlock
           id="plate-photo"
-          title="Photo de la plaque"
+          title="License Plate Photo"
           accept="image/*"
           files={platePhotoFile ? [platePhotoFile] : []}
           onChange={(files) =>
@@ -428,29 +429,19 @@ export default function StepVehicleInfo({
           onRemove={() =>
             removeSinglePhoto(setPlatePhotoFile, setPlatePhoto, platePhotoFile)
           }
-          hint="Photo claire de la plaque d'immatriculation."
+          hint="Clear photo of the license plate."
         />
 
-        <UploadBlock
-          id="odometer-photo"
+        <CameraCapture
           title="Photo du tableau de bord (Compteur)"
-          accept="image/*"
-          files={odometerPhotoFile ? [odometerPhotoFile] : []}
-          onChange={(files) =>
-            handleSinglePhotoChange(
-              files,
-              setOdometerPhotoFile,
-              setOdometerPhoto
-            )
-          }
-          onRemove={() =>
-            removeSinglePhoto(
-              setOdometerPhotoFile,
-              setOdometerPhoto,
-              odometerPhotoFile
-            )
-          }
-          hint="Photo du compteur kilometrique visible."
+          hint="Take a photo of the dashboard showing the odometer reading."
+          file={odometerPhotoFile}
+          onCapture={(f) => {
+            const uploaded = { file: f, preview: URL.createObjectURL(f) };
+            setOdometerPhotoFile(uploaded);
+            setOdometerPhoto(f);
+          }}
+          onRemove={() => removeSinglePhoto(setOdometerPhotoFile, setOdometerPhoto, odometerPhotoFile)}
         />
 
         <UploadBlock
@@ -496,10 +487,134 @@ export default function StepVehicleInfo({
 
       {missingFields.length > 0 && (
         <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">
-          <p className="mb-1 font-semibold">Champs manquants :</p>
+          <p className="mb-1 font-semibold">Missing fields:</p>
           <ul className="list-disc pl-4 space-y-0.5">
             {missingFields.map((f) => <li key={f}>{f}</li>)}
           </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Camera capture (in-app viewfinder) ───────────────────────────────────────
+
+function CameraCapture({
+  title,
+  hint,
+  file,
+  onCapture,
+  onRemove,
+}: {
+  title: string;
+  hint: string;
+  file: UploadedFile | null;
+  onCapture: (f: File) => void;
+  onRemove: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [err, setErr] = useState("");
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const openCamera = async () => {
+    setErr("");
+    try {
+      const s = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+      });
+      setStream(s);
+      setOpen(true);
+    } catch {
+      setErr("Camera unavailable — check browser permissions.");
+    }
+  };
+
+  useEffect(() => {
+    if (open && stream && videoRef.current) {
+      videoRef.current.srcObject = stream;
+      videoRef.current.play().catch(() => {});
+    }
+  }, [open, stream]);
+
+  useEffect(() => {
+    return () => { stream?.getTracks().forEach((t) => t.stop()); };
+  }, [stream]);
+
+  const closeCamera = () => {
+    stream?.getTracks().forEach((t) => t.stop());
+    setStream(null);
+    setOpen(false);
+  };
+
+  const capture = () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!video || !canvas) return;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d")?.drawImage(video, 0, 0);
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const captured = new File([blob], `odometer-${Date.now()}.jpg`, { type: "image/jpeg" });
+      onCapture(captured);
+      closeCamera();
+    }, "image/jpeg", 0.85);
+  };
+
+  return (
+    <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+      <div className="mb-3">
+        <h3 className="text-sm font-bold text-gray-800">{title}</h3>
+        <p className="text-xs text-gray-500">{hint}</p>
+      </div>
+
+      {file ? (
+        <div>
+          <img src={file.preview} alt="Odometer" className="h-44 w-full rounded-xl object-cover" />
+          <div className="mt-2 flex items-center justify-between">
+            <p className="text-xs text-gray-500 truncate max-w-[70%]">{file.file.name}</p>
+            <button type="button" onClick={onRemove}
+              className="text-xs font-semibold text-rose-600 hover:text-rose-700 flex items-center gap-1">
+              <FaCamera className="text-[10px]" /> Retake
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          <button
+            type="button"
+            onClick={openCamera}
+            className="w-full rounded-xl border-2 border-dashed border-cyan-300 bg-cyan-50 py-8 flex flex-col items-center gap-2.5 text-cyan-700 hover:bg-cyan-100 transition"
+          >
+            <FaCamera className="text-3xl" />
+            <span className="text-sm font-semibold">Take Photo</span>
+            <span className="text-xs text-cyan-500">Opens your camera</span>
+          </button>
+          {err && <p className="text-xs text-red-500 text-center">{err}</p>}
+        </div>
+      )}
+
+      {open && (
+        <div className="fixed inset-0 z-[100] flex flex-col bg-black">
+          <video ref={videoRef} autoPlay playsInline muted className="flex-1 w-full object-cover" />
+          <canvas ref={canvasRef} className="hidden" />
+          <div className="flex items-center justify-between px-8 py-6 bg-black/90">
+            <button type="button" onClick={closeCamera}
+              className="text-white/70 text-sm font-medium hover:text-white transition px-3 py-2">
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={capture}
+              className="w-20 h-20 rounded-full border-4 border-white flex items-center justify-center hover:scale-95 transition-transform"
+              aria-label="Capture photo"
+            >
+              <div className="w-14 h-14 rounded-full bg-white" />
+            </button>
+            <div className="w-16" />
+          </div>
         </div>
       )}
     </div>
@@ -538,7 +653,7 @@ function UploadBlock({
           htmlFor={id}
           className="cursor-pointer rounded-lg border border-cyan-400 bg-cyan-50 px-3 py-2 text-xs font-semibold text-cyan-700 transition hover:bg-cyan-100"
         >
-          Ajouter
+          Add
         </label>
       </div>
 
@@ -554,7 +669,7 @@ function UploadBlock({
 
       {files.length === 0 ? (
         <p className="rounded-lg border border-dashed border-gray-300 bg-gray-50 px-3 py-4 text-center text-xs text-gray-500">
-          Aucun fichier televerse pour le moment.
+          No file uploaded yet.
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -579,7 +694,7 @@ function UploadBlock({
                 onClick={() => onRemove(index)}
                 className="mt-2 text-xs font-semibold text-red-600 transition hover:text-red-700"
               >
-                Supprimer
+                Remove
               </button>
             </div>
           ))}

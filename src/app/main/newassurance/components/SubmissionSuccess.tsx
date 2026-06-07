@@ -19,7 +19,7 @@ export default function SubmissionSuccess({ totalCost, contractNumber }: Submiss
           </p>
           {contractNumber ? (
             <p className="mt-2 mb-3 inline-block rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-800">
-              N° de contrat : {contractNumber}
+              Contract No.: {contractNumber}
             </p>
           ) : null}
           <p className="text-base font-bold text-emerald-700">

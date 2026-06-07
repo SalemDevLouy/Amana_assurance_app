@@ -68,7 +68,7 @@ export default function StepGuarantees({
   onSelectGroupChange,
 }: StepGuaranteeProps) {
   if (isLoading) {
-    return <p className="text-sm text-gray-500">Chargement des garanties...</p>;
+    return <p className="text-sm text-gray-500">Loading guarantees...</p>;
   }
 
   if (error) {
@@ -106,7 +106,7 @@ export default function StepGuarantees({
                   isDisabled={isMandatory}
                 >
                   <Label>{group.title}</Label>
-                  <Description>{group.description ?? "Choisissez toutes les options qui s'appliquent."}</Description>
+                  <Description>{group.description ?? "Choose all options that apply."}</Description>
                   {group.options.map((option) => (
                     <Checkbox key={option.id} value={option.id}>
                       <Checkbox.Control>
@@ -114,7 +114,7 @@ export default function StepGuarantees({
                       </Checkbox.Control>
                       <Checkbox.Content>
                         <Label>{option.label}</Label>
-                        <Description>{option.price > 0 ? `${option.price} DA` : "Inclus"}</Description>
+                        <Description>{option.price > 0 ? `${option.price} DA` : "Included"}</Description>
                       </Checkbox.Content>
                     </Checkbox>
                   ))}
@@ -134,7 +134,7 @@ export default function StepGuarantees({
                 onChange={(value) => onSelectGroupChange(group.key, toSingleString(value))}
               >
                 <Label>{group.title}</Label>
-                <Description>{group.description ?? "Selectionnez une option."}</Description>
+                <Description>{group.description ?? "Select an option."}</Description>
                 {group.options.map((option) => (
                   <Radio key={option.id} value={option.id}>
                     <Radio.Control>
@@ -142,7 +142,7 @@ export default function StepGuarantees({
                     </Radio.Control>
                     <Radio.Content>
                       <Label>{option.label}</Label>
-                      <Description>{option.price > 0 ? `${option.price} DA` : "Inclus"}</Description>
+                      <Description>{option.price > 0 ? `${option.price} DA` : "Included"}</Description>
                     </Radio.Content>
                   </Radio>
                 ))}
