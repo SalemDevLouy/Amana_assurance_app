@@ -22,6 +22,18 @@ const INSURANCE_SERVICES = [
     available: true,
     href: "/main/services/automobile",
   },
+   {
+    id: "agricole",
+    label: "Agricole",
+    desc: "Récoltes, matériel et cheptel",
+    icon: FaIndustry,
+    gradient: "from-lime-500 to-green-600",
+    bg: "bg-lime-50",
+    color: "text-lime-700",
+    border: "border-lime-200",
+    available: true,
+    href: "/main/services/agricole",
+  },
   {
     id: "habitation",
     label: "Habitation",
@@ -82,18 +94,19 @@ const INSURANCE_SERVICES = [
     available: false,
     href: "#",
   },
-  {
-    id: "agricole",
-    label: "Agricole",
-    desc: "Récoltes, matériel et cheptel",
-    icon: FaIndustry,
-    gradient: "from-lime-500 to-green-600",
-    bg: "bg-lime-50",
-    color: "text-lime-700",
-    border: "border-lime-200",
+   {
+    id: "transport",
+    label: "Transport",
+    desc: "Véhicules, camions, transport de marchandises",
+    icon: FaCar,
+    gradient: "from-blue-600 to-cyan-500",
+    bg: "bg-blue-50",
+    color: "text-blue-600",
+    border: "border-blue-200",
     available: false,
-    href: "#",
+    href: "/main/services/transport",
   },
+ 
 ];
 
 export default function MainPage() {
