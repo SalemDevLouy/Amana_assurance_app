@@ -71,7 +71,7 @@ function toDisplayContract(c: ApiContract, userName: string): DisplayContract {
     premium: `${c.totalCost.toLocaleString("fr-DZ")} DA/an`,
     validFrom,
     validTo,
-    agency: "Amanatek Alger Centre",
+    agency: "Amaneka Alger Centre",
     status: STATUS_MAP[c.status] ?? "Pending",
     phone: "+213 555 012 345",
   };
@@ -101,7 +101,7 @@ function ContractCard({ contract }: { contract: DisplayContract }) {
             <FaShieldAlt className="text-white text-lg" />
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-blue-600">Amanatek</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-blue-600">Amaneka</p>
             <p className="text-[10px] text-gray-400 tracking-wide">Assurance Automobile</p>
           </div>
         </div>
@@ -204,7 +204,7 @@ function PrintableCard({ contract }: { contract: DisplayContract }) {
         <ContractCard contract={contract} />
       </div>
       <p className="mt-6 text-[9px] text-gray-400 text-center">
-        Document généré par Amanatek — {new Date().toLocaleDateString("fr-DZ")} — amanatek.dz
+        Document généré par Amaneka — {new Date().toLocaleDateString("fr-DZ")} — Amaneka.dz
       </p>
     </div>
   );

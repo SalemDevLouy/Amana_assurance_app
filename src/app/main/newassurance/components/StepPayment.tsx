@@ -113,13 +113,6 @@ export default function StepPayment({
               <Description>Transfert bancaire classique.</Description>
             </Radio.Content>
           </Radio>
-          <Radio value="cash">
-            <Radio.Control><Radio.Indicator /></Radio.Control>
-            <Radio.Content>
-              <Label>Cash</Label>
-              <Description>Paiement en espèces en agence.</Description>
-            </Radio.Content>
-          </Radio>
         </RadioGroup>
 
         <Checkbox

@@ -98,7 +98,7 @@ export default function DashboardSidebar() {
             <FaShieldAlt className="text-white text-xs" />
           </div>
           <span className="text-sm font-extrabold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent tracking-tight">
-            Amanatek Admin
+            Amaneka Admin
           </span>
         </div>
         <button
@@ -130,7 +130,7 @@ export default function DashboardSidebar() {
           </div>
           <div>
             <p className="text-sm font-extrabold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent tracking-tight leading-none">
-              Amanatek
+              Amaneka
             </p>
             <p className="text-xs text-slate-400 font-medium">Admin Panel</p>
           </div>

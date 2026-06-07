@@ -1,6 +1,6 @@
 export type AssuranceType = "" | "third_party" | "full_coverage" | "commercial";
 
-export type PaymentMethod = "card" | "transfer" | "cash";
+export type PaymentMethod = "card" | "transfer" ;
 
 export type GuaranteeOption = {
   id: string;
@@ -43,6 +43,10 @@ export type CarInfo = {
   technicalCertificate: string;
   carteGriseNumber?: string;
   previousInsuranceNumber?: string;
+  peakHoursDriving?: string;
+  nightDrive?: "yes" | "no" | "";
+  priorViolations?: "yes" | "no" | "";
+  priorAccidents?: "yes" | "no" | "";
 };
 
 export type PaymentInfo = {

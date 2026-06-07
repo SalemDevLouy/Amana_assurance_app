@@ -30,15 +30,50 @@ const SEED_PARTNERS = [
   { name: "Atelier Peinture Moderne", type: PartnerType.BODY_SHOP, wilaya: "Blida", city: "Blida", address: "Route de Boufarik, Blida", phone: "+213 25 39 11 46", rating: 4.5, available: true, hours: "Lun–Sam 08h–18h" },
   { name: "Carrosserie du Sahel", type: PartnerType.BODY_SHOP, wilaya: "Tipaza", city: "Tipaza", address: "Cité des Orangers, Tipaza", phone: "+213 24 47 88 21", rating: 4.4, available: false, hours: "Lun–Ven 08h–17h" },
   { name: "Auto Carrosserie Nord", type: PartnerType.BODY_SHOP, wilaya: "Oran", city: "Oran", address: "Sidi Maarouf, Oran", phone: "+213 41 52 77 33", rating: 4.6, available: true, hours: "Lun–Sam 07h–19h" },
+
+  // Spare parts
+  { name: "Pièces Auto Alger Centre", type: PartnerType.SPARE_PARTS, wilaya: "Alger", city: "Alger", address: "Marché Auto, Hussein Dey, Alger", phone: "+213 21 77 55 00", rating: 4.6, available: true, hours: "Lun–Sam 08h–18h" },
+  { name: "Magasin Pièces Détachées Oran", type: PartnerType.SPARE_PARTS, wilaya: "Oran", city: "Oran", address: "Rue de la Bastille, Oran", phone: "+213 41 35 77 22", rating: 4.4, available: true, hours: "Lun–Sam 08h–18h" },
+
+  // Oil & fluids
+  { name: "Total Lubrifiants Alger", type: PartnerType.OIL_DISTRIBUTOR, wilaya: "Alger", city: "Alger", address: "Zone Industrielle, Rouiba", phone: "+213 21 80 41 60", rating: 4.7, available: true, hours: "Dim–Jeu 07h30–17h30" },
+  { name: "Naftal Produits Lubrifiant Oran", type: PartnerType.OIL_DISTRIBUTOR, wilaya: "Oran", city: "Oran", address: "Route des Glycines, Oran", phone: "+213 41 40 88 55", rating: 4.5, available: true, hours: "Dim–Jeu 08h–17h" },
+
+  // Tech control centers
+  { name: "Centre Contrôle Technique Alger Est", type: PartnerType.CONTROL_CENTER, wilaya: "Alger", city: "Dar El Beïda", address: "Av. du 1er Novembre, Dar El Beïda", phone: "+213 21 50 30 20", rating: 4.5, available: true, hours: "Dim–Jeu 08h–17h" },
+  { name: "CT Auto Oran", type: PartnerType.CONTROL_CENTER, wilaya: "Oran", city: "Oran", address: "Boulevard de la Soummam, Oran", phone: "+213 41 46 22 10", rating: 4.4, available: true, hours: "Dim–Jeu 07h30–16h30" },
+  { name: "Centre CT Annaba", type: PartnerType.CONTROL_CENTER, wilaya: "Annaba", city: "Annaba", address: "Route Sidi Amar, Annaba", phone: "+213 38 55 11 90", rating: 4.3, available: false, hours: "Lun–Jeu 08h–16h" },
+
+  // Tire centers
+  { name: "Pneus Express Alger", type: PartnerType.TIRE_CENTER, wilaya: "Alger", city: "Alger", address: "Boulevard Krim Belkacem, Alger", phone: "+213 21 63 88 44", rating: 4.6, available: true, hours: "Lun–Sam 08h–18h" },
+  { name: "Montage Pneus Rapide Blida", type: PartnerType.TIRE_CENTER, wilaya: "Blida", city: "Blida", address: "Cité 500, Blida", phone: "+213 25 40 77 33", rating: 4.5, available: true, hours: "Lun–Sam 07h–18h" },
+
+  // Auto electricians
+  { name: "Électricité Auto Alger", type: PartnerType.AUTO_ELECTRICIAN, wilaya: "Alger", city: "Hussein Dey", address: "Rue des Ateliers, Hussein Dey", phone: "+213 21 77 12 55", rating: 4.7, available: true, hours: "Lun–Sam 08h–18h" },
+  { name: "Électronicien Auto Oran", type: PartnerType.AUTO_ELECTRICIAN, wilaya: "Oran", city: "Oran", address: "Rue Larbi Ben M'hidi, Oran", phone: "+213 41 37 44 88", rating: 4.5, available: true, hours: "Lun–Sam 08h–17h" },
+
+  // Legal advisors
+  { name: "Cabinet Maître Bensalem — Droit Routier", type: PartnerType.LEGAL, wilaya: "Alger", city: "Alger", address: "3 Rue Didouche Mourad, Alger", phone: "+213 21 74 33 60", rating: 4.8, available: true, hours: "Dim–Jeu 09h–17h" },
+  { name: "Conseil Juridique Auto Oran", type: PartnerType.LEGAL, wilaya: "Oran", city: "Oran", address: "Bd Zabana, Oran", phone: "+213 41 39 55 70", rating: 4.6, available: true, hours: "Dim–Jeu 09h–17h" },
 ];
 
 const TYPE_MAP: Record<string, PartnerType> = {
-  towing: PartnerType.TOWING,
-  mechanic: PartnerType.MECHANIC,
-  expert: PartnerType.EXPERT,
-  body_shop: PartnerType.BODY_SHOP,
-  body: PartnerType.BODY_SHOP,
-  insurance: PartnerType.INSURANCE,
+  towing:       PartnerType.TOWING,
+  mechanic:     PartnerType.MECHANIC,
+  expert:       PartnerType.EXPERT,
+  body_shop:    PartnerType.BODY_SHOP,
+  body:         PartnerType.BODY_SHOP,
+  insurance:    PartnerType.INSURANCE,
+  spare_parts:  PartnerType.SPARE_PARTS,
+  oil:          PartnerType.OIL_DISTRIBUTOR,
+  oil_distributor: PartnerType.OIL_DISTRIBUTOR,
+  control:      PartnerType.CONTROL_CENTER,
+  control_center: PartnerType.CONTROL_CENTER,
+  tires:        PartnerType.TIRE_CENTER,
+  tire_center:  PartnerType.TIRE_CENTER,
+  electrician:  PartnerType.AUTO_ELECTRICIAN,
+  auto_electrician: PartnerType.AUTO_ELECTRICIAN,
+  legal:        PartnerType.LEGAL,
 };
 
 async function ensureSeedExists() {

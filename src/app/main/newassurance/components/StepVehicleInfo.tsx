@@ -269,6 +269,79 @@ export default function StepVehicleInfo({
         />
       </div>
 
+      {/* ── Driver behaviour ─────────────────────────────── */}
+      <div className="mt-5 rounded-2xl border border-gray-200 bg-white p-4 sm:p-5">
+        <h3 className="mb-4 text-sm font-bold text-gray-800">Driver Information</h3>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Input
+            type="number"
+            value={carInfo.peakHoursDriving ?? ""}
+            onChange={(e) => setCarInfo((p) => ({ ...p, peakHoursDriving: e.target.value }))}
+            placeholder="Peak-hour driving (hours/day)"
+          />
+
+          <div className="flex flex-col gap-1.5">
+            <p className="text-xs font-semibold text-gray-500">Night driving?</p>
+            <div className="flex gap-2">
+              {(["yes", "no"] as const).map((v) => (
+                <button
+                  key={v}
+                  type="button"
+                  onClick={() => setCarInfo((p) => ({ ...p, nightDrive: v }))}
+                  className={`flex-1 rounded-xl border px-4 py-2 text-sm font-semibold transition ${
+                    carInfo.nightDrive === v
+                      ? "border-blue-400 bg-blue-50 text-blue-700"
+                      : "border-gray-200 bg-white text-gray-500 hover:bg-gray-50"
+                  }`}
+                >
+                  {v === "yes" ? "Yes" : "No"}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <p className="text-xs font-semibold text-gray-500">Prior traffic violations? (مخالفات سابقة)</p>
+            <div className="flex gap-2">
+              {(["yes", "no"] as const).map((v) => (
+                <button
+                  key={v}
+                  type="button"
+                  onClick={() => setCarInfo((p) => ({ ...p, priorViolations: v }))}
+                  className={`flex-1 rounded-xl border px-4 py-2 text-sm font-semibold transition ${
+                    carInfo.priorViolations === v
+                      ? "border-amber-400 bg-amber-50 text-amber-700"
+                      : "border-gray-200 bg-white text-gray-500 hover:bg-gray-50"
+                  }`}
+                >
+                  {v === "yes" ? "Yes" : "No"}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <p className="text-xs font-semibold text-gray-500">Prior accidents? (حوادث سابقة)</p>
+            <div className="flex gap-2">
+              {(["yes", "no"] as const).map((v) => (
+                <button
+                  key={v}
+                  type="button"
+                  onClick={() => setCarInfo((p) => ({ ...p, priorAccidents: v }))}
+                  className={`flex-1 rounded-xl border px-4 py-2 text-sm font-semibold transition ${
+                    carInfo.priorAccidents === v
+                      ? "border-rose-400 bg-rose-50 text-rose-700"
+                      : "border-gray-200 bg-white text-gray-500 hover:bg-gray-50"
+                  }`}
+                >
+                  {v === "yes" ? "Yes" : "No"}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="mt-6 space-y-4">
         <UploadBlock
           id="vehicle-photos"
@@ -433,6 +506,7 @@ function UploadBlock({
         type="file"
         multiple={multiple}
         accept={accept}
+        capture={accept.startsWith("image") ? "environment" : undefined}
         onChange={(e) => onChange(e.target.files)}
         className="hidden"
       />

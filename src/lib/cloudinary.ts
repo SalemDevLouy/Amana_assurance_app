@@ -11,7 +11,7 @@ export default cloudinary;
 export async function uploadBuffer(
   buffer: Buffer,
   mimeType: string,
-  folder = "amanatek"
+  folder = "Amaneka"
 ): Promise<string> {
   const dataUri = `data:${mimeType};base64,${buffer.toString("base64")}`;
   const result = await cloudinary.uploader.upload(dataUri, {

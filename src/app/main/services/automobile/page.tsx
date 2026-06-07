@@ -6,8 +6,9 @@ import Link from "next/link";
 import {
   FaShieldAlt, FaCar, FaExclamationTriangle, FaBell,
   FaPlus, FaClipboardList, FaCheckCircle, FaClock, FaChevronRight,
-  FaRegIdCard, FaTimes, FaCheckDouble,
+  FaRegIdCard, FaTimes, FaCheckDouble, FaSyncAlt, FaTachometerAlt,
   FaTruck, FaWrench, FaSearch, FaTools, FaPhone, FaMapMarkerAlt, FaStar,
+  FaBoxOpen, FaOilCan, FaCogs, FaCarBattery, FaUserTie, FaBus,
 } from "react-icons/fa";
 import { getProfileStatusCached } from "@/app/lib/clientCache";
 
@@ -50,10 +51,17 @@ const AGENCIES = [
 
 // ── Service partners ──────────────────────────────────────────────────────────
 const SERVICE_CATEGORIES = [
-  { id: "towing",   label: "Dépannage",  icon: FaTruck,  color: "text-rose-600",   bg: "bg-rose-50",   border: "border-rose-200",   active: "bg-rose-600" },
-  { id: "mechanic", label: "Mécanicien", icon: FaWrench, color: "text-blue-600",   bg: "bg-blue-50",   border: "border-blue-200",   active: "bg-blue-600" },
-  { id: "expert",   label: "Expert",     icon: FaSearch, color: "text-violet-600", bg: "bg-violet-50", border: "border-violet-200", active: "bg-violet-600" },
-  { id: "body",     label: "Carrosserie",icon: FaTools,  color: "text-amber-600",  bg: "bg-amber-50",  border: "border-amber-200",  active: "bg-amber-600" },
+  { id: "towing",      label: "Towing",         icon: FaTruck,        color: "text-rose-600",   bg: "bg-rose-50",   border: "border-rose-200",   active: "bg-rose-600" },
+  { id: "mechanic",    label: "Mechanics",       icon: FaWrench,       color: "text-blue-600",   bg: "bg-blue-50",   border: "border-blue-200",   active: "bg-blue-600" },
+  { id: "body",        label: "Body Shop",       icon: FaTools,        color: "text-amber-600",  bg: "bg-amber-50",  border: "border-amber-200",  active: "bg-amber-600" },
+  { id: "spare_parts", label: "Spare Parts",     icon: FaBoxOpen,      color: "text-orange-600", bg: "bg-orange-50", border: "border-orange-200", active: "bg-orange-600" },
+  { id: "oil",         label: "Oil & Fluids",    icon: FaOilCan,       color: "text-yellow-600", bg: "bg-yellow-50", border: "border-yellow-200", active: "bg-yellow-600" },
+  { id: "control",     label: "Tech Control",    icon: FaCogs,         color: "text-slate-600",  bg: "bg-slate-50",  border: "border-slate-200",  active: "bg-slate-600" },
+  { id: "tires",       label: "Tires",           icon: FaCar,          color: "text-zinc-600",   bg: "bg-zinc-50",   border: "border-zinc-200",   active: "bg-zinc-600" },
+  { id: "electrician", label: "Auto Electrician",icon: FaCarBattery,   color: "text-cyan-600",   bg: "bg-cyan-50",   border: "border-cyan-200",   active: "bg-cyan-600" },
+  { id: "expert",      label: "Expert",          icon: FaSearch,       color: "text-violet-600", bg: "bg-violet-50", border: "border-violet-200", active: "bg-violet-600" },
+  { id: "legal",       label: "Legal Advisor",   icon: FaUserTie,      color: "text-indigo-600", bg: "bg-indigo-50", border: "border-indigo-200", active: "bg-indigo-600" },
+  { id: "transport",   label: "Transport",       icon: FaBus,          color: "text-teal-600",   bg: "bg-teal-50",   border: "border-teal-200",   active: "bg-teal-600", soon: true },
 ];
 
 
@@ -95,32 +103,41 @@ type DbPartner = {
 };
 
 const TAB_TO_TYPE: Record<string, string> = {
-  towing:   "TOWING",
-  mechanic: "MECHANIC",
-  expert:   "EXPERT",
-  body:     "BODY_SHOP",
+  towing:      "TOWING",
+  mechanic:    "MECHANIC",
+  expert:      "EXPERT",
+  body:        "BODY_SHOP",
+  spare_parts: "SPARE_PARTS",
+  oil:         "OIL_DISTRIBUTOR",
+  control:     "CONTROL_CENTER",
+  tires:       "TIRE_CENTER",
+  electrician: "AUTO_ELECTRICIAN",
+  legal:       "LEGAL",
 };
 
 const COVERAGE_LABEL: Record<string, string> = {
-  third_party:   "Tiers",
-  full_coverage: "Tous Risques",
+  third_party:   "Third Party",
+  full_coverage: "Full Coverage",
   commercial:    "Commercial",
 };
 
 const STATUS_LABEL: Record<string, string> = {
-  APPROUVE:   "Actif",
-  EN_ATTENTE: "En attente",
-  REFUSE:     "Refusé",
-  EXPIRE:     "Expiré",
-  EN_REVUE:   "En révision",
-  ACCEPTEE:   "Acceptée",
-  REFUSEE:    "Refusée",
+  APPROUVE:   "Active",
+  EN_ATTENTE: "Pending",
+  REFUSE:     "Refused",
+  EXPIRE:     "Expired",
+  EN_REVUE:   "In Review",
+  ACCEPTEE:   "Accepted",
+  REFUSEE:    "Refused",
 };
 
 const mockNotifications = [
-  { id: 1, text: "Votre nouveau contrat a été reçu et est en cours de traitement.", time: "Il y a 2h",  read: false },
-  { id: 2, text: "Votre dossier sinistre a été transmis à un expert.",              time: "Il y a 1j",  read: false },
-  { id: 3, text: "Paiement confirmé pour votre souscription.",                      time: "Il y a 3j",  read: true },
+  { id: 1, text: "Your new contract has been received and is being processed.",          time: "2h ago",  read: false },
+  { id: 2, text: "Your claim has been forwarded to an expert for review.",               time: "1d ago",  read: false },
+  { id: 3, text: "Payment confirmed for your subscription.",                             time: "3d ago",  read: true  },
+  { id: 4, text: "Reminder: Technical inspection (contrôle technique) due in 30 days.", time: "1w ago",  read: false },
+  { id: 5, text: "Reminder: Oil change recommended — check your mileage.",              time: "1w ago",  read: true  },
+  { id: 6, text: "Reminder: Tyre inspection advised before the next long trip.",        time: "2w ago",  read: true  },
 ];
 
 const statusBadge = (s: string) =>
@@ -165,7 +182,7 @@ function AgencySheet({
             <h2 className="text-base font-extrabold text-gray-800">
               {current ? "Changer d'agence" : "Choisissez votre agence"}
             </h2>
-            <p className="mt-0.5 text-xs text-gray-500">Partenaire officiel Amanatek</p>
+            <p className="mt-0.5 text-xs text-gray-500">Partenaire officiel Amaneka</p>
           </div>
           {onClose && (
             <button type="button" onClick={onClose}
@@ -289,9 +306,9 @@ export default function AutomobilePage() {
         <div className="rounded-3xl border border-gray-100 bg-white/90 p-4 shadow-sm sm:p-5">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500">Assurance Automobile</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500">Auto Insurance</p>
               <h1 className="mt-0.5 text-lg font-extrabold text-gray-800 sm:text-2xl">
-                Bonjour, <span className="text-blue-600">{session?.user?.name?.split(" ")[0] ?? "—"}</span>
+                Hello, <span className="text-blue-600">{session?.user?.name?.split(" ")[0] ?? "—"}</span>
               </h1>
               {agency && (
                 <button
@@ -300,15 +317,14 @@ export default function AutomobilePage() {
                   className={`mt-2 inline-flex items-center gap-1.5 rounded-xl border px-2.5 py-1 text-xs font-semibold ${agency.badge}`}
                 >
                   <span className={`h-1.5 w-1.5 rounded-full ${agency.dot}`} />
-                  {agency.abbr} <span className="opacity-60">· Changer</span>
+                  {agency.abbr} <span className="opacity-60">· Change</span>
                 </button>
               )}
             </div>
-            {/* Desktop CTA buttons */}
             <div className="hidden shrink-0 items-center gap-2 sm:flex">
               <Link href="/main/contract"
                 className="inline-flex items-center gap-1.5 rounded-2xl border border-blue-200 bg-white px-3 py-2 text-xs font-bold text-blue-600 shadow-sm hover:bg-blue-50">
-                <FaRegIdCard className="text-xs" /> Ma carte
+                <FaRegIdCard className="text-xs" /> My Card
               </Link>
               <Link href="/main/accident"
                 className="inline-flex items-center gap-1.5 rounded-2xl bg-rose-600 px-3 py-2 text-xs font-bold text-white shadow-md hover:bg-rose-700">
@@ -316,7 +332,7 @@ export default function AutomobilePage() {
               </Link>
               <Link href="/main/newassurance"
                 className="inline-flex items-center gap-1.5 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-4 py-2 text-xs font-bold text-white shadow-md">
-                <FaPlus className="text-xs" /> Nouveau
+                <FaPlus className="text-xs" /> New
               </Link>
             </div>
           </div>
@@ -327,42 +343,44 @@ export default function AutomobilePage() {
           <div className="flex items-start gap-3 rounded-3xl border border-amber-200 bg-amber-50 p-4">
             <FaRegIdCard className="mt-0.5 shrink-0 text-base text-amber-500" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-amber-800">Complétez votre profil</p>
-              <p className="mt-0.5 text-xs text-amber-600">Requis pour créer un contrat.</p>
+              <p className="text-sm font-bold text-amber-800">Complete your profile</p>
+              <p className="mt-0.5 text-xs text-amber-600">Required to create a contract.</p>
             </div>
             <Link href="/main/profile"
               className="shrink-0 inline-flex items-center gap-1 rounded-xl border border-amber-200 bg-amber-100 px-3 py-1.5 text-xs font-bold text-amber-700 hover:bg-amber-200">
-              Compléter <FaChevronRight className="text-[10px]" />
+              Complete <FaChevronRight className="text-[10px]" />
             </Link>
           </div>
         )}
 
-        {/* ── Mobile-only action strip ──────────────────────────────── */}
-        <div className="grid grid-cols-3 gap-2.5 sm:hidden">
-          <Link href="/main/newassurance"
-            className="flex flex-col items-center gap-1.5 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 p-3.5 text-center shadow-md shadow-blue-500/20">
-            <FaPlus className="text-xl text-white" />
-            <span className="text-[11px] font-bold leading-tight text-white">Nouveau contrat</span>
-          </Link>
-          <Link href="/main/accident"
-            className="flex flex-col items-center gap-1.5 rounded-2xl bg-rose-600 p-3.5 text-center shadow-md shadow-rose-500/20">
-            <FaExclamationTriangle className="text-xl text-white" />
-            <span className="text-[11px] font-bold leading-tight text-white">Déclarer accident</span>
-          </Link>
-          <Link href="/main/contract"
-            className="flex flex-col items-center gap-1.5 rounded-2xl border border-blue-200 bg-blue-50 p-3.5 text-center">
-            <FaRegIdCard className="text-xl text-blue-600" />
-            <span className="text-[11px] font-bold leading-tight text-blue-700">Ma carte</span>
-          </Link>
+        {/* ── Quick actions ─────────────────────────────────────────── */}
+        <div className="rounded-3xl border border-gray-100 bg-white/80 p-4 shadow-sm sm:p-5">
+          <h2 className="mb-3 text-sm font-bold text-gray-800">Quick Actions</h2>
+          <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-6">
+            {[
+              { label: "New Contract",   href: "/main/newassurance", icon: FaPlus,               cls: "bg-gradient-to-br from-blue-600 to-cyan-500 text-white shadow-md shadow-blue-500/20" },
+              { label: "Report Accident",href: "/main/accident",      icon: FaExclamationTriangle, cls: "bg-rose-600 text-white shadow-md shadow-rose-500/20" },
+              { label: "Renew",          href: "/main/newassurance",  icon: FaSyncAlt,             cls: "border border-emerald-200 bg-emerald-50 text-emerald-700" },
+              { label: "Recharge km",   href: "/main/profile",       icon: FaTachometerAlt,       cls: "border border-amber-200 bg-amber-50 text-amber-700" },
+              { label: "My Card",        href: "/main/contract",      icon: FaRegIdCard,           cls: "border border-blue-200 bg-blue-50 text-blue-700" },
+              { label: "My Profile",     href: "/main/profile",       icon: FaClipboardList,       cls: "border border-gray-200 bg-gray-50 text-gray-700" },
+            ].map((a) => (
+              <Link key={a.label} href={a.href}
+                className={`flex flex-col items-center gap-1.5 rounded-2xl p-3.5 text-center transition-all hover:opacity-90 ${a.cls}`}>
+                <a.icon className="text-lg" />
+                <span className="text-[11px] font-bold leading-tight">{a.label}</span>
+              </Link>
+            ))}
+          </div>
         </div>
 
         {/* ── KPI strip ────────────────────────────────────────────── */}
         <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-4">
           {[
-            { label: "Contrats actifs",   value: contracts.filter((c) => c.status === "APPROUVE").length, icon: FaShieldAlt,    color: "text-blue-600",    bg: "bg-blue-50" },
-            { label: "Sinistres ouverts", value: accidents.filter((a) => a.status === "EN_ATTENTE" || a.status === "EN_REVUE").length, icon: FaClipboardList, color: "text-amber-600", bg: "bg-amber-50" },
-            { label: "Sinistres résolus", value: accidents.filter((a) => a.status === "ACCEPTEE").length, icon: FaCheckCircle,  color: "text-emerald-600", bg: "bg-emerald-50" },
-            { label: "Total contrats",    value: contracts.length, icon: FaClock, color: "text-gray-500", bg: "bg-gray-100" },
+            { label: "Active Contracts", value: contracts.filter((c) => c.status === "APPROUVE").length, icon: FaShieldAlt,    color: "text-blue-600",    bg: "bg-blue-50" },
+            { label: "Open Claims",     value: accidents.filter((a) => a.status === "EN_ATTENTE" || a.status === "EN_REVUE").length, icon: FaClipboardList, color: "text-amber-600", bg: "bg-amber-50" },
+            { label: "Resolved Claims", value: accidents.filter((a) => a.status === "ACCEPTEE").length, icon: FaCheckCircle,  color: "text-emerald-600", bg: "bg-emerald-50" },
+            { label: "Total Contracts", value: contracts.length, icon: FaClock, color: "text-gray-500", bg: "bg-gray-100" },
           ].map((kpi) => (
             <div key={kpi.label}
               className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white/80 p-3.5 shadow-sm sm:rounded-3xl sm:p-4">
@@ -382,20 +400,20 @@ export default function AutomobilePage() {
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FaShieldAlt className="text-blue-600" />
-              <h2 className="text-sm font-bold text-gray-800">Mes contrats</h2>
+              <h2 className="text-sm font-bold text-gray-800">My Contracts</h2>
               <span className="rounded-full border border-blue-100 bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-600">
                 {contracts.length}
               </span>
             </div>
             <Link href="/main/newassurance" className="flex items-center gap-1 text-xs font-semibold text-blue-600">
-              + Nouveau <FaChevronRight className="text-xs" />
+              + New <FaChevronRight className="text-xs" />
             </Link>
           </div>
 
           {contracts.length === 0 ? (
             <div className="py-8 text-center">
               <FaCar className="mx-auto mb-2 text-3xl text-gray-200" />
-              <p className="text-sm text-gray-400">Aucun contrat.</p>
+              <p className="text-sm text-gray-400">No contracts yet.</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -425,7 +443,7 @@ export default function AutomobilePage() {
                       </div>
                       <Link href="/main/contract"
                         className="inline-flex items-center gap-1.5 rounded-xl border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-600">
-                        <FaRegIdCard className="text-xs" /> Carte
+                        <FaRegIdCard className="text-xs" /> Card
                       </Link>
                     </div>
                   </div>
@@ -441,19 +459,19 @@ export default function AutomobilePage() {
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <FaClipboardList className="text-amber-500" />
-                <h2 className="text-sm font-bold text-gray-800">Mes sinistres</h2>
+                <h2 className="text-sm font-bold text-gray-800">My Claims</h2>
                 <span className="rounded-full border border-amber-100 bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-600">
                   {accidents.length}
                 </span>
               </div>
               <Link href="/main/claims" className="flex items-center gap-1 text-xs font-semibold text-blue-600">
-                Voir tout <FaChevronRight className="text-xs" />
+                View all <FaChevronRight className="text-xs" />
               </Link>
             </div>
             {accidents.length === 0 ? (
               <div className="py-6 text-center">
                 <FaClipboardList className="mx-auto mb-2 text-3xl text-gray-200" />
-                <p className="text-sm text-gray-400">Aucun sinistre déclaré.</p>
+                <p className="text-sm text-gray-400">No claims declared.</p>
               </div>
             ) : (
               <div className="space-y-2.5">
@@ -501,8 +519,8 @@ export default function AutomobilePage() {
         {/* ── Service partners ──────────────────────────────────────── */}
         <div className="rounded-3xl border border-gray-100 bg-white/80 p-4 shadow-sm sm:p-6">
           <div className="mb-4">
-            <h2 className="text-sm font-bold text-gray-800">Partenaires de service</h2>
-            <p className="mt-0.5 text-xs text-gray-500">Prestataires agréés Amanatek</p>
+            <h2 className="text-sm font-bold text-gray-800">Service Partners</h2>
+            <p className="mt-0.5 text-xs text-gray-500">Amaneka certified providers</p>
           </div>
 
           {/* Tabs — scrollable row on mobile */}
@@ -513,19 +531,34 @@ export default function AutomobilePage() {
                 <button
                   key={cat.id}
                   type="button"
-                  onClick={() => setActiveServiceTab(cat.id)}
-                  className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-2xl border px-3.5 py-2 text-xs font-bold transition-all ${
-                    active
-                      ? `${cat.active} border-transparent text-white shadow-md`
-                      : `${cat.bg} ${cat.color} ${cat.border}`
+                  onClick={() => !cat.soon && setActiveServiceTab(cat.id)}
+                  disabled={cat.soon}
+                  className={`relative flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-2xl border px-3.5 py-2 text-xs font-bold transition-all ${
+                    cat.soon
+                      ? `${cat.bg} ${cat.color} ${cat.border} opacity-60 cursor-not-allowed`
+                      : active
+                        ? `${cat.active} border-transparent text-white shadow-md`
+                        : `${cat.bg} ${cat.color} ${cat.border}`
                   }`}
                 >
                   <cat.icon className="text-xs" /> {cat.label}
+                  {cat.soon && (
+                    <span className="ml-1 rounded-full bg-white/60 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-current opacity-80">
+                      Soon
+                    </span>
+                  )}
                 </button>
               );
             })}
           </div>
 
+          {SERVICE_CATEGORIES.find((c) => c.id === activeServiceTab)?.soon ? (
+            <div className="flex flex-col items-center gap-3 py-12 text-center">
+              <FaBus className="text-4xl text-teal-200" />
+              <p className="text-sm font-bold text-gray-600">Transport — Coming Soon</p>
+              <p className="text-xs text-gray-400">This service will be available shortly.</p>
+            </div>
+          ) : (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {partners.filter((p) => p.type === TAB_TO_TYPE[activeServiceTab]).map((partner) => {
               const cat = SERVICE_CATEGORIES.find((c) => c.id === activeServiceTab)!;
@@ -544,7 +577,7 @@ export default function AutomobilePage() {
                             ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                             : "border-gray-200 bg-gray-100 text-gray-400"
                         }`}>
-                          {partner.available ? "● Dispo" : "○ Indispo"}
+                          {partner.available ? "● Available" : "○ Unavailable"}
                         </span>
                       </div>
                       <div className="mt-0.5 flex items-center gap-1">
@@ -580,6 +613,7 @@ export default function AutomobilePage() {
               );
             })}
           </div>
+          )}
         </div>
 
         {/* ── Active agency pill ────────────────────────────────────── */}
@@ -589,7 +623,7 @@ export default function AutomobilePage() {
               <span className="text-xs font-black text-white">{agency.abbr}</span>
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Agence active</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Active agency</p>
               <p className="truncate text-sm font-extrabold text-gray-800">{agency.name}</p>
             </div>
             <button type="button" onClick={() => setShowChangeSheet(true)}
@@ -599,24 +633,6 @@ export default function AutomobilePage() {
           </div>
         )}
 
-        {/* ── Quick actions (desktop only — on mobile use the strip above) ── */}
-        <div className="hidden sm:block rounded-3xl border border-gray-100 bg-white/80 p-6 shadow-sm">
-          <h2 className="mb-4 text-sm font-bold text-gray-800">Actions rapides</h2>
-          <div className="grid grid-cols-4 gap-3">
-            {[
-              { label: "Nouveau contrat",   href: "/main/newassurance", icon: FaPlus,               color: "border-blue-100 bg-blue-50 text-blue-600 hover:bg-blue-100" },
-              { label: "Déclarer accident", href: "/main/accident",      icon: FaExclamationTriangle, color: "border-rose-100 bg-rose-50 text-rose-600 hover:bg-rose-100" },
-              { label: "Mes sinistres",     href: "/main/claims",        icon: FaClipboardList,      color: "border-amber-100 bg-amber-50 text-amber-600 hover:bg-amber-100" },
-              { label: "Mon profil",        href: "/main/profile",       icon: FaRegIdCard,          color: "border-emerald-100 bg-emerald-50 text-emerald-600 hover:bg-emerald-100" },
-            ].map((a) => (
-              <Link key={a.label} href={a.href}
-                className={`flex flex-col items-center gap-2.5 rounded-2xl border p-4 text-center transition-all ${a.color}`}>
-                <a.icon className="text-xl" />
-                <span className="text-xs font-semibold">{a.label}</span>
-              </Link>
-            ))}
-          </div>
-        </div>
 
       </div>
     </div>

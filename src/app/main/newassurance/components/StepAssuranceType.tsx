@@ -134,7 +134,7 @@ export default function StepAssuranceType({
               </ul>
 
               <p className={`text-sm font-bold ${isSelected ? opt.color : "text-gray-500"}`}>
-                From {basePrice["car"] ?? 500} DA/yr
+                From {basePrice["car"] ?? "----"} DA/yr
               </p>
             </button>
           );

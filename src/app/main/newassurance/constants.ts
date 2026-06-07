@@ -149,9 +149,9 @@ export const DEFAULT_GUARANTEE_CATALOG: Record<ApiCatalogType, GuaranteeSeedGrou
 };
 
 export const BASE_PRICE: Record<Exclude<AssuranceType, "">, number> = {
-  third_party: 9200,
-  full_coverage: 18500,
-  commercial: 24000,
+  third_party: 21000,
+  full_coverage: 21000,
+  commercial: 21000,
 };
 
 // Maps UI coverage types to the API catalog type

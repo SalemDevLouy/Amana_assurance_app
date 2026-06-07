@@ -51,7 +51,7 @@ export default async function VerifyPage({
             Ce QR code ne correspond à aucun contrat enregistré dans notre système. Il est peut-être invalide ou falsifié.
           </p>
           <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-xs text-red-700 mb-6">
-            Si vous pensez qu'il s'agit d'une erreur, contactez votre agence Amanatek.
+            Si vous pensez qu'il s'agit d'une erreur, contactez votre agence Amaneka.
           </div>
           <Link href="/" className="text-sm font-bold text-blue-600 hover:underline">
             Retour à l'accueil
@@ -100,7 +100,7 @@ export default async function VerifyPage({
               <FaShieldAlt className="text-white text-sm" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-blue-600">Amanatek Assurance</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-blue-600">Amaneka Assurance</p>
               <p className="text-[10px] text-gray-400">Attestation d'assurance automobile</p>
             </div>
             <div className="ml-auto text-right">
@@ -130,7 +130,7 @@ export default async function VerifyPage({
             </Row>
 
             <Row icon={<FaIdCard className="text-gray-400" />} label="Agence">
-              <p className="text-sm font-bold text-gray-800">Amanatek Alger Centre</p>
+              <p className="text-sm font-bold text-gray-800">Amaneka Alger Centre</p>
             </Row>
           </div>
 
@@ -146,7 +146,7 @@ export default async function VerifyPage({
         </div>
 
         <p className="text-center text-xs text-gray-400">
-          Vérification fournie par <span className="font-bold text-blue-600">Amanatek Assurance</span>
+          Vérification fournie par <span className="font-bold text-blue-600">Amaneka Assurance</span>
         </p>
       </div>
     </div>
