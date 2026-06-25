@@ -543,6 +543,15 @@ function CameraCapture({
     return () => { stream?.getTracks().forEach((t) => t.stop()); };
   }, [stream]);
 
+  useEffect(() => {
+    if (open) {
+      document.body.setAttribute("data-camera-open", "true");
+    } else {
+      document.body.removeAttribute("data-camera-open");
+    }
+    return () => document.body.removeAttribute("data-camera-open");
+  }, [open]);
+
   const closeCamera = () => {
     stream?.getTracks().forEach((t) => t.stop());
     setStream(null);

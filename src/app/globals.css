@@ -18,3 +18,7 @@ html {
 body {
   min-width: 0;
 }
+
+body[data-camera-open] nav {
+  display: none;
+}
