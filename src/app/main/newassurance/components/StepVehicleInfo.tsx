@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { FaCamera } from "react-icons/fa";
 import { CarInfo } from "../types";
 
@@ -596,11 +597,14 @@ function CameraCapture({
         </div>
       )}
 
-      {open && (
-        <div className="fixed inset-0 z-[100] flex flex-col bg-black">
+      {open && createPortal(
+        <div className="fixed inset-0 z-[9999] flex flex-col bg-black">
           <video ref={videoRef} autoPlay playsInline muted className="flex-1 w-full object-cover" />
           <canvas ref={canvasRef} className="hidden" />
-          <div className="flex items-center justify-between px-8 py-6 bg-black/90">
+          <div
+            className="flex items-center justify-between px-8 py-6 bg-black/90"
+            style={{ paddingBottom: "calc(1.5rem + env(safe-area-inset-bottom))" }}
+          >
             <button type="button" onClick={closeCamera}
               className="text-white/70 text-sm font-medium hover:text-white transition px-3 py-2">
               Cancel
@@ -615,7 +619,8 @@ function CameraCapture({
             </button>
             <div className="w-16" />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
